@@ -58,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		sessionStorage.setItem("accessToken", token);
 		sessionStorage.setItem("expiresAt", String(expiresAt));
 		fetchUserInfo(token).then((userInfo) => {
-			console.log("Fetched user info:", { userInfo }); // Debugging line
 			setAuthState({ accessToken: token, expiresAt, userInfo });
 			if (userInfo) sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
 		});
@@ -101,9 +100,7 @@ async function fetchUserInfo(token: string): Promise<UserInfo | null> {
 			headers: { Authorization: `Bearer ${token}` },
 		});
 		if (!res.ok) return null;
-		console.log("User info response status:", res.status); // Debugging line
 		const data = await res.json();
-		console.log("User info response data:", data); // Debugging line
 		return {
 			email: data.email ?? "",
 			name: data.name ?? data.email ?? "",

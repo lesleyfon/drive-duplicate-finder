@@ -35,8 +35,6 @@ export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 
 	const clickable = !!onPreviewClick;
 	if (!file.thumbnailLink || imgError) {
-		console.log("Rendering default thumbnail for file:", file.name, file.thumbnailLink);
-		console.log("Rendering default thumbnail for file:", imgError);
 		return (
 			<button
 				type="button"
