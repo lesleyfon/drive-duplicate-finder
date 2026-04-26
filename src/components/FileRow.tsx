@@ -25,17 +25,9 @@ export function FileRow({
 	const { accessToken } = useAuth();
 	const parentId = file.parents?.[0];
 
-	if (!accessToken) {
-		throw new Error("FileRow must be used within an AuthProvider. Missing access token.");
-	}
-
-	if (parentId === undefined) {
-		throw new Error(`File ${file.id} is missing parent information.`);
-	}
-
 	const folderQuery = useQuery({
 		queryKey: ["folder", parentId],
-		queryFn: () => getFolderName(accessToken, parentId),
+		queryFn: () => getFolderName(accessToken ?? "", parentId ?? ""),
 		enabled: !!parentId && !!accessToken,
 		staleTime: Infinity,
 	});
