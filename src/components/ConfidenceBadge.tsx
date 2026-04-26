@@ -2,23 +2,23 @@ import type { ConfidenceLevel } from "../types/drive";
 
 const CONFIG: Record<ConfidenceLevel, { label: string; className: string }> = {
 	exact: {
-		label: "Exact Match",
-		className: "bg-green-100 text-green-800 border-green-200",
+		label: "EXACT MATCH",
+		className: "bg-cyan-dark border border-cyan-dim text-cyan-bright",
 	},
 	likely: {
-		label: "Likely Duplicate",
-		className: "bg-yellow-100 text-yellow-800 border-yellow-200",
+		label: "LIKELY DUPLICATE",
+		className: "bg-[#3B2F00] border border-[#EAC324] text-[#EAC324]",
 	},
 	version: {
-		label: "Possible Version",
-		className: "bg-gray-100 text-gray-700 border-gray-200",
+		label: "POSSIBLE VERSION",
+		className: "border border-border-bright text-text-muted",
 	},
 };
 
 export function ConfidenceBadge({ level }: { level: ConfidenceLevel }) {
 	const { label, className } = CONFIG[level];
 	return (
-		<span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${className}`}>
+		<span className={`px-2 py-0.5 text-label uppercase tracking-widest ${className}`}>
 			{label}
 		</span>
 	);

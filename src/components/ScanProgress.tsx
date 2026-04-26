@@ -6,31 +6,32 @@ interface ScanProgressProps {
 
 export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgressProps) {
 	return (
-		<div className="space-y-3">
-			{/* Progress bar */}
-			<div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+		<div className="flex flex-col items-center gap-6">
+			<h2 className="text-md uppercase tracking-widest text-text-primary">
+				{isComplete ? "SCAN COMPLETE" : "SCAN IN PROGRESS"}
+			</h2>
+
+			<div className="w-full h-1 bg-surface-high border border-border-dim overflow-hidden relative">
 				{isComplete ? (
-					<div className="h-3 bg-green-500 rounded-full w-full transition-all" />
+					<div className="h-full bg-cyan-bright w-full" />
 				) : (
-					<div className="h-3 rounded-full bg-blue-500 animate-[indeterminate_1.5s_ease-in-out_infinite]" />
+					<div className="absolute inset-y-0 bg-cyan-bright w-1/3 animate-indeterminate" />
 				)}
 			</div>
 
-			{/* Status */}
-			<p className="text-sm text-gray-600">
+			<p className="text-sm text-text-muted uppercase tracking-widest">
 				{isComplete ? (
-					<span className="text-green-700 font-medium">
-						Scan complete — {totalFiles.toLocaleString()} files found
-					</span>
+					<>
+						OBJECTS PARSED:{" "}
+						<span className="text-status-ok">{totalFiles.toLocaleString()}</span>
+					</>
 				) : isFetching ? (
 					<>
-						Scanning&hellip;{" "}
-						<span className="font-medium">
-							{totalFiles.toLocaleString()} files found so far
-						</span>
+						OBJECTS PARSED:{" "}
+						<span className="text-text-primary">{totalFiles.toLocaleString()}</span>
 					</>
 				) : (
-					"Starting scan…"
+					"INITIALIZING..."
 				)}
 			</p>
 		</div>

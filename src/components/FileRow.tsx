@@ -12,7 +12,6 @@ interface FileRowProps {
 	file: FileRecord;
 	isKept: boolean;
 	isSelectedForDeletion: boolean;
-	onKeep: (fileId: string) => void;
 	onToggleDelete: (fileId: string) => void;
 	showMd5: boolean;
 }
@@ -21,7 +20,7 @@ export function FileRow({
 	file,
 	isKept,
 	isSelectedForDeletion,
-	onKeep,
+
 	onToggleDelete,
 	showMd5,
 }: FileRowProps) {
@@ -29,8 +28,7 @@ export function FileRow({
 	const parentId = file.parents?.[0];
 	const [showPlayer, setShowPlayer] = useState(false);
 
-	const isMedia =
-		file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/");
+	const isMedia = file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/");
 
 	const folderQuery = useQuery({
 		queryKey: ["folder", parentId],
@@ -39,107 +37,102 @@ export function FileRow({
 		staleTime: Infinity,
 	});
 
+	const rowClass = isSelectedForDeletion
+		? "border-l-2 border-status-error bg-surface-low"
+		: isKept
+			? "border-l-2 border-status-ok bg-surface-low"
+			: "border-l-2 border-transparent hover:bg-surface-low";
+
 	return (
 		<>
-		<div
-			className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
-				isSelectedForDeletion
-					? "bg-red-50 border-red-200"
-					: isKept
-						? "bg-green-50 border-green-200"
-						: "bg-white border-gray-100 hover:border-gray-200"
-			}`}
-		>
-			{/* Keep radio */}
-			<div className="pt-0.5">
-				<input
-					type="radio"
-					name={`keep-${file.id}`}
-					checked={isKept}
-					onChange={() => onKeep(file.id)}
-					className="accent-green-600 w-4 h-4 cursor-pointer"
-					title="Keep this file"
-				/>
-			</div>
-
-			{/* Delete checkbox */}
-			<div className="pt-0.5">
-				<input
-					type="checkbox"
-					checked={isSelectedForDeletion}
-					onChange={() => onToggleDelete(file.id)}
-					disabled={isKept}
-					className="accent-red-600 w-4 h-4 cursor-pointer disabled:opacity-40"
-					title="Mark for deletion"
-				/>
-			</div>
-
-			{/* Thumbnail */}
-			<FileThumbnail
-				file={file}
-				onPreviewClick={isMedia ? () => setShowPlayer(true) : undefined}
-			/>
-
-			{/* File details */}
-			<div className="flex-1 min-w-0 text-sm space-y-0.5">
-				<div className="flex items-center gap-1.5 flex-wrap">
-					<a
-						href={file.webViewLink}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="font-medium text-blue-700 hover:underline truncate"
-					>
-						{file.name}
-					</a>
-					<ExternalLink className="w-3 h-3 text-gray-400 flex-shrink-0" />
+			<div
+				className={`flex items-start gap-3 px-5 py-3 border-b border-border-dim transition-colors ${rowClass}`}
+			>
+				{/* Delete checkbox */}
+				<div className="pt-0.5 flex-shrink-0 self-center">
+					<input
+						type="checkbox"
+						checked={isSelectedForDeletion}
+						onChange={() => onToggleDelete(file.id)}
+						disabled={isKept}
+						className="cursor-pointer"
+						title="Mark for deletion"
+					/>
 				</div>
 
-				<div className="text-gray-500 text-xs flex flex-wrap gap-x-4 gap-y-0.5">
-					<span>
-						<span className="text-gray-400">Folder:</span>{" "}
-						{folderQuery.isPending
-							? "…"
-							: (folderQuery.data ?? (parentId ? "Unknown" : "Root"))}
-					</span>
-					<span>
-						<span className="text-gray-400">Size:</span> {formatBytes(file.size)}
-					</span>
-					<span>
-						<span className="text-gray-400">Modified:</span>{" "}
-						{formatDate(file.modifiedTime)}
-					</span>
-					<span>
-						<span className="text-gray-400">Created:</span>{" "}
-						{formatDate(file.createdTime)}
-					</span>
-					{file.owners?.[0] && (
+				{/* Thumbnail */}
+				<FileThumbnail
+					file={file}
+					onPreviewClick={isMedia ? () => setShowPlayer(true) : undefined}
+				/>
+
+				{/* File details */}
+				<div className="flex-1 min-w-0">
+					<div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+						<a
+							href={file.webViewLink}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-body font-medium text-cyan-bright hover:text-cyan-dim transition-colors truncate flex items-center gap-1"
+						>
+							<span>{file.name}</span>
+							<ExternalLink className="w-3 h-3  flex-shrink-0 text-cyan-bright hover:text-cyan-dim transition-colors" />
+						</a>
+					</div>
+
+					<div className="text-sm text-text-muted flex flex-wrap gap-x-4 gap-y-0.5">
 						<span>
-							<span className="text-gray-400">Owner:</span>{" "}
-							{file.owners[0].displayName}
-							{file.owners[0].emailAddress !== file.owners[0].displayName
-								? ` (${file.owners[0].emailAddress})`
-								: ""}
+							<span className="text-border-bright">FOLDER:</span>{" "}
+							<span className="text-text-secondary">
+								{folderQuery.isPending
+									? "..."
+									: (folderQuery.data ?? (parentId ? "Unknown" : "Root"))}
+							</span>
 						</span>
-					)}
-					{showMd5 && file.md5Checksum && (
-						<span className="font-mono break-all">
-							<span className="text-gray-400">MD5:</span> {file.md5Checksum}
+						<span>
+							<span className="text-border-bright">SIZE:</span>{" "}
+							<span className="text-text-secondary">{formatBytes(file.size)}</span>
 						</span>
-					)}
+						<span>
+							<span className="text-border-bright">MODIFIED:</span>{" "}
+							<span className="text-text-secondary">
+								{formatDate(file.modifiedTime)}
+							</span>
+						</span>
+						<span>
+							<span className="text-border-bright">CREATED:</span>{" "}
+							<span className="text-text-secondary">
+								{formatDate(file.createdTime)}
+							</span>
+						</span>
+						{file.owners?.[0] && (
+							<span>
+								<span className="text-border-bright">OWNER:</span>{" "}
+								<span className="text-text-secondary">
+									{file.owners[0].displayName}
+									{file.owners[0].emailAddress !== file.owners[0].displayName
+										? ` (${file.owners[0].emailAddress})`
+										: ""}
+								</span>
+							</span>
+						)}
+						{showMd5 && file.md5Checksum && (
+							<span className="font-mono break-all">
+								<span className="text-border-bright">MD5:</span>{" "}
+								<span className="text-text-secondary">{file.md5Checksum}</span>
+							</span>
+						)}
+					</div>
 				</div>
-
-				{/* Warn if not owned by signed-in user */}
-				{file.owners?.length > 0 && <></>}
 			</div>
-		</div>
 
-		{showPlayer && accessToken && (
-			<MediaPlayerModal
-				file={file}
-				accessToken={accessToken}
-				onClose={() => setShowPlayer(false)}
-			/>
-		)}
+			{showPlayer && accessToken && (
+				<MediaPlayerModal
+					file={file}
+					accessToken={accessToken}
+					onClose={() => setShowPlayer(false)}
+				/>
+			)}
 		</>
 	);
 }

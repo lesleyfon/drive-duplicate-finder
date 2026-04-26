@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, File } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import type { DuplicateGroup } from "../types/drive";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 import { FileRow } from "./FileRow";
@@ -13,17 +13,6 @@ interface DuplicateGroupCardProps {
 export function DuplicateGroupCard({ group, onGroupChange }: DuplicateGroupCardProps) {
 	const [expanded, setExpanded] = useState(false);
 
-	const handleKeep = (fileId: string) => {
-		const updated: DuplicateGroup = {
-			...group,
-			keepFileId: fileId,
-			selectedForDeletion: new Set(
-				group.files.map((f) => f.id).filter((id) => id !== fileId),
-			),
-		};
-		onGroupChange(updated);
-	};
-
 	const handleToggleDelete = (fileId: string) => {
 		if (group.keepFileId === fileId) return;
 		const updated = new Set(group.selectedForDeletion);
@@ -35,57 +24,61 @@ export function DuplicateGroupCard({ group, onGroupChange }: DuplicateGroupCardP
 		onGroupChange({ ...group, selectedForDeletion: updated });
 	};
 
-	const wastedLabel =
-		group.files.length > 1
-			? `${group.files.length - 1} extra cop${group.files.length - 1 === 1 ? "y" : "ies"} × ${formatBytes(group.files[0].size)} = ${formatBytes(group.totalWastedBytes)} wasted`
-			: "";
-
-	const mimeLabel = group.files[0]?.mimeType?.split("/").pop()?.toUpperCase() ?? "FILE";
+	const groupIdShort = group.key.substring(0, 8).toUpperCase();
 
 	return (
-		<div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-			{/* Card header */}
+		<div className="border border-border-dim mb-px bg-surface">
+			{/* Group header */}
 			<button
 				type="button"
 				onClick={() => setExpanded((v) => !v)}
-				className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 transition-colors"
+				className="w-full flex items-center justify-between px-5 py-3 border-b border-border-dim hover:bg-surface-low transition-colors text-left"
 			>
-				<File className="w-5 h-5 text-gray-400 flex-shrink-0" />
+				<div className="flex items-center gap-3 flex-wrap">
+					<span className="text-text-muted hover:text-cyan-bright transition-colors">
+						{expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+					</span>
 
-				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-2 flex-wrap">
-						<span className="font-medium text-gray-800 truncate">
-							{group.files[0]?.name}
-						</span>
-						<ConfidenceBadge level={group.confidence} />
-					</div>
-					<div className="text-xs text-gray-500 mt-0.5 flex flex-wrap gap-x-3">
-						<span>{mimeLabel}</span>
-						<span>{group.files.length} copies</span>
-						{wastedLabel && <span>{wastedLabel}</span>}
-					</div>
-				</div>
+					<span className="text-label uppercase tracking-widest text-text-muted">
+						GROUP_ID: <span className="text-text-secondary">{groupIdShort}</span>
+					</span>
 
-				<div className="flex items-center gap-2 text-gray-400">
+					<span className="px-2 py-0.5 bg-cyan-dark border border-cyan-dim text-cyan-bright text-label uppercase tracking-widest">
+						{group.files.length} DUPLICATES FOUND
+					</span>
+
+					<ConfidenceBadge level={group.confidence} />
+
 					{group.selectedForDeletion.size > 0 && (
-						<span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-							{group.selectedForDeletion.size} to delete
+						<span className="px-2 py-0.5 border border-status-error text-status-error text-label uppercase tracking-widest">
+							{group.selectedForDeletion.size} MARKED
 						</span>
 					)}
-					{expanded ? (
-						<ChevronUp className="w-4 h-4" />
-					) : (
-						<ChevronDown className="w-4 h-4" />
-					)}
 				</div>
+
+				<span className="text-label uppercase tracking-widest text-text-muted flex-shrink-0 ml-4">
+					POTENTIAL RECLAIM:{" "}
+					<span className="text-text-primary">{formatBytes(group.totalWastedBytes)}</span>
+				</span>
 			</button>
+
+			{/* Collapsed preview */}
+			{!expanded && (
+				<div className="px-5 py-2 flex items-center gap-3">
+					<span className="text-sm text-text-muted truncate">{group.files[0]?.name}</span>
+					<span className="text-label text-text-muted flex-shrink-0">
+						+{group.files.length - 1} more
+					</span>
+				</div>
+			)}
 
 			{/* Expanded file list */}
 			{expanded && (
-				<div className="border-t border-gray-100 p-3 space-y-2 bg-gray-50">
-					<div className="text-xs text-gray-500 flex gap-4 px-1 mb-1">
-						<span>Keep</span>
-						<span>Delete</span>
+				<div>
+					<div className="flex items-center gap-6 px-5 py-2 border-b border-border-dim bg-surface-dim">
+						<span className="text-label uppercase tracking-widest text-text-muted">
+							FILE
+						</span>
 					</div>
 					{group.files.map((file) => (
 						<FileRow
@@ -93,7 +86,6 @@ export function DuplicateGroupCard({ group, onGroupChange }: DuplicateGroupCardP
 							file={file}
 							isKept={group.keepFileId === file.id}
 							isSelectedForDeletion={group.selectedForDeletion.has(file.id)}
-							onKeep={handleKeep}
 							onToggleDelete={handleToggleDelete}
 							showMd5={group.confidence === "exact"}
 						/>
