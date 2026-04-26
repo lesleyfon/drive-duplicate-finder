@@ -35,11 +35,11 @@ export function useDeleteFiles() {
 	const { accessToken } = useAuth();
 	const queryClient = useQueryClient();
 
-	if (!accessToken) {
-		throw new Error("useDeleteFiles must be used within an AuthProvider");
-	}
 	return useMutation({
-		mutationFn: (fileIds: string[]) => deleteSequentially(accessToken, fileIds),
+		mutationFn: (fileIds: string[]) =>
+			accessToken
+				? deleteSequentially(accessToken, fileIds)
+				: Promise.reject(new Error("Not authenticated")),
 		onSuccess: ({ succeeded }) => {
 			// Remove deleted files from scan results
 			queryClient.setQueryData<ScanResult>(["scanResults"], (prev) => {
