@@ -1,9 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import { NavBar } from "../components/NavBar";
 import { ScanProgress } from "../components/ScanProgress";
 import { useScanFiles } from "../hooks/useScanFiles";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
 
 export const Route = createFileRoute("/scan")({
 	component: ScanPage,
@@ -13,48 +12,63 @@ function ScanPage() {
 	const navigate = useNavigate();
 	const { totalFiles, isComplete, isFetching, isFetchingNextPage, isError, error } =
 		useScanFiles(true);
+	const { signOut } = useGoogleAuth();
 
 	useEffect(() => {
 		if (isComplete) {
-			// Brief pause so user can see "Scan complete" before redirect
-			const t = setTimeout(() => navigate({ to: "/results" }), 800);
+			const t = setTimeout(
+				() => navigate({ to: "/results", search: { filter: "duplicates" } }),
+				800,
+			);
 			return () => clearTimeout(t);
 		}
 	}, [isComplete, navigate]);
 
+	useEffect(() => {
+		if (isError && "status" in error && error.status === 401) {
+			signOut();
+			navigate({ to: "/" });
+		}
+	}, [isError, error, signOut, navigate]);
 	return (
-		<div className="min-h-screen bg-gray-50">
-			<NavBar />
-			<main className="max-w-xl mx-auto px-6 py-16 space-y-8">
-				<div className="text-center space-y-1">
-					<h1 className="text-2xl font-bold text-gray-900">Scanning your Drive</h1>
-					<p className="text-gray-500 text-sm">This may take a minute for large drives</p>
-				</div>
+		<div className="flex flex-col h-full">
+			{/* Page header */}
+			<div className="px-8 py-5 border-b border-border-dim">
+				<p className="text-label uppercase tracking-widest text-text-muted mb-1">
+					CLEANUP / <span className="text-cyan-bright">SCAN</span>
+				</p>
+				<h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
+					DRIVE SCAN
+				</h1>
+			</div>
 
-				<div className="bg-white rounded-2xl border border-gray-200 p-8 space-y-6">
-					<ScanProgress
-						totalFiles={totalFiles}
-						isComplete={isComplete}
-						isFetching={isFetching || isFetchingNextPage}
-					/>
+			{/* Scan progress */}
+			<div className="flex-1 flex flex-col items-center justify-center p-12 gap-6 w-full max-w-xl mx-auto">
+				<ScanProgress
+					totalFiles={totalFiles}
+					isComplete={isComplete}
+					isFetching={isFetching || isFetchingNextPage}
+				/>
 
-					{isError && (
-						<div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
-							<p className="font-medium">Scan interrupted</p>
-							<p>{(error as Error)?.message ?? "Unknown error. Please retry."}</p>
-						</div>
-					)}
+				{isError && (
+					<div className="w-full border border-status-error bg-surface-low p-4">
+						<p className="text-label uppercase tracking-widest text-status-error mb-1">
+							SCAN INTERRUPTED
+						</p>
+						<p className="text-sm text-text-secondary">
+							{(error as Error)?.message ?? "Unknown error. Please retry."}
+						</p>
+					</div>
+				)}
 
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/dashboard" })}
-						className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-					>
-						<ArrowLeft className="w-4 h-4" />
-						Cancel scan
-					</button>
-				</div>
-			</main>
+				<button
+					type="button"
+					onClick={() => navigate({ to: "/dashboard" })}
+					className="px-6 py-2 border border-border-bright text-text-secondary text-label uppercase tracking-widest hover:border-text-primary hover:text-text-primary transition-colors"
+				>
+					CANCEL
+				</button>
+			</div>
 		</div>
 	);
 }
