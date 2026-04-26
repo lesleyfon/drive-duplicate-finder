@@ -11,15 +11,11 @@ export function useScanFiles(enabled: boolean) {
 	const queryClient = useQueryClient();
 	const startTimeRef = useRef<number | null>(null);
 
-	if (!accessToken) {
-		throw new Error("useScanFiles must be used within an AuthProvider");
-	}
-
 	const query = useInfiniteQuery({
 		queryKey: ["scanFiles"],
 		queryFn: async ({ pageParam }) => {
 			if (!startTimeRef.current) startTimeRef.current = Date.now();
-			return listFilesPage(accessToken, pageParam as string | undefined);
+			return listFilesPage(accessToken ?? "", pageParam as string | undefined);
 		},
 		initialPageParam: undefined as string | undefined,
 		getNextPageParam: (lastPage) => lastPage.nextPageToken,
