@@ -4,6 +4,7 @@ import type { FileRecord } from "../types/drive";
 import { useAuth } from "../context/AuthContext";
 import { getFolderName } from "../lib/driveApi";
 import { formatBytes, formatDate } from "../lib/formatters";
+import { FileThumbnail } from "./FileThumbnail";
 
 interface FileRowProps {
 	file: FileRecord;
@@ -65,6 +66,9 @@ export function FileRow({
 					title="Mark for deletion"
 				/>
 			</div>
+
+			{/* Thumbnail */}
+			<FileThumbnail file={file} />
 
 			{/* File details */}
 			<div className="flex-1 min-w-0 text-sm space-y-0.5">

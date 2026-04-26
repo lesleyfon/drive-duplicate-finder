@@ -48,7 +48,7 @@ export async function listFilesPage(
 	const params = new URLSearchParams({
 		pageSize: "1000",
 		fields:
-			"nextPageToken,files(id,name,mimeType,size,md5Checksum,createdTime,modifiedTime,owners,parents,webViewLink,fullFileExtension,trashed)",
+			"nextPageToken,files(id,name,mimeType,size,md5Checksum,createdTime,modifiedTime,owners,parents,webViewLink,thumbnailLink,fullFileExtension,trashed)",
 		q: "trashed=false",
 		supportsAllDrives: "true",
 		includeItemsFromAllDrives: "true",
@@ -74,6 +74,7 @@ export async function listFilesPage(
 		owners: f.owners ?? [],
 		parents: f.parents ?? [],
 		webViewLink: f.webViewLink ?? "",
+		thumbnailLink: f.thumbnailLink ?? null,
 		fullFileExtension: f.fullFileExtension ?? null,
 		trashed: f.trashed ?? false,
 	}));

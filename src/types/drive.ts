@@ -9,6 +9,7 @@ export interface FileRecord {
   owners: { displayName: string; emailAddress: string }[]
   parents: string[]
   webViewLink: string
+  thumbnailLink: string | null
   fullFileExtension: string | null
   trashed: boolean
 }
