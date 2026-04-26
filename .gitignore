@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Google OAuth credentials - never commit these
+client_secret*.json
+
+# IDE / editor
+.vscode/
+.claude/
+
+# Design docs
+DESIGN_SPEC.docx
+DESIGN_SPEC.md
+
+# OS
+.DS_Store
