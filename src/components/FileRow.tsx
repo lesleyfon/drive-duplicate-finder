@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
 import type { FileRecord } from "../types/drive";
@@ -5,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { getFolderName } from "../lib/driveApi";
 import { formatBytes, formatDate } from "../lib/formatters";
 import { FileThumbnail } from "./FileThumbnail";
+import { MediaPlayerModal } from "./MediaPlayerModal";
 
 interface FileRowProps {
 	file: FileRecord;
@@ -25,6 +27,10 @@ export function FileRow({
 }: FileRowProps) {
 	const { accessToken } = useAuth();
 	const parentId = file.parents?.[0];
+	const [showPlayer, setShowPlayer] = useState(false);
+
+	const isMedia =
+		file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/");
 
 	const folderQuery = useQuery({
 		queryKey: ["folder", parentId],
@@ -34,6 +40,7 @@ export function FileRow({
 	});
 
 	return (
+		<>
 		<div
 			className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${
 				isSelectedForDeletion
@@ -68,7 +75,10 @@ export function FileRow({
 			</div>
 
 			{/* Thumbnail */}
-			<FileThumbnail file={file} />
+			<FileThumbnail
+				file={file}
+				onPreviewClick={isMedia ? () => setShowPlayer(true) : undefined}
+			/>
 
 			{/* File details */}
 			<div className="flex-1 min-w-0 text-sm space-y-0.5">
@@ -122,5 +132,14 @@ export function FileRow({
 				{file.owners?.length > 0 && <></>}
 			</div>
 		</div>
+
+		{showPlayer && accessToken && (
+			<MediaPlayerModal
+				file={file}
+				accessToken={accessToken}
+				onClose={() => setShowPlayer(false)}
+			/>
+		)}
+		</>
 	);
 }

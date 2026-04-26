@@ -12,11 +12,16 @@ function MimeIcon({ mimeType }: { mimeType: string }) {
 	return <FileText className="w-8 h-8 text-gray-400" />;
 }
 
-export function FileThumbnail({ file }: { file: FileRecord }) {
+interface FileThumbnailProps {
+	file: FileRecord;
+	onPreviewClick?: () => void;
+}
+
+export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 	const [hovered, setHovered] = useState(false);
 	const [imgError, setImgError] = useState(false);
 	const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
-	const containerRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLButtonElement>(null);
 
 	const handleMouseEnter = () => {
 		if (containerRef.current) {
@@ -28,24 +33,34 @@ export function FileThumbnail({ file }: { file: FileRecord }) {
 		setHovered(true);
 	};
 
+	const clickable = !!onPreviewClick;
 	if (!file.thumbnailLink || imgError) {
+		console.log("Rendering default thumbnail for file:", file.name, file.thumbnailLink);
+		console.log("Rendering default thumbnail for file:", imgError);
 		return (
-			<div className="w-[90px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+			<button
+				type="button"
+				className={`w-[90px] h-[90px] flex-shrink-0 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200 ${clickable ? "cursor-pointer hover:bg-gray-200 transition-colors" : ""}`}
+				onClick={onPreviewClick}
+			>
 				<MimeIcon mimeType={file.mimeType} />
-			</div>
+			</button>
 		);
 	}
 
 	return (
-		<div
+		<button
+			type="button"
 			ref={containerRef}
-			className="w-[90px] h-[90px] flex-shrink-0 cursor-zoom-in"
+			className={`w-[90px] h-[90px] flex-shrink-0 ${clickable ? "cursor-pointer" : "cursor-zoom-in"}`}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={() => setHovered(false)}
+			onClick={onPreviewClick}
 		>
 			<img
 				src={file.thumbnailLink}
 				alt={file.name}
+				loading="lazy"
 				className="w-full h-full object-cover rounded-lg border border-gray-200"
 				onError={() => setImgError(true)}
 			/>
@@ -72,6 +87,6 @@ export function FileThumbnail({ file }: { file: FileRecord }) {
 					</div>,
 					document.body,
 				)}
-		</div>
+		</button>
 	);
 }
