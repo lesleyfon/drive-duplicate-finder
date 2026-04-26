@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 interface UserInfo {
 	email: string;
@@ -28,15 +28,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		userInfo: null,
 	});
 
+	useEffect(() => {
+		try {
+			const userInfo = sessionStorage.getItem("userInfo");
+			const accessToken = sessionStorage.getItem("accessToken");
+			const expiresAt = Number(sessionStorage.getItem("expiresAt"));
+
+			const tokenValid = accessToken && expiresAt && Date.now() < expiresAt - 60_000;
+
+			setAuthState({
+				accessToken: tokenValid ? accessToken : null,
+				expiresAt: tokenValid ? expiresAt : null,
+				userInfo: userInfo ? JSON.parse(userInfo) : null,
+			});
+
+			if (!tokenValid) {
+				sessionStorage.removeItem("accessToken");
+				sessionStorage.removeItem("expiresAt");
+			}
+		} catch {
+			sessionStorage.removeItem("userInfo");
+			sessionStorage.removeItem("accessToken");
+			sessionStorage.removeItem("expiresAt");
+		}
+	}, []);
+
 	const setAuth = useCallback((token: string, expiresIn: number) => {
 		const expiresAt = Date.now() + expiresIn * 1000;
-		// Decode basic user info from tokeninfo endpoint
+		sessionStorage.setItem("accessToken", token);
+		sessionStorage.setItem("expiresAt", String(expiresAt));
 		fetchUserInfo(token).then((userInfo) => {
 			setAuthState({ accessToken: token, expiresAt, userInfo });
+			if (userInfo) sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
 		});
 	}, []);
 
 	const clearAuth = useCallback(() => {
+		sessionStorage.removeItem("userInfo");
+		sessionStorage.removeItem("accessToken");
+		sessionStorage.removeItem("expiresAt");
 		if (auth.accessToken) {
 			google.accounts.oauth2.revoke(auth.accessToken);
 		}
