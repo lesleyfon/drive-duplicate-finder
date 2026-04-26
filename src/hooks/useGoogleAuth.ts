@@ -22,8 +22,13 @@ export function useGoogleAuth() {
 					setAuth(response.access_token, response.expires_in);
 				},
 			});
+
+			if (sessionStorage.getItem("userInfo")) {
+				tokenClientRef.current.requestAccessToken({ prompt: "" });
+			}
 		};
 
+		console.log("Initsializing Google Auth. GIS script loaded:");
 		if (typeof google !== "undefined" && google.accounts?.oauth2) {
 			init();
 		} else {
