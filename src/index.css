@@ -2,18 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  *, *::before, *::after {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html, body, #root {
+    height: 100%;
+    background-color: #131313;
+    color: #E2E2E2;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar       { width: 6px; background: #0e0e0e; }
+  ::-webkit-scrollbar-thumb { background: #3b494b; }
+  ::-webkit-scrollbar-thumb:hover { background: #00DBE9; }
+
+  :focus-visible {
+    outline: 1px solid #00F0FF;
+    outline-offset: 0;
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #849495;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  input[type="checkbox"]:checked {
+    background-color: #00F0FF;
+    border-color: #00F0FF;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='%23000' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-size: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  input[type="checkbox"]:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  input[type="radio"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #849495;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  input[type="radio"]:checked {
+    border-color: #00F0FF;
+    background-color: #00F0FF;
+  }
+}
+
+@layer components {
+  .cursor-blink::after {
+    content: '▋';
+    color: #00F0FF;
+    animation: blink 1s step-end infinite;
+  }
+}
+
 @layer utilities {
   @keyframes indeterminate {
-    0% {
-      transform: translateX(-100%) scaleX(0.5);
-    }
+    0%   { transform: translateX(-100%) scaleX(0.5); }
+    50%  { transform: translateX(0%) scaleX(0.7); }
+    100% { transform: translateX(100%) scaleX(0.5); }
+  }
 
-    50% {
-      transform: translateX(0%) scaleX(0.7);
-    }
-
-    100% {
-      transform: translateX(100%) scaleX(0.5);
-    }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
   }
 }
