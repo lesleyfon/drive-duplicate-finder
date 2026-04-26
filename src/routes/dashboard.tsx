@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { ScanLine } from "lucide-react";
-import { NavBar } from "../components/NavBar";
 import { StorageBar } from "../components/StorageBar";
 
 export const Route = createFileRoute("/dashboard")({
@@ -13,47 +12,54 @@ function DashboardPage() {
 	const queryClient = useQueryClient();
 
 	const handleStartScan = () => {
-		// Clear previous scan data
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
 		queryClient.removeQueries({ queryKey: ["scanResults"] });
 		navigate({ to: "/scan" });
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50">
-			<NavBar />
-			<main className="max-w-2xl mx-auto px-6 py-10 space-y-6">
-				<div>
-					<h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-					<p className="text-gray-500 mt-1">
-						Scan your Google Drive to find and remove duplicate files.
-					</p>
-				</div>
+		<div className="flex flex-col h-full">
+			{/* Page header */}
+			<div className="px-8 py-5 border-b border-border-dim">
+				<p className="text-label uppercase tracking-widest text-text-muted mb-1">
+					CLEANUP / <span className="text-cyan-bright">STORAGE SUMMARY</span>
+				</p>
+				<h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
+					STORAGE SUMMARY
+				</h1>
+			</div>
 
-				<StorageBar />
+			{/* Storage bar */}
+			<StorageBar />
 
-				<div className="bg-white rounded-2xl border border-gray-200 p-8 text-center space-y-5">
+			{/* Scan launcher */}
+			<div className="flex-1 flex flex-col items-center justify-center p-12 gap-6">
+				<div className="border border-border-dim bg-surface-low p-8 w-full max-w-md text-center space-y-5">
 					<div className="flex justify-center">
-						<div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
-							<ScanLine className="w-7 h-7 text-blue-600" />
+						<div className="w-12 h-12 bg-surface-high border border-border-dim flex items-center justify-center">
+							<ScanLine className="w-6 h-6 text-cyan-bright" />
 						</div>
 					</div>
+
 					<div>
-						<h2 className="text-xl font-semibold text-gray-900">Start a Scan</h2>
-						<p className="text-gray-500 text-sm mt-1 max-w-sm mx-auto">
-							We&apos;ll fetch all your Drive files and group duplicates by checksum,
-							size, and name. Large drives (10k+ files) may take a minute or two.
+						<h2 className="text-nav uppercase tracking-widest text-text-primary mb-2">
+							INITIATE SCAN
+						</h2>
+						<p className="text-sm text-text-muted leading-relaxed">
+							Fetch all Drive files and group duplicates by checksum, size, and name.
+							Large drives (10k+ files) may take a minute or two.
 						</p>
 					</div>
+
 					<button
 						type="button"
 						onClick={handleStartScan}
-						className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-sm transition-colors"
+						className="w-full py-3 bg-cyan-bright text-ink font-semibold text-label uppercase tracking-widest hover:bg-cyan-dim transition-colors"
 					>
-						Start Scan
+						START SCAN
 					</button>
 				</div>
-			</main>
+			</div>
 		</div>
 	);
 }
