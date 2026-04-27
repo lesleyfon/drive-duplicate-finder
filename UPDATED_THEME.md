@@ -292,7 +292,7 @@ Each page's header area follows this pattern (shown at top of content area, not 
       FILES BY CATEGORY / <span className="text-cyan-bright">DUPLICATE FILES</span>
     </p>
     <h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
-      DUPLICATE_SCANNER.LOG
+      DUPLICATE SCANNER
     </h1>
   </div>
 

@@ -164,7 +164,7 @@ function DuplicatesView() {
 						<span className="text-cyan-bright">DUPLICATE FILES</span>
 					</p>
 					<h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
-						DUPLICATE_SCANNER.LOG
+						DUPLICATE SCANNER
 					</h1>
 				</div>
 				<div className="flex gap-3">
@@ -175,14 +175,7 @@ function DuplicatesView() {
 						className="flex items-center gap-2 px-4 py-2 bg-cyan-bright text-ink text-label uppercase tracking-widest font-semibold hover:bg-cyan-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
 					>
 						<Trash2 size={12} />
-						BULK DELETE TOOL
-					</button>
-					<button
-						type="button"
-						className="flex items-center gap-2 px-4 py-2 border border-text-primary text-text-primary text-label uppercase tracking-widest hover:bg-surface-high transition-colors"
-					>
-						<Download size={12} />
-						EXPORT CSV
+						BULK DELETE
 					</button>
 				</div>
 			</div>
