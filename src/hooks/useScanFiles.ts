@@ -38,6 +38,12 @@ export function useScanFiles(enabled: boolean) {
 	useEffect(() => {
 		if (status === "success" && !hasNextPage && data) {
 			const allFiles: FileRecord[] = data.pages.flatMap((p) => p.files);
+
+			allFiles.forEach((f) => {
+				if (f.mimeType?.startsWith("video/")) {
+					console.log(f.owners);
+				}
+			});
 			const result = runDeduplication(allFiles);
 			queryClient.setQueryData(["scanResults"], result);
 		}

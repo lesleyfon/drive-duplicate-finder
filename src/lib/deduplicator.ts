@@ -2,6 +2,7 @@ import type {
 	ConfidenceLevel,
 	DuplicateGroup,
 	FileRecord,
+	RecentFileEntry,
 	ScanResult,
 } from "../types/drive";
 
@@ -144,12 +145,46 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		return b.totalWastedBytes - a.totalWastedBytes;
 	});
 
+	const fileGroupBytes = { image: 0, video: 0, audio: 0, document: 0, other: 0 };
+	for (const file of allFiles) {
+		if (file.size == null) continue;
+		fileGroupBytes[classifyMime(file.mimeType)] += file.size;
+	}
+
+	const recentFiles: RecentFileEntry[] = [...allFiles]
+		.sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime))
+		.slice(0, 8)
+		.map((f) => ({
+			id: f.id,
+			name: f.name,
+			mimeType: f.mimeType,
+			size: f.size ?? 0,
+			modifiedTime: f.modifiedTime,
+			webViewLink: f.webViewLink,
+		}));
+
 	return {
 		totalFilesScanned: allFiles.length,
 		excludedFiles,
 		duplicateGroups: groups,
 		scannedAt: new Date(),
+		fileGroupBytes,
+		recentFiles,
 	};
+}
+
+function classifyMime(mimeType: string): "image" | "video" | "audio" | "document" | "other" {
+	if (mimeType.startsWith("image/")) return "image";
+	if (mimeType.startsWith("video/")) return "video";
+	if (mimeType.startsWith("audio/")) return "audio";
+	if (
+		mimeType === "application/pdf" ||
+		mimeType.startsWith("text/") ||
+		mimeType.includes("word") ||
+		mimeType.includes("document")
+	)
+		return "document";
+	return "other";
 }
 
 function makeGroup(

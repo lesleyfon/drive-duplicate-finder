@@ -31,3 +31,18 @@ export function formatPercent(used: number, total: number): string {
 	if (total === 0) return "0%";
 	return `${Math.round((used / total) * 100)}%`;
 }
+
+export function formatTime(iso: string): string {
+	return new Date(iso).toTimeString().slice(0, 8);
+}
+
+export function getMimeColor(mimeType: string): string {
+	if (mimeType.startsWith("image/")) return "#00F0FF";
+	if (mimeType.startsWith("video/")) return "#00DBE9";
+	if (mimeType.startsWith("audio/")) return "#7AD4DD";
+	if (mimeType === "application/pdf") return "#4A9EFF";
+	if (mimeType.startsWith("text/")) return "#B9CACB";
+	if (mimeType.includes("zip") || mimeType.includes("tar") || mimeType.includes("gzip"))
+		return "#849495";
+	return "#3B494B";
+}
