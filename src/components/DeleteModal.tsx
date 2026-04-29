@@ -46,7 +46,9 @@ export function DeleteModal({
 								key={f.id}
 								className="flex items-center justify-between px-4 py-2 border-b border-border-dim last:border-0"
 							>
-								<span className="text-sm text-text-secondary truncate">{f.name}</span>
+								<span className="text-sm text-text-secondary truncate">
+									{f.name}
+								</span>
 								<span className="text-label text-text-muted flex-shrink-0 ml-4">
 									{formatBytes(f.size)}
 								</span>
@@ -82,7 +84,7 @@ export function DeleteModal({
 								EXECUTING...
 							</>
 						) : (
-							"EXECUTE_WIPE"
+							"EXECUTE WIPE"
 						)}
 					</button>
 				</div>
