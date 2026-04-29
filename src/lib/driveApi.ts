@@ -63,21 +63,23 @@ export async function listFilesPage(
 		nextPageToken?: string;
 	}>(res);
 
-	const files: FileRecord[] = data.files.map((f) => ({
-		id: f.id ?? "",
-		name: f.name ?? "",
-		mimeType: f.mimeType ?? "",
-		size: f.size != null ? Number(f.size) : null,
-		md5Checksum: f.md5Checksum ?? null,
-		createdTime: f.createdTime ?? "",
-		modifiedTime: f.modifiedTime ?? "",
-		owners: f.owners ?? [],
-		parents: f.parents ?? [],
-		webViewLink: f.webViewLink ?? "",
-		thumbnailLink: f.thumbnailLink ?? null,
-		fullFileExtension: f.fullFileExtension ?? null,
-		trashed: f.trashed ?? false,
-	}));
+	const files: FileRecord[] = data.files
+		.filter((f) => f.owners?.some((o) => o.me)) // Only include files owned by the user, to avoid duplicates and permission issues
+		.map((f) => ({
+			id: f.id ?? "",
+			name: f.name ?? "",
+			mimeType: f.mimeType ?? "",
+			size: f.size != null ? Number(f.size) : null,
+			md5Checksum: f.md5Checksum ?? null,
+			createdTime: f.createdTime ?? "",
+			modifiedTime: f.modifiedTime ?? "",
+			owners: f.owners ?? [],
+			parents: f.parents ?? [],
+			webViewLink: f.webViewLink ?? "",
+			thumbnailLink: f.thumbnailLink ?? null,
+			fullFileExtension: f.fullFileExtension ?? null,
+			trashed: f.trashed ?? false,
+		}));
 
 	return { files, nextPageToken: data.nextPageToken };
 }
