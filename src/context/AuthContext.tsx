@@ -15,8 +15,10 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
 	setAuth: (token: string, expiresIn: number) => void;
 	clearAuth: () => void;
+	markAuthResolved: () => void;
 	isAuthenticated: boolean;
 	isTokenExpired: () => boolean;
+	isAuthLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -27,12 +29,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		expiresAt: null,
 		userInfo: null,
 	});
+	const [isAuthLoading, setIsAuthLoading] = useState(true);
 
 	useEffect(() => {
 		try {
-			const userInfo = sessionStorage.getItem("userInfo");
-			const accessToken = sessionStorage.getItem("accessToken");
-			const expiresAt = Number(sessionStorage.getItem("expiresAt"));
+			const userInfo = localStorage.getItem("userInfo");
+			const accessToken = localStorage.getItem("accessToken");
+			const expiresAt = Number(localStorage.getItem("expiresAt"));
 
 			const tokenValid = accessToken && expiresAt && Date.now() < expiresAt - 60_000;
 
@@ -43,39 +46,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			});
 
 			if (!tokenValid) {
-				sessionStorage.removeItem("accessToken");
-				sessionStorage.removeItem("expiresAt");
+				localStorage.removeItem("accessToken");
+				localStorage.removeItem("expiresAt");
+			}
+
+			// Only stay loading if we're expecting a silent re-auth from GIS.
+			// That happens when userInfo exists but the token is expired/missing.
+			const needsSilentAuth = !!userInfo && !tokenValid;
+			if (!needsSilentAuth) {
+				setIsAuthLoading(false);
 			}
 		} catch {
-			sessionStorage.removeItem("userInfo");
-			sessionStorage.removeItem("accessToken");
-			sessionStorage.removeItem("expiresAt");
+			localStorage.removeItem("userInfo");
+			localStorage.removeItem("accessToken");
+			localStorage.removeItem("expiresAt");
+			setIsAuthLoading(false);
 		}
 	}, []);
 
 	const setAuth = useCallback((token: string, expiresIn: number) => {
 		const expiresAt = Date.now() + expiresIn * 1000;
-		sessionStorage.setItem("accessToken", token);
-		sessionStorage.setItem("expiresAt", String(expiresAt));
+		localStorage.setItem("accessToken", token);
+		localStorage.setItem("expiresAt", String(expiresAt));
 		fetchUserInfo(token).then((userInfo) => {
 			setAuthState({ accessToken: token, expiresAt, userInfo });
-			if (userInfo) sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+			if (userInfo) localStorage.setItem("userInfo", JSON.stringify(userInfo));
+			setIsAuthLoading(false);
 		});
 	}, []);
 
 	const clearAuth = useCallback(() => {
-		sessionStorage.removeItem("userInfo");
-		sessionStorage.removeItem("accessToken");
-		sessionStorage.removeItem("expiresAt");
+		localStorage.removeItem("userInfo");
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("expiresAt");
 		if (auth.accessToken) {
 			google.accounts.oauth2.revoke(auth.accessToken);
 		}
 		setAuthState({ accessToken: null, expiresAt: null, userInfo: null });
+		setIsAuthLoading(false);
 	}, [auth.accessToken]);
+
+	const markAuthResolved = useCallback(() => {
+		setIsAuthLoading(false);
+	}, []);
 
 	const isTokenExpired = useCallback(() => {
 		if (!auth.expiresAt) return true;
-		// Treat as expired 60s before actual expiry for safety
 		return Date.now() > auth.expiresAt - 60_000;
 	}, [auth.expiresAt]);
 
@@ -85,8 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				...auth,
 				setAuth,
 				clearAuth,
+				markAuthResolved,
 				isAuthenticated: !!auth.accessToken && !isTokenExpired(),
 				isTokenExpired,
+				isAuthLoading,
 			}}
 		>
 			{children}
