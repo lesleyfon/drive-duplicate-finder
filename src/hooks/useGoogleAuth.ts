@@ -3,45 +3,66 @@ import { GOOGLE_CLIENT_ID, GOOGLE_SCOPES } from "../env";
 import { useAuth } from "../context/AuthContext";
 
 export function useGoogleAuth() {
-	const { setAuth, clearAuth, isAuthenticated, isTokenExpired } = useAuth();
-	const tokenClientRef = useRef<google.accounts.oauth2.TokenClient | null>(
-		null,
-	);
+	const { setAuth, clearAuth, markAuthResolved, isAuthenticated, isTokenExpired } = useAuth();
+	const tokenClientRef = useRef<google.accounts.oauth2.TokenClient | null>(null);
 
 	useEffect(() => {
-		// Wait for GIS script to be ready
+		// Safety net: if GIS never loads or its callback never fires, unblock the UI.
+		const timeout = setTimeout(markAuthResolved, 8000);
+
 		const init = () => {
+			clearTimeout(timeout);
+
 			tokenClientRef.current = google.accounts.oauth2.initTokenClient({
 				client_id: GOOGLE_CLIENT_ID,
 				scope: GOOGLE_SCOPES,
 				callback: (response) => {
 					if (response.error) {
 						console.error("Auth error:", response.error_description);
+						markAuthResolved();
 						return;
 					}
 					setAuth(response.access_token, response.expires_in);
 				},
 			});
 
-			if (sessionStorage.getItem("userInfo")) {
+			// Only attempt silent re-auth if user was previously signed in but
+			// their stored token has expired. If the token is still valid, AuthContext
+			// already restored it — no GIS round-trip needed.
+			const userInfo = localStorage.getItem("userInfo");
+			const accessToken = localStorage.getItem("accessToken");
+			const expiresAt = Number(localStorage.getItem("expiresAt"));
+			const tokenValid = accessToken && expiresAt && Date.now() < expiresAt - 60_000;
+
+			if (userInfo && !tokenValid) {
 				tokenClientRef.current.requestAccessToken({ prompt: "" });
+			} else {
+				// Token is valid (AuthContext handles it) or no prior session — nothing to do.
+				markAuthResolved();
 			}
 		};
 
-		console.log("Initsializing Google Auth. GIS script loaded:");
 		if (typeof google !== "undefined" && google.accounts?.oauth2) {
 			init();
 		} else {
-			// GIS script may still be loading
 			const script = document.querySelector(
 				'script[src*="accounts.google.com/gsi/client"]',
 			);
 			if (script) {
 				script.addEventListener("load", init);
-				return () => script.removeEventListener("load", init);
+				return () => {
+					script.removeEventListener("load", init);
+					clearTimeout(timeout);
+				};
+			} else {
+				// GIS script not present (blocked, removed, etc.) — unblock the UI.
+				clearTimeout(timeout);
+				markAuthResolved();
 			}
 		}
-	}, [setAuth]);
+
+		return () => clearTimeout(timeout);
+	}, [setAuth, markAuthResolved]);
 
 	const signIn = useCallback(() => {
 		tokenClientRef.current?.requestAccessToken({ prompt: "consent" });
