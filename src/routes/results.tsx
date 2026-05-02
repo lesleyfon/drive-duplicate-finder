@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { Search, Trash2, Download } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { DuplicateGroupCard } from "../components/DuplicateGroupCard";
 import { DeleteModal } from "../components/DeleteModal";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
