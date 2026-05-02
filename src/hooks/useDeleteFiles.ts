@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { trashFile } from "../lib/driveApi";
-import type { ScanResult } from "../types/drive";
+import { useScanStore } from "../store/scanStore";
 
 interface DeleteResult {
 	succeeded: string[];
@@ -33,7 +33,6 @@ async function deleteSequentially(
 
 export function useDeleteFiles() {
 	const { accessToken } = useAuth();
-	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: (fileIds: string[]) =>
@@ -41,27 +40,7 @@ export function useDeleteFiles() {
 				? deleteSequentially(accessToken, fileIds)
 				: Promise.reject(new Error("Not authenticated")),
 		onSuccess: ({ succeeded }) => {
-			// Remove deleted files from scan results
-			queryClient.setQueryData<ScanResult>(["scanResults"], (prev) => {
-				if (!prev) return prev;
-				const deletedSet = new Set(succeeded);
-				const updatedGroups = prev.duplicateGroups
-					.map((group) => ({
-						...group,
-						files: group.files.filter((f) => !deletedSet.has(f.id)),
-						selectedForDeletion: new Set(
-							[...group.selectedForDeletion].filter(
-								(id) => !deletedSet.has(id),
-							),
-						),
-					}))
-					.filter((group) => group.files.length >= 2);
-
-				return {
-					...prev,
-					duplicateGroups: updatedGroups,
-				};
-			});
+			useScanStore.getState().removeFiles(succeeded);
 		},
 	});
 }
