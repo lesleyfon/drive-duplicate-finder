@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { useScanStore } from "../store/scanStore";
 
 interface UserInfo {
 	email: string;
@@ -82,6 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		if (auth.accessToken) {
 			google.accounts.oauth2.revoke(auth.accessToken);
 		}
+		// Clear scan state on logout to prevent showing stale results if a different user logs in.
+		useScanStore.getState().resetScan();
 		setAuthState({ accessToken: null, expiresAt: null, userInfo: null });
 		setIsAuthLoading(false);
 	}, [auth.accessToken]);
