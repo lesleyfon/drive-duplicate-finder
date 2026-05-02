@@ -4,7 +4,7 @@ import { useStorageQuota } from "../hooks/useStorageQuota";
 import { QuickScanCard } from "../components/QuickScanCard";
 import { RecentFileActivity } from "../components/RecentFileActivity";
 import { formatBytes, formatPercent } from "../lib/formatters";
-import type { ScanResult } from "../types/drive";
+import { useScanStore } from "../store/scanStore";
 
 export const Route = createFileRoute("/dashboard")({
 	component: DashboardPage,
@@ -28,11 +28,11 @@ function DashboardPage() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { data: quota } = useStorageQuota();
-	const scanResults = queryClient.getQueryData<ScanResult>(["scanResults"]) ?? null;
+	const scanResults = useScanStore((s) => s.scanResults);
 
 	const handleStartScan = () => {
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
-		queryClient.removeQueries({ queryKey: ["scanResults"] });
+		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });
 	};
 
