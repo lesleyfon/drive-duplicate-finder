@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, Files, LogOut, Layers } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { SidebarItem } from "../components/SidebarItem";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 
@@ -108,7 +109,18 @@ function Sidebar() {
 }
 
 function RootComponent() {
-	const { isAuthenticated } = useAuth();
+	useGoogleAuth();
+	const { isAuthenticated, isAuthLoading } = useAuth();
+
+	if (isAuthLoading) {
+		return (
+			<div className="min-h-screen bg-ink flex items-center justify-center">
+				<span className="text-text-muted text-label uppercase tracking-widest animate-pulse">
+					INITIALIZING...
+				</span>
+			</div>
+		);
+	}
 
 	if (!isAuthenticated) {
 		return <Outlet />;
