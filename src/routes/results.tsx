@@ -5,7 +5,8 @@ import { Search, Trash2 } from "lucide-react";
 import { DuplicateGroupCard } from "../components/DuplicateGroupCard";
 import { DeleteModal } from "../components/DeleteModal";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
-import type { ScanResult, DuplicateGroup, FileRecord } from "../types/drive";
+import { useScanStore } from "../store/scanStore";
+import type { DuplicateGroup, FileRecord } from "../types/drive";
 import { formatBytes } from "../lib/formatters";
 
 export const Route = createFileRoute("/results")({
@@ -58,7 +59,7 @@ function DuplicatesView() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
-	const scanResult = queryClient.getQueryData<ScanResult>(["scanResults"]);
+	const scanResult = useScanStore((s) => s.scanResults);
 
 	const [groups, setGroups] = useState<DuplicateGroup[]>(() => scanResult?.duplicateGroups ?? []);
 	const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceFilter>("all");
@@ -109,7 +110,7 @@ function DuplicatesView() {
 		const ids = allSelectedFiles.map((f) => f.id);
 		const result = await deleteMutation.mutateAsync(ids);
 		setShowModal(false);
-		const updated = queryClient.getQueryData<ScanResult>(["scanResults"]);
+		const updated = useScanStore.getState().scanResults;
 		if (updated) setGroups(updated.duplicateGroups);
 		const freed = allSelectedFiles.reduce((sum, f) => sum + (f.size ?? 0), 0);
 		setSuccessMessage(
@@ -119,7 +120,7 @@ function DuplicatesView() {
 
 	const handleNewScan = () => {
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
-		queryClient.removeQueries({ queryKey: ["scanResults"] });
+		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });
 	};
 
