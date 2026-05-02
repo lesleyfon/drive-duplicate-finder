@@ -16,9 +16,7 @@ client_secret*.json
 .vscode/
 .claude/
 
-# Design docs
-DESIGN_SPEC.docx
-DESIGN_SPEC.md
+
 
 # OS
 .DS_Store
