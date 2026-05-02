@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ScanProgress } from "../components/ScanProgress";
 import { useScanFiles } from "../hooks/useScanFiles";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import { useScanStore } from "../store/scanStore";
 
 export const Route = createFileRoute("/scan")({
 	component: ScanPage,
@@ -10,19 +11,22 @@ export const Route = createFileRoute("/scan")({
 
 function ScanPage() {
 	const navigate = useNavigate();
-	const { totalFiles, isComplete, isFetching, isFetchingNextPage, isError, error } =
-		useScanFiles(true);
+	const storeStatus = useScanStore((s) => s.status);
+	const { totalFiles, isFetching, isFetchingNextPage, isError, error } = useScanFiles(true);
 	const { signOut } = useGoogleAuth();
 
+	// Capture whether scan was already complete when this page mounted
+	const wasAlreadyCompleteRef = useRef(storeStatus === "complete");
+
 	useEffect(() => {
-		if (isComplete) {
-			const t = setTimeout(
-				() => navigate({ to: "/results", search: { filter: "duplicates" } }),
-				800,
-			);
-			return () => clearTimeout(t);
-		}
-	}, [isComplete, navigate]);
+		if (storeStatus !== "complete") return;
+		const delay = wasAlreadyCompleteRef.current ? 0 : 800;
+		const t = setTimeout(
+			() => navigate({ to: "/results", search: { filter: "duplicates" } }),
+			delay,
+		);
+		return () => clearTimeout(t);
+	}, [storeStatus, navigate]);
 
 	useEffect(() => {
 		if (isError && "status" in error && error.status === 401) {
@@ -30,6 +34,9 @@ function ScanPage() {
 			navigate({ to: "/" });
 		}
 	}, [isError, error, signOut, navigate]);
+
+	const isComplete = storeStatus === "complete";
+
 	return (
 		<div className="flex flex-col h-full">
 			{/* Page header */}
