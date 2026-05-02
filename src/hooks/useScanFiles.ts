@@ -1,15 +1,19 @@
-import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
 import { useAuth } from "../context/AuthContext";
 import { listFilesPage } from "../lib/driveApi";
 import type { FileRecord } from "../types/drive";
 import { runDeduplication } from "../lib/deduplicator";
+import { useScanStore } from "../store/scanStore";
 
 export function useScanFiles(enabled: boolean) {
 	const { accessToken } = useAuth();
-	const queryClient = useQueryClient();
 	const startTimeRef = useRef<number | null>(null);
+
+	const { status: storeStatus, totalFiles: storeTotalFiles, startScan, updateProgress, completeScan, setScanError } =
+		useScanStore();
+	const isAlreadyComplete = storeStatus === "complete";
 
 	const query = useInfiniteQuery({
 		queryKey: ["scanFiles"],
@@ -19,13 +23,19 @@ export function useScanFiles(enabled: boolean) {
 		},
 		initialPageParam: undefined as string | undefined,
 		getNextPageParam: (lastPage) => lastPage.nextPageToken,
-		enabled: enabled && !!accessToken,
+		enabled: enabled && !!accessToken && !isAlreadyComplete,
 		staleTime: Infinity,
 		gcTime: Infinity,
 	});
 
-	const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
-		query;
+	const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } = query;
+
+	// Kick off scan when enabled and store is idle
+	useEffect(() => {
+		if (enabled && storeStatus === "idle") {
+			startScan();
+		}
+	}, [enabled, storeStatus, startScan]);
 
 	// Auto-fetch all pages
 	useEffect(() => {
@@ -34,23 +44,36 @@ export function useScanFiles(enabled: boolean) {
 		}
 	}, [status, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+	// Track progress after each page
+	useEffect(() => {
+		if (data) {
+			updateProgress(data.pages.flatMap((p) => p.files).length);
+		}
+	}, [data, updateProgress]);
+
 	// Run deduplication once all pages are fetched
 	useEffect(() => {
 		if (status === "success" && !hasNextPage && data) {
 			const allFiles: FileRecord[] = data.pages.flatMap((p) => p.files);
-
-			const result = runDeduplication(allFiles);
-			queryClient.setQueryData(["scanResults"], result);
+			completeScan(runDeduplication(allFiles));
 		}
-	}, [status, hasNextPage, data, queryClient]);
+	}, [status, hasNextPage, data, completeScan]);
 
-	const totalFiles = data?.pages.flatMap((p) => p.files).length ?? 0;
+	// Surface query errors to the store
+	useEffect(() => {
+		if (query.isError && query.error) {
+			setScanError(query.error as Error);
+		}
+	}, [query.isError, query.error, setScanError]);
+
+	const totalFiles = isAlreadyComplete
+		? storeTotalFiles
+		: (data?.pages.flatMap((p) => p.files).length ?? 0);
 
 	const estimatedTimeRemaining = (() => {
 		if (!startTimeRef.current || !data || data.pages.length < 2) return null;
 		if (!hasNextPage) return 0;
 		const elapsed = (Date.now() - startTimeRef.current) / 1000;
-		// We don't know total file count, so we can't compute ETA
 		void elapsed;
 		return null;
 	})();
@@ -59,6 +82,6 @@ export function useScanFiles(enabled: boolean) {
 		...query,
 		totalFiles,
 		estimatedTimeRemaining,
-		isComplete: status === "success" && !hasNextPage,
+		isComplete: isAlreadyComplete || (status === "success" && !hasNextPage),
 	};
 }
