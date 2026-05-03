@@ -1,13 +1,14 @@
-import { createFileRoute, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, useMemo } from "react";
-import { Search, Trash2 } from "lucide-react";
-import { DuplicateGroupCard } from "../components/DuplicateGroupCard";
+import { createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import { SearchIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { DeleteModal } from "../components/DeleteModal";
+import { DuplicateGroupCard } from "../components/DuplicateGroupCard";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
+import { cn } from "../lib/cn";
+import { formatBytes } from "../lib/formatters";
 import { useScanStore } from "../store/scanStore";
 import type { DuplicateGroup, FileRecord } from "../types/drive";
-import { formatBytes } from "../lib/formatters";
 
 export const Route = createFileRoute("/results")({
 	component: ResultsPage,
@@ -30,7 +31,6 @@ function StubPage({ filter }: { filter: string }) {
 		breadcrumb: filter.toUpperCase(),
 		title: `${filter.toUpperCase()}.LOG`,
 	};
-
 	return (
 		<div className="flex flex-col h-full">
 			<div className="px-8 py-5 border-b border-border-dim">
@@ -41,7 +41,6 @@ function StubPage({ filter }: { filter: string }) {
 					{meta.title}
 				</h1>
 			</div>
-
 			<div className="flex-1 flex flex-col items-center justify-center gap-3 p-16">
 				<p className="text-label uppercase tracking-widest text-text-muted">
 					FEATURE STATUS: <span className="text-status-warn">COMING SOON</span>
@@ -52,15 +51,21 @@ function StubPage({ filter }: { filter: string }) {
 	);
 }
 
-type ConfidenceFilter = "all" | "exact" | "likely";
+type ConfidenceFilter = "all" | "exact" | "likely" | "version";
 type SortType = "size" | "copies" | "type" | "name";
+
+const FILTER_TABS: { key: ConfidenceFilter; label: string }[] = [
+	{ key: "all", label: "All Types" },
+	{ key: "exact", label: "Exact Match" },
+	{ key: "likely", label: "Likely Duplicates" },
+	{ key: "version", label: "Versions" },
+];
 
 function DuplicatesView() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
 	const scanResult = useScanStore((s) => s.scanResults);
-
 	const [groups, setGroups] = useState<DuplicateGroup[]>(() => scanResult?.duplicateGroups ?? []);
 	const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceFilter>("all");
 	const [sort, setSort] = useState<SortType>("size");
@@ -72,10 +77,10 @@ function DuplicatesView() {
 
 	const filteredGroups = useMemo(() => {
 		let result = groups;
-
 		if (confidenceFilter === "exact") result = result.filter((g) => g.confidence === "exact");
-		else if (confidenceFilter === "likely")
-			result = result.filter((g) => g.confidence === "likely");
+		if (confidenceFilter === "likely") result = result.filter((g) => g.confidence === "likely");
+		if (confidenceFilter === "version")
+			result = result.filter((g) => g.confidence === "version");
 
 		if (search.trim()) {
 			const q = search.trim().toLowerCase();
@@ -127,26 +132,22 @@ function DuplicatesView() {
 
 	if (!scanResult) {
 		return (
-			<div className="flex flex-col h-full">
-				<div className="px-8 py-5 border-b border-border-dim">
-					<p className="text-label uppercase tracking-widest text-text-muted mb-1">
-						FILES BY CATEGORY /{" "}
-						<span className="text-cyan-bright">DUPLICATE FILES</span>
-					</p>
-					<h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
-						DUPLICATE SCANNER
-					</h1>
+			<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">
+				<div className="h-14 px-8 flex items-center gap-2 bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-topbar-border)]">
+					<span className="text-[13px] font-semibold text-[var(--theme-text-primary)] tracking-[0.05em] uppercase font-barlow">
+						Duplicate Files
+					</span>
 				</div>
-				<div className="flex-1 flex flex-col items-center justify-center gap-4 p-16">
-					<p className="text-label uppercase tracking-widest text-text-muted">
-						SCAN STATUS: <span className="text-status-warn">NO DATA</span>
+				<div className="flex-1 flex flex-col items-center justify-center gap-4">
+					<p className="text-[11px] font-bold text-[var(--theme-text-secondary)] tracking-[0.08em] uppercase font-barlow">
+						No scan data — run a scan first
 					</p>
 					<button
 						type="button"
 						onClick={() => navigate({ to: "/dashboard" })}
-						className="px-4 py-2 border border-border-bright text-text-secondary text-label uppercase tracking-widest hover:border-text-primary hover:text-text-primary transition-colors"
+						className="px-5 py-2 rounded bg-[var(--theme-accent)] text-white text-[12px] font-bold tracking-[0.06em] uppercase font-barlow border-none cursor-pointer"
 					>
-						BACK TO DASHBOARD
+						Back to Dashboard
 					</button>
 				</div>
 			</div>
@@ -155,209 +156,180 @@ function DuplicatesView() {
 
 	const totalRecoverableBytes = groups.reduce((s, g) => s + g.totalWastedBytes, 0);
 	const totalExtraFiles = groups.reduce((s, g) => s + (g.files.length - 1), 0);
+	const hasSelection = allSelectedFiles.length > 0;
 
 	return (
-		<div className="flex flex-col h-full">
-			{/* Page header */}
-			<div className="px-8 py-5 border-b border-border-dim flex items-center justify-between flex-shrink-0">
-				<div>
-					<p className="text-label uppercase tracking-widest text-text-muted mb-1">
-						FILES BY CATEGORY /{" "}
-						<span className="text-cyan-bright">DUPLICATE FILES</span>
-					</p>
-					<h1 className="text-lg font-bold uppercase tracking-widest text-text-primary">
-						DUPLICATE SCANNER
-					</h1>
+		<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">
+			{/* ── Top bar ── */}
+			<div className="h-14 px-8 flex items-center gap-6 bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-topbar-border)] shrink-0">
+				{/* Left: label */}
+				<div className="flex items-center gap-2">
+					<span className="text-[13px] font-semibold text-[var(--theme-text-primary)] tracking-[0.05em] uppercase font-barlow">
+						Duplicate Files
+					</span>
 				</div>
-				<div className="flex gap-3">
+
+				{/* Center: stats */}
+				<div className="flex-1 flex justify-center gap-5 text-[12px] text-[var(--theme-text-secondary)] font-barlow">
+					<span>
+						<b className="text-[var(--theme-text-primary)] text-[13px]">
+							{groups.length}
+						</b>{" "}
+						groups
+					</span>
+					<span>
+						<b className="text-[var(--theme-text-primary)] text-[13px]">
+							{totalExtraFiles}
+						</b>{" "}
+						extra files
+					</span>
+					<span>
+						<b className="text-[var(--theme-accent)] text-[13px]">
+							{formatBytes(totalRecoverableBytes)}
+						</b>{" "}
+						recoverable
+					</span>
+				</div>
+
+				{/* Right: sort + delete */}
+				<div className="flex items-center gap-3">
+					<select
+						value={sort}
+						onChange={(e) => setSort(e.target.value as SortType)}
+						className="text-[11px] font-bold tracking-[0.06em] uppercase font-barlow border border-[var(--theme-topbar-border)] bg-[var(--theme-search-bg)] text-[var(--theme-text-secondary)] px-[10px] py-[5px] rounded cursor-pointer"
+					>
+						<option value="size">Largest first</option>
+						<option value="copies">Most copies</option>
+						<option value="type">File type</option>
+						<option value="name">Name</option>
+					</select>
+
 					<button
 						type="button"
+						disabled={!hasSelection}
 						onClick={() => setShowModal(true)}
-						disabled={allSelectedFiles.length === 0}
-						className="flex items-center gap-2 px-4 py-2 bg-cyan-bright text-ink text-label uppercase tracking-widest font-semibold hover:bg-cyan-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+						className={cn(
+							"px-[18px] py-[7px] rounded border-none text-[12px] font-bold tracking-[0.06em] uppercase font-barlow transition-all duration-200 whitespace-nowrap",
+							hasSelection
+								? "bg-[var(--theme-delete-btn-active-bg)] text-[var(--theme-delete-btn-active-text)] cursor-pointer"
+								: "bg-[var(--theme-delete-btn-bg)] text-[var(--theme-delete-btn-text)] cursor-default",
+						)}
 					>
-						<Trash2 size={12} />
-						BULK DELETE
+						{hasSelection
+							? `Delete ${allSelectedFiles.length} selected`
+							: "Delete selected"}
 					</button>
 				</div>
 			</div>
 
-			{/* Success message */}
+			{/* ── Success banner ── */}
 			{successMessage && (
-				<div className="px-8 py-3 border-b border-border-dim flex items-center justify-between gap-4 bg-surface-low flex-shrink-0">
-					<p className="text-label uppercase tracking-widest text-status-ok">
+				<div className="px-8 py-[10px] border-b border-[var(--theme-topbar-border)] flex items-center justify-between gap-4 bg-[var(--theme-topbar-bg)] shrink-0">
+					<p className="text-[12px] font-semibold text-[var(--theme-accent)] font-barlow tracking-[0.04em]">
 						{successMessage}
 					</p>
 					<button
 						type="button"
 						onClick={handleNewScan}
-						className="text-label uppercase tracking-widest text-text-secondary hover:text-cyan-bright transition-colors flex-shrink-0"
+						className="text-[11px] font-bold text-[var(--theme-text-secondary)] bg-transparent border-none cursor-pointer tracking-[0.06em] uppercase font-barlow shrink-0"
 					>
-						RUN NEW SCAN
+						Run New Scan
 					</button>
 				</div>
 			)}
 
-			{/* Summary */}
-			<div className="px-8 py-4 border-b border-border-dim flex-shrink-0">
-				{groups.length === 0 ? (
-					<div className="flex items-center gap-6">
-						<span className="text-label uppercase tracking-widest text-status-ok">
-							SCAN STATUS: CLEAN
-						</span>
-						<span className="text-label uppercase tracking-widest text-text-muted">
-							OBJECTS PARSED:{" "}
-							<span className="text-text-secondary">
-								{scanResult.totalFilesScanned.toLocaleString()}
-							</span>
-						</span>
-					</div>
-				) : (
-					<div className="flex items-center justify-between flex-wrap gap-4">
-						<div className="flex items-center gap-6 flex-wrap">
-							<span className="text-label uppercase tracking-widest text-text-muted">
-								GROUPS: <span className="text-text-primary">{groups.length}</span>
-							</span>
-							<span className="text-label uppercase tracking-widest text-text-muted">
-								EXTRA_FILES:{" "}
-								<span className="text-text-primary">{totalExtraFiles}</span>
-							</span>
-							<span className="text-label uppercase tracking-widest text-text-muted">
-								RECOVERABLE:{" "}
-								<span className="text-status-warn">
-									{formatBytes(totalRecoverableBytes)}
-								</span>
-							</span>
-							<span className="text-label uppercase tracking-widest text-text-muted">
-								TOTAL SCANNED:{" "}
-								<span className="text-text-secondary">
-									{scanResult.totalFilesScanned.toLocaleString()}
-								</span>
-							</span>
-						</div>
-						<button
-							type="button"
-							onClick={handleNewScan}
-							className="text-label uppercase tracking-widest text-text-muted hover:text-cyan-bright transition-colors"
-						>
-							RUN NEW SCAN
-						</button>
-					</div>
-				)}
-			</div>
-
 			{groups.length > 0 && (
 				<>
-					{/* Filter toolbar */}
-					<div className="px-8 py-3 border-b border-border-dim flex flex-wrap gap-4 items-center flex-shrink-0 bg-surface-dim">
-						{/* Confidence filter */}
-						<div className="flex">
-							{(["all", "exact", "likely"] as ConfidenceFilter[]).map((f) => (
+					{/* ── Filter bar ── */}
+					<div className="px-8 flex items-center gap-1 bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-topbar-border)] shrink-0">
+						{FILTER_TABS.map(({ key, label }) => {
+							const active = confidenceFilter === key;
+							return (
 								<button
+									key={key}
 									type="button"
-									key={f}
-									onClick={() => setConfidenceFilter(f)}
-									className={`px-3 py-1.5 text-label uppercase tracking-widest border transition-colors ${
-										confidenceFilter === f
-											? "bg-cyan-dark border-cyan-dim text-cyan-bright"
-											: "border-border-dim text-text-muted hover:text-text-primary hover:border-border-bright"
-									}`}
+									onClick={() => setConfidenceFilter(key)}
+									className={cn(
+										"px-4 py-3 text-[11px] font-bold tracking-[0.08em] uppercase font-barlow border-none bg-transparent cursor-pointer transition-all duration-150",
+										active
+											? "text-[var(--theme-filter-active)] border-b-2 border-[var(--theme-filter-active)]"
+											: "text-[var(--theme-filter-inactive)] border-b-2 border-transparent",
+									)}
 								>
-									{f === "all" ? "ALL" : f === "exact" ? "EXACT" : "LIKELY"}
+									{label}
 								</button>
-							))}
-						</div>
+							);
+						})}
 
-						{/* Sort */}
-						<select
-							value={sort}
-							onChange={(e) => setSort(e.target.value as SortType)}
-							className="text-label uppercase tracking-widest border border-border-dim bg-surface-dim text-text-secondary px-3 py-1.5 cursor-pointer hover:border-border-bright transition-colors"
-						>
-							<option value="size">SORT: LARGEST</option>
-							<option value="copies">SORT: MOST COPIES</option>
-							<option value="type">SORT: FILE TYPE</option>
-							<option value="name">SORT: NAME</option>
-						</select>
+						<div className="flex-1" />
 
 						{/* Search */}
-						<div className="flex-1 min-w-[180px] relative">
-							<Search className="w-3 h-3 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+						<div className="flex items-center gap-2 bg-[var(--theme-search-bg)] border border-[var(--theme-topbar-border)] rounded px-3 py-[6px]">
+							<SearchIcon width="13" height="13" viewBox="0 0 24 24" />
 							<input
 								type="text"
-								placeholder="SEARCH BY FILENAME..."
+								placeholder="Search filename…"
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
-								className="w-full pl-8 pr-3 py-1.5 text-label uppercase tracking-widest border border-border-dim bg-surface-dim text-text-secondary placeholder-text-muted focus:border-cyan-bright"
+								className="border-none bg-transparent text-[12px] text-[var(--theme-body-text)] outline-none w-[140px] font-barlow"
 							/>
 						</div>
 					</div>
 
-					{/* Group list */}
-					<div className="flex-1 overflow-y-auto">
+					{/* ── Group list ── */}
+					<div className="flex-1 overflow-auto px-8 py-6 flex flex-col gap-3">
 						{filteredGroups.length === 0 ? (
-							<div className="flex items-center justify-center p-16">
-								<p className="text-label uppercase tracking-widest text-text-muted">
-									NO RESULTS:{" "}
-									<span className="text-text-secondary">ADJUST FILTERS</span>
+							<div className="flex-1 flex items-center justify-center p-16">
+								<p className="text-[12px] font-semibold text-[var(--theme-text-secondary)] font-barlow tracking-[0.06em] uppercase">
+									No results — adjust filters
 								</p>
 							</div>
 						) : (
-							<div>
-								{filteredGroups.map((group) => (
-									<DuplicateGroupCard
-										key={group.key}
-										group={group}
-										onGroupChange={handleGroupChange}
-									/>
-								))}
+							filteredGroups.map((group) => (
+								<DuplicateGroupCard
+									key={group.key}
+									group={group}
+									onGroupChange={handleGroupChange}
+								/>
+							))
+						)}
+
+						{/* New scan link at bottom */}
+						{!successMessage && (
+							<div className="text-center pt-2">
+								<button
+									type="button"
+									onClick={handleNewScan}
+									className="text-[11px] font-bold text-[var(--theme-text-secondary)] bg-transparent border-none cursor-pointer tracking-[0.06em] uppercase font-barlow"
+								>
+									Run New Scan
+								</button>
 							</div>
 						)}
 					</div>
 				</>
 			)}
 
-			{/* Status bar */}
-			<div className="border-t border-border-dim px-8 py-2 flex items-center gap-6 text-label uppercase tracking-widest flex-shrink-0 bg-surface-dim">
-				<span className="text-text-muted">
-					SCAN STATUS: <span className="text-status-ok">COMPLETED</span>
-				</span>
-				<span className="text-border-bright">|</span>
-				<span className="text-text-muted">
-					OBJECTS PARSED:{" "}
-					<span className="text-text-secondary">
-						{scanResult.totalFilesScanned.toLocaleString()}
-					</span>
-				</span>
-			</div>
-
-			{/* System selection panel */}
-			{allSelectedFiles.length > 0 && (
-				<div className="fixed bottom-6 right-6 bg-surface border border-cyan-dim p-5 w-52 z-40">
-					<p className="text-label uppercase tracking-widest text-cyan-bright mb-2">
-						SYSTEM SELECTION
+			{/* Empty / clean state */}
+			{groups.length === 0 && (
+				<div className="flex-1 flex flex-col items-center justify-center gap-4">
+					<p className="text-[13px] font-semibold text-[var(--theme-accent)] font-barlow tracking-[0.06em]">
+						No duplicates found — your Drive is clean
 					</p>
-					<p className="text-[32px] font-bold leading-none text-text-primary mb-1">
-						{allSelectedFiles.length}
-					</p>
-					<p className="text-label uppercase tracking-widest text-text-secondary mb-3">
-						FILES MARKED
-					</p>
-					<p className="text-sm text-text-muted mb-4">
-						SPACE TO FREE:{" "}
-						<span className="text-text-primary">{formatBytes(totalSelectedBytes)}</span>
+					<p className="text-[12px] text-[var(--theme-text-secondary)] font-barlow">
+						{scanResult.totalFilesScanned.toLocaleString()} files scanned
 					</p>
 					<button
 						type="button"
-						onClick={() => setShowModal(true)}
-						className="w-full py-2 bg-cyan-bright text-ink text-label uppercase tracking-widest font-semibold hover:bg-cyan-dim transition-colors"
+						onClick={handleNewScan}
+						className="mt-2 px-5 py-2 rounded border border-[var(--theme-border)] bg-transparent text-[var(--theme-text-secondary)] text-[11px] font-bold tracking-[0.06em] uppercase font-barlow cursor-pointer"
 					>
-						EXECUTE WIPE
+						Run New Scan
 					</button>
 				</div>
 			)}
 
-			{/* Delete modal */}
+			{/* Delete confirmation modal */}
 			{showModal && (
 				<DeleteModal
 					files={allSelectedFiles}

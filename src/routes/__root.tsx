@@ -1,13 +1,60 @@
-import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Files, LogOut, Layers } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import { SidebarItem } from "../components/SidebarItem";
+import { createRootRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import { useAuth } from "../context/AuthContext";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
+
+function useIsActiveFilter(filter: string) {
+	const state = useRouterState();
+	if (state.location.pathname !== "/results") return false;
+	const params = new URLSearchParams(state.location.searchStr.replace(/^\?/, ""));
+	return params.get("filter") === filter;
+}
+
+function useIsDashboard() {
+	const state = useRouterState();
+	return state.location.pathname === "/dashboard";
+}
+
+const NAV_ITEMS = [
+	{ label: "DUPLICATES", filter: "duplicates" },
+	{ label: "SAME FOLDER", filter: "same-folder" },
+	{ label: "HIDDEN", filter: "hidden" },
+	{ label: "EMPTY", filter: "empty" },
+	{ label: "LARGE", filter: "large" },
+	{ label: "OLD", filter: "old" },
+	{ label: "NOT OWNED BY ME", filter: "not-owned" },
+	{ label: "TYPE", filter: "type" },
+	{ label: "ALL FILES", filter: "all-files" },
+];
+
+const sidebarLinkClass =
+	"px-[18px] py-[5px] text-[9px] font-bold tracking-[0.12em] uppercase font-barlow-condensed cursor-pointer block no-underline text-[var(--theme-sidebar-text)]";
+
+function NavItem({ label, filter }: { label: string; filter: string }) {
+	const active = useIsActiveFilter(filter);
+	return (
+		<Link
+			to="/results"
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			search={{ filter } as any}
+			className={sidebarLinkClass}
+			style={{
+				fontWeight: active ? 700 : 500,
+				color: active ? "var(--theme-sidebar-active)" : "var(--theme-sidebar-text)",
+				background: active ? "var(--theme-sidebar-active-bg)" : "transparent",
+			}}
+		>
+			{label}
+		</Link>
+	);
+}
 
 function Sidebar() {
 	const { clearAuth } = useAuth();
 	const navigate = useNavigate();
+	const { theme, toggleTheme } = useTheme();
+	const dashActive = useIsDashboard();
 
 	const handleSignOut = () => {
 		clearAuth();
@@ -15,94 +62,80 @@ function Sidebar() {
 	};
 
 	return (
-		<aside className="w-[260px] flex-shrink-0 bg-surface-dim border-r border-border-dim flex flex-col h-screen sticky top-0">
+		<aside className="w-[180px] shrink-0 bg-[var(--theme-sidebar-bg)] border-r border-[var(--theme-sidebar-border)] flex flex-col h-full font-barlow-condensed">
 			{/* Logo */}
-			<div className="px-6 py-5 border-b border-border-dim">
-				<span className="text-cyan-bright text-lg font-bold uppercase tracking-widest block">
-					Drive Duplicate Cleaner
-				</span>
-				<p className="text-text-muted text-label uppercase mt-1 tracking-widest">
+			<div className="px-[18px] pt-5 pb-4 border-b border-[var(--theme-sidebar-border)]">
+				<div className="text-[18px] font-black text-[var(--theme-sidebar-accent)] leading-[1.1] uppercase">
+					Drive
+					<br />
+					Duplicate
+					<br />
+					Cleaner
+				</div>
+				<div className="text-[8px] font-bold text-[var(--theme-sidebar-text)] tracking-[0.1em] mt-1">
 					DRIVE SCANNER V1
-				</p>
+				</div>
 			</div>
 
-			{/* Nav */}
-			<nav className="flex-1 overflow-y-auto py-4">
-				<SidebarItem
-					icon={<LayoutDashboard size={14} />}
-					label="STORAGE SUMMARY"
+			{/* Storage summary */}
+			<div className="py-2 border-b border-[var(--theme-sidebar-border)]">
+				<Link
 					to="/dashboard"
-					level={1}
-				/>
+					className={sidebarLinkClass}
+					style={{
+						color: dashActive
+							? "var(--theme-sidebar-active)"
+							: "var(--theme-sidebar-text)",
+						background: dashActive ? "var(--theme-sidebar-active-bg)" : "transparent",
+					}}
+				>
+					STORAGE SUMMARY
+				</Link>
+			</div>
 
-				{/* Files by category */}
-				<div className="px-6 pt-5 pb-2">
-					<p className="text-label uppercase tracking-widest text-text-muted">
-						FILES BY CATEGORY
-					</p>
+			{/* Files by category */}
+			<div className="py-2 border-b border-[var(--theme-sidebar-border)]">
+				<div className="px-[18px] pt-1 pb-2 text-[8px] font-bold text-[var(--theme-sidebar-text)] tracking-[0.12em] uppercase">
+					FILES BY CATEGORY
 				</div>
-				<SidebarItem
-					label="DUPLICATES"
-					to="/results"
-					search={{ filter: "duplicates" }}
-					level={2}
-				/>
-				<SidebarItem
-					label="SAME FOLDER"
-					to="/results"
-					search={{ filter: "same-folder" }}
-					level={2}
-				/>
-				<SidebarItem label="HIDDEN" to="/results" search={{ filter: "hidden" }} level={2} />
-				<SidebarItem label="EMPTY" to="/results" search={{ filter: "empty" }} level={2} />
-				<SidebarItem label="LARGE" to="/results" search={{ filter: "large" }} level={2} />
-				<SidebarItem label="OLD" to="/results" search={{ filter: "old" }} level={2} />
-				<SidebarItem
-					label="NOT OWNED BY ME"
-					to="/results"
-					search={{ filter: "not-owned" }}
-					level={2}
-				/>
-				<SidebarItem label="TYPE" to="/results" search={{ filter: "type" }} level={2} />
-				<SidebarItem
-					label="ALL FILES"
-					to="/results"
-					search={{ filter: "all-files" }}
-					level={2}
-				/>
+				{NAV_ITEMS.map((item) => (
+					<NavItem key={item.filter} label={item.label} filter={item.filter} />
+				))}
+			</div>
 
-				{/* Folders by category — future */}
-				<div className="px-6 pt-5 pb-2">
-					<p className="text-label uppercase tracking-widest text-text-muted opacity-40">
-						FOLDERS BY CATEGORY
-					</p>
-				</div>
+			{/* Spacer */}
+			<div className="flex-1" />
 
-				<div className="pt-3">
-					<SidebarItem
-						icon={<Layers size={14} />}
-						label="STORAGE ANALYZER"
-						to="/dashboard"
-						level={1}
-					/>
-					<SidebarItem
-						icon={<Files size={14} />}
-						label="BROWSE GROUPS"
-						to="/results"
-						search={{ filter: "duplicates" }}
-						level={1}
-					/>
-				</div>
-			</nav>
+			{/* Footer links */}
+			<div className="border-t border-[var(--theme-sidebar-border)] py-3">
+				<Link to="/dashboard" className={sidebarLinkClass}>
+					STORAGE ANALYZER
+				</Link>
+				<Link
+					to="/results"
+					search={{ filter: "duplicates" } as never}
+					className={sidebarLinkClass}
+				>
+					BROWSE GROUPS
+				</Link>
+				<button
+					type="button"
+					onClick={toggleTheme}
+					className={`${sidebarLinkClass} border-none bg-transparent w-full text-left`}
+				>
+					{theme === "light" ? "◑ DARK MODE" : "◐ LIGHT MODE"}
+				</button>
+			</div>
 
-			{/* Bottom */}
-			<div className="border-t border-border-dim py-4">
-				<SidebarItem
-					icon={<LogOut size={14} />}
-					label="LOG OUT"
+			{/* Log out */}
+			<div className="border-t border-[var(--theme-sidebar-border)] py-3">
+				<button
+					type="button"
 					onClick={handleSignOut}
-					level={1}
-				/>
+					className={`${sidebarLinkClass} border-none bg-transparent w-full text-left`}
+				>
+					LOG OUT
+				</button>
 			</div>
 		</aside>
 	);
@@ -111,6 +144,7 @@ function Sidebar() {
 function RootComponent() {
 	useGoogleAuth();
 	const { isAuthenticated, isAuthLoading } = useAuth();
+	const { theme } = useTheme();
 
 	if (isAuthLoading) {
 		return (
@@ -127,7 +161,7 @@ function RootComponent() {
 	}
 
 	return (
-		<div className="flex h-screen bg-surface overflow-hidden">
+		<div data-theme={theme} className="flex h-screen overflow-hidden">
 			<Sidebar />
 			<main className="flex-1 overflow-y-auto bg-surface">
 				<Outlet />
@@ -136,7 +170,15 @@ function RootComponent() {
 	);
 }
 
+function AppRoot() {
+	return (
+		<ThemeProvider>
+			<RootComponent />
+		</ThemeProvider>
+	);
+}
+
 export const Route = createRootRoute({
-	component: RootComponent,
+	component: AppRoot,
 	errorComponent: ({ error, reset }) => <ErrorBoundary error={error} reset={reset} />,
 });

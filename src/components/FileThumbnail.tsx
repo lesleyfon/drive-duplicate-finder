@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { FileText, Image, Film, Music, Archive } from "lucide-react";
 import type { FileRecord } from "../types/drive";
 
-function MimeIcon({ mimeType }: { mimeType: string }) {
+export function MimeIcon({ mimeType }: { mimeType: string }) {
 	if (mimeType.startsWith("image/")) return <Image className="w-5 h-5 text-cyan-dim" />;
 	if (mimeType.startsWith("video/")) return <Film className="w-5 h-5 text-text-secondary" />;
 	if (mimeType.startsWith("audio/")) return <Music className="w-5 h-5 text-text-secondary" />;
