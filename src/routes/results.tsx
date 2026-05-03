@@ -53,7 +53,7 @@ function StubPage({ filter }: { filter: string }) {
 }
 
 type ConfidenceFilter = "all" | "exact" | "likely";
-type SortType = "size" | "copies" | "type";
+type SortType = "size" | "copies" | "type" | "name";
 
 function DuplicatesView() {
 	const queryClient = useQueryClient();
@@ -86,6 +86,7 @@ function DuplicatesView() {
 			if (sort === "size") return b.totalWastedBytes - a.totalWastedBytes;
 			if (sort === "copies") return b.files.length - a.files.length;
 			if (sort === "type") return a.files[0].mimeType.localeCompare(b.files[0].mimeType);
+			if (sort === "name") return a.files[0].name.localeCompare(b.files[0].name);
 			return 0;
 		});
 	}, [groups, confidenceFilter, sort, search]);
@@ -276,6 +277,7 @@ function DuplicatesView() {
 							<option value="size">SORT: LARGEST</option>
 							<option value="copies">SORT: MOST COPIES</option>
 							<option value="type">SORT: FILE TYPE</option>
+							<option value="name">SORT: NAME</option>
 						</select>
 
 						{/* Search */}
