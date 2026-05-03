@@ -4,12 +4,15 @@ import { FileText, Image, Film, Music, Archive } from "lucide-react";
 import type { FileRecord } from "../types/drive";
 
 export function MimeIcon({ mimeType }: { mimeType: string }) {
-	if (mimeType.startsWith("image/")) return <Image className="w-5 h-5 text-cyan-dim" />;
-	if (mimeType.startsWith("video/")) return <Film className="w-5 h-5 text-text-secondary" />;
-	if (mimeType.startsWith("audio/")) return <Music className="w-5 h-5 text-text-secondary" />;
+	if (mimeType.startsWith("image/"))
+		return <Image className="w-5 h-5 text-[var(--theme-accent)]" />;
+	if (mimeType.startsWith("video/"))
+		return <Film className="w-5 h-5 text-[var(--theme-body-text)]" />;
+	if (mimeType.startsWith("audio/"))
+		return <Music className="w-5 h-5 text-[var(--theme-body-text)]" />;
 	if (mimeType.includes("zip") || mimeType.includes("tar") || mimeType.includes("archive"))
-		return <Archive className="w-5 h-5 text-status-warn" />;
-	return <FileText className="w-5 h-5 text-text-muted" />;
+		return <Archive className="w-5 h-5 text-[var(--theme-size-text)]" />;
+	return <FileText className="w-5 h-5 text-[var(--theme-caret-color)]" />;
 }
 
 interface FileThumbnailProps {
@@ -39,7 +42,7 @@ export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 		return (
 			<button
 				type="button"
-				className={`w-10 h-10 flex-shrink-0 bg-surface-high border border-border-dim flex items-center justify-center ${clickable ? "cursor-pointer hover:border-cyan-dim transition-colors" : "cursor-default"}`}
+				className={`w-10 h-10 flex-shrink-0 rounded bg-[var(--theme-count-badge-bg)] border border-[var(--theme-card-border)] flex items-center justify-center transition-colors ${clickable ? "cursor-pointer hover:border-[var(--theme-accent)]" : "cursor-default"}`}
 				onClick={onPreviewClick}
 			>
 				<MimeIcon mimeType={file.mimeType} />
@@ -51,17 +54,18 @@ export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 		<button
 			type="button"
 			ref={containerRef}
-			className={`w-10 h-10 flex-shrink-0 border border-border-dim overflow-hidden ${clickable ? "cursor-pointer hover:border-cyan-dim" : "cursor-zoom-in"} transition-colors`}
+			className={`w-10 h-10 flex-shrink-0 rounded border border-[var(--theme-card-border)] overflow-hidden transition-colors ${clickable ? "cursor-pointer hover:border-[var(--theme-accent)]" : "cursor-zoom-in"}`}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={() => setHovered(false)}
 			onClick={onPreviewClick}
 		>
 			<img
-				src={file.thumbnailLink}
-				alt={file.name}
 				loading="lazy"
-				className="w-full h-full object-cover"
+				alt={file.name}
+				referrerPolicy="no-referrer"
+				src={file.thumbnailLink ?? ""}
 				onError={() => setImgError(true)}
+				className="w-full h-full object-cover"
 			/>
 			{hovered &&
 				ReactDOM.createPortal(
@@ -73,14 +77,14 @@ export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 							transform: "translateY(-100%)",
 							zIndex: 9999,
 						}}
-						className="bg-surface-dim border border-border-mid overflow-hidden p-1.5 pointer-events-none"
+						className="bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] rounded-lg overflow-hidden p-2 pointer-events-none shadow-[var(--theme-card-shadow)]"
 					>
 						<img
-							src={file.thumbnailLink}
+							src={file.thumbnailLink ?? ""}
 							alt={file.name}
-							className="max-w-[280px] max-h-[280px] object-contain block"
+							className="max-w-[280px] max-h-[280px] object-contain block rounded"
 						/>
-						<p className="text-label text-text-muted text-center mt-1 px-1 w-[280px] truncate uppercase tracking-widest">
+						<p className="text-[11px] font-barlow text-[var(--theme-path-text)] text-center mt-1.5 px-1 w-[280px] truncate tracking-[0.04em]">
 							{file.name}
 						</p>
 					</div>,

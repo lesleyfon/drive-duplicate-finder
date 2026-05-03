@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import type { DuplicateGroup, FileRecord } from "../types/drive";
-import { formatBytes, formatDate } from "../lib/formatters";
-import { getFolderName } from "../lib/driveApi";
+import type { DuplicateGroup } from "../types/drive";
+import { formatBytes } from "../lib/formatters";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { cn } from "../lib/cn";
 import { MimeIcon } from "./FileThumbnail";
+import { FileRow } from "./FileRow";
 
 const TYPE_COLORS = {
 	light: {
@@ -36,78 +35,6 @@ const TYPE_COLORS = {
 		},
 	},
 };
-
-function FolderCell({
-	parentId,
-	accessToken,
-}: {
-	parentId: string | undefined;
-	accessToken: string | null;
-}) {
-	const { data } = useQuery({
-		queryKey: ["folder", parentId],
-		queryFn: () => getFolderName(accessToken ?? "", parentId ?? ""),
-		enabled: !!parentId && !!accessToken,
-		staleTime: Infinity,
-	});
-	return <>{data ?? (parentId ? "…" : "Root")}</>;
-}
-
-function CardFileRow({
-	file,
-	isSelected,
-	isKept,
-	onToggle,
-	accessToken,
-	accentColor,
-	isLast,
-}: {
-	file: FileRecord;
-	isSelected: boolean;
-	isKept: boolean;
-	onToggle: (id: string) => void;
-	accessToken: string | null;
-	accentColor: string;
-	isLast: boolean;
-}) {
-	return (
-		<div
-			className={cn(
-				"flex items-center gap-3 px-5 py-[11px] transition-[background] duration-150",
-				!isLast && "border-b border-[var(--theme-file-row-border)]",
-			)}
-			style={{ background: isSelected ? `${accentColor}12` : "transparent" }}
-		>
-			<input
-				type="checkbox"
-				checked={isSelected}
-				onChange={() => onToggle(file.id)}
-				disabled={isKept}
-				title={isKept ? "Keep file" : "Mark for deletion"}
-				className="shrink-0"
-			/>
-			<span
-				className={cn(
-					"flex-1 text-[12px] font-jetbrains overflow-hidden text-ellipsis whitespace-nowrap",
-					isSelected
-						? "font-semibold text-[var(--theme-body-text)]"
-						: "font-normal text-[var(--theme-filename-text)]",
-				)}
-			>
-				{file.name}
-			</span>
-			<span className="text-[11px] text-[var(--theme-path-text)] whitespace-nowrap">
-				<FolderCell parentId={file.parents?.[0]} accessToken={accessToken} />
-			</span>
-			<span className="text-[11px] text-[var(--theme-size-text)] font-semibold whitespace-nowrap">
-				{formatBytes(file.size)}
-			</span>
-			<span className="text-[11px] text-[var(--theme-date-text)] whitespace-nowrap">
-				{formatDate(file.modifiedTime)}
-			</span>
-		</div>
-	);
-}
 
 interface DuplicateGroupCardProps {
 	group: DuplicateGroup;
@@ -178,15 +105,9 @@ export function DuplicateGroupCard({ group, onGroupChange }: DuplicateGroupCardP
 						</span>
 					</div>
 					<div className="text-[13px] font-jetbrains text-[var(--theme-body-text)] overflow-hidden text-ellipsis whitespace-nowrap max-w-[480px] text-left">
-						<a
-							href={`https://drive.google.com/file/d/${group.files[0]?.id}/view`}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-inherit no-underline !cursor-pointer"
-							onClick={(e) => e.stopPropagation()}
-						>
+						<p className="text-inherit no-underline !cursor-pointer">
 							{group.files[0]?.name}
-						</a>
+						</p>
 					</div>
 				</button>
 
@@ -220,7 +141,7 @@ export function DuplicateGroupCard({ group, onGroupChange }: DuplicateGroupCardP
 			{expanded && (
 				<div className="border-t border-[var(--theme-expanded-border)] bg-[var(--theme-expanded-bg)]">
 					{group.files.map((file, i) => (
-						<CardFileRow
+						<FileRow
 							key={file.id}
 							file={file}
 							isSelected={group.selectedForDeletion.has(file.id)}

@@ -1,131 +1,97 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ExternalLink } from "lucide-react";
 import type { FileRecord } from "../types/drive";
-import { useAuth } from "../context/AuthContext";
 import { getFolderName } from "../lib/driveApi";
 import { formatBytes, formatDate } from "../lib/formatters";
 import { FileThumbnail } from "./FileThumbnail";
 import { MediaPlayerModal } from "./MediaPlayerModal";
+import { cn } from "../lib/cn";
 
-interface FileRowProps {
-	file: FileRecord;
-	isKept: boolean;
-	isSelectedForDeletion: boolean;
-	onToggleDelete: (fileId: string) => void;
-	showMd5: boolean;
-}
-
-export function FileRow({
-	file,
-	isKept,
-	isSelectedForDeletion,
-
-	onToggleDelete,
-	showMd5,
-}: FileRowProps) {
-	const { accessToken } = useAuth();
-	const parentId = file.parents?.[0];
-	const [showPlayer, setShowPlayer] = useState(false);
-
-	const isMedia = file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/");
-
-	const folderQuery = useQuery({
+function FolderCell({
+	parentId,
+	accessToken,
+}: {
+	parentId: string | undefined;
+	accessToken: string | null;
+}) {
+	const { data } = useQuery({
 		queryKey: ["folder", parentId],
 		queryFn: () => getFolderName(accessToken ?? "", parentId ?? ""),
 		enabled: !!parentId && !!accessToken,
 		staleTime: Infinity,
 	});
+	return <>{data ?? (parentId ? "…" : "Root")}</>;
+}
 
-	const rowClass = isSelectedForDeletion
-		? "border-l-2 border-status-error bg-surface-low"
-		: isKept
-			? "border-l-2 border-status-ok bg-surface-low"
-			: "border-l-2 border-transparent hover:bg-surface-low";
+export function FileRow({
+	file,
+	isSelected,
+	isKept,
+	onToggle,
+	accessToken,
+	accentColor,
+	isLast,
+}: {
+	file: FileRecord;
+	isSelected: boolean;
+	isKept: boolean;
+	onToggle: (id: string) => void;
+	accessToken: string | null;
+	accentColor: string;
+	isLast: boolean;
+}) {
+	const [showPlayer, setShowPlayer] = useState(false);
+	const isMedia = file.mimeType.startsWith("audio/") || file.mimeType.startsWith("video/");
 
 	return (
 		<>
 			<div
-				className={`flex items-start gap-3 px-5 py-3 border-b border-border-dim transition-colors ${rowClass}`}
+				className={cn(
+					"flex items-center gap-3 px-5 py-[11px] transition-[background] duration-150",
+					!isLast && "border-b border-[var(--theme-file-row-border)]",
+				)}
+				style={{ background: isSelected ? `${accentColor}12` : "transparent" }}
 			>
-				{/* Delete checkbox */}
-				<div className="pt-0.5 flex-shrink-0 self-center">
-					<input
-						type="checkbox"
-						checked={isSelectedForDeletion}
-						onChange={() => onToggleDelete(file.id)}
-						disabled={isKept}
-						className="cursor-pointer"
-						title="Mark for deletion"
-					/>
-				</div>
-
+				<input
+					type="checkbox"
+					checked={isSelected}
+					onChange={() => onToggle(file.id)}
+					disabled={isKept}
+					title={isKept ? "Keep file" : "Mark for deletion"}
+					className="shrink-0"
+				/>
 				{/* Thumbnail */}
 				<FileThumbnail
 					file={file}
 					onPreviewClick={isMedia ? () => setShowPlayer(true) : undefined}
 				/>
-
-				{/* File details */}
-				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-						<a
-							href={file.webViewLink}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-body font-medium text-cyan-bright hover:text-cyan-dim transition-colors truncate flex items-center gap-1"
-						>
-							<span>{file.name}</span>
-							<ExternalLink className="w-3 h-3  flex-shrink-0 text-cyan-bright hover:text-cyan-dim transition-colors" />
-						</a>
-					</div>
-
-					<div className="text-sm text-text-muted flex flex-wrap gap-x-4 gap-y-0.5">
-						<span>
-							<span className="text-border-bright">FOLDER:</span>{" "}
-							<span className="text-text-secondary">
-								{folderQuery.isPending
-									? "..."
-									: (folderQuery.data ?? (parentId ? "Unknown" : "Root"))}
-							</span>
-						</span>
-						<span>
-							<span className="text-border-bright">SIZE:</span>{" "}
-							<span className="text-text-secondary">{formatBytes(file.size)}</span>
-						</span>
-						<span>
-							<span className="text-border-bright">MODIFIED:</span>{" "}
-							<span className="text-text-secondary">
-								{formatDate(file.modifiedTime)}
-							</span>
-						</span>
-						<span>
-							<span className="text-border-bright">CREATED:</span>{" "}
-							<span className="text-text-secondary">
-								{formatDate(file.createdTime)}
-							</span>
-						</span>
-						{file.owners?.[0] && (
-							<span>
-								<span className="text-border-bright">OWNER:</span>{" "}
-								<span className="text-text-secondary">
-									{file.owners[0].displayName}
-									{file.owners[0].emailAddress !== file.owners[0].displayName
-										? ` (${file.owners[0].emailAddress})`
-										: ""}
-								</span>
-							</span>
+				<a
+					href={`https://drive.google.com/file/d/${file.id}/view`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="flex-1 min-w-0"
+				>
+					<span
+						className={cn(
+							"flex-1 text-[12px] font-jetbrains overflow-hidden text-ellipsis whitespace-nowrap",
+							isSelected
+								? "font-semibold text-[var(--theme-body-text)]"
+								: "font-normal text-[var(--theme-filename-text)]",
 						)}
-						{showMd5 && file.md5Checksum && (
-							<span className="font-mono break-all">
-								<span className="text-border-bright">MD5:</span>{" "}
-								<span className="text-text-secondary">{file.md5Checksum}</span>
-							</span>
-						)}
-					</div>
-				</div>
-			</div>
-
+					>
+						{file.name}
+					</span>
+				</a>
+				<span className="text-[11px] text-[var(--theme-path-text)] whitespace-nowrap">
+					<FolderCell parentId={file.parents?.[0]} accessToken={accessToken} />
+				</span>
+				<span className="text-[11px] text-[var(--theme-size-text)] font-semibold whitespace-nowrap">
+					{formatBytes(file.size)}
+				</span>
+				<span className="text-[11px] text-[var(--theme-date-text)] whitespace-nowrap">
+					{formatDate(file.modifiedTime)}
+				</span>
+			</div>{" "}
 			{showPlayer && accessToken && (
 				<MediaPlayerModal
 					file={file}

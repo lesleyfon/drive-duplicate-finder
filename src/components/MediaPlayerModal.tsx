@@ -57,16 +57,18 @@ export function MediaPlayerModal({ file, accessToken, onClose }: MediaPlayerModa
 			onKeyDown={(e) => {
 				if (e.target === dialogRef.current && e.key === "Enter") onClose();
 			}}
-			className="bg-transparent p-4 w-full max-w-2xl backdrop:bg-black/75"
+			className="bg-transparent p-4 w-full max-w-2xl backdrop:bg-black/60"
 		>
-			<div className="bg-white rounded-2xl shadow-2xl w-full overflow-hidden">
+			<div className="bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] rounded-xl shadow-[var(--theme-card-shadow-sel)] w-full overflow-hidden">
 				{/* Header */}
-				<div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-					<p className="font-medium text-gray-800 truncate pr-4 text-sm">{file.name}</p>
+				<div className="flex items-center justify-between px-5 py-3 border-b border-[var(--theme-card-border)]">
+					<p className="text-[13px] font-semibold font-barlow text-[var(--theme-body-text)] truncate pr-4 tracking-[0.03em]">
+						{file.name}
+					</p>
 					<button
 						type="button"
 						onClick={onClose}
-						className="flex-shrink-0 p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+						className="shrink-0 p-1.5 rounded-lg text-[var(--theme-caret-color)] hover:text-[var(--theme-body-text)] hover:bg-[var(--theme-count-badge-bg)] transition-colors border-none bg-transparent cursor-pointer"
 					>
 						<X className="w-4 h-4" />
 					</button>
@@ -74,31 +76,26 @@ export function MediaPlayerModal({ file, accessToken, onClose }: MediaPlayerModa
 
 				{/* Player */}
 				{loading && (
-					<div className="flex items-center justify-center py-16 bg-gray-50">
-						<Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+					<div className="flex items-center justify-center py-16 bg-[var(--theme-expanded-bg)]">
+						<Loader2 className="w-7 h-7 text-[var(--theme-accent)] animate-spin" />
 					</div>
 				)}
 				{error && (
-					<div className="px-6 py-10 text-center text-sm text-red-500 bg-gray-50">
+					<div className="px-6 py-10 text-center text-[12px] font-barlow text-[var(--theme-danger)] bg-[var(--theme-expanded-bg)]">
 						Failed to load media: {error}
 					</div>
 				)}
 				{blobUrl && isVideo && (
 					<div className="bg-black">
-						<video
-							controls
-							autoPlay
-							src={blobUrl}
-							className="w-full max-h-[60vh] block"
-						>
+						<video controls autoPlay src={blobUrl} className="w-full max-h-[60vh] block">
 							<track kind="captions" />
 						</video>
 					</div>
 				)}
 				{blobUrl && !isVideo && (
-					<div className="px-6 py-10 flex flex-col items-center gap-5 bg-gray-50">
-						<div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
-							<Music className="w-9 h-9 text-blue-500" />
+					<div className="px-6 py-10 flex flex-col items-center gap-5 bg-[var(--theme-expanded-bg)]">
+						<div className="w-20 h-20 rounded-full bg-[var(--theme-count-badge-bg)] border border-[var(--theme-card-border)] flex items-center justify-center">
+							<Music className="w-9 h-9 text-[var(--theme-accent)]" />
 						</div>
 						<audio controls autoPlay src={blobUrl} className="w-full">
 							<track kind="captions" />
