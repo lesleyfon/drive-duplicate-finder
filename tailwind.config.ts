@@ -5,14 +5,24 @@ export default {
   theme: {
     borderRadius: {
       none: '0px',
-      DEFAULT: '0px',
+      sm:   '4px',
+      DEFAULT: '6px',
+      md:   '6px',
+      lg:   '8px',
+      xl:   '10px',
+      '2xl': '16px',
+      full: '9999px',
     },
     fontFamily: {
-      sans: ['"Space Grotesk"', 'monospace'],
-      mono: ['"Space Grotesk"', 'monospace'],
+      sans:              ['"Space Grotesk"', 'monospace'],
+      mono:              ['"Space Grotesk"', 'monospace'],
+      barlow:            ['Barlow', 'sans-serif'],
+      'barlow-condensed': ['"Barlow Condensed"', 'sans-serif'],
+      jetbrains:         ['"JetBrains Mono"', 'monospace'],
     },
     extend: {
       colors: {
+        // ── Legacy dark-theme tokens (dashboard / scan pages) ──
         'ink':           '#000000',
         'surface':       '#131313',
         'surface-dim':   '#0e0e0e',
@@ -37,7 +47,7 @@ export default {
         'status-grey':  '#849495',
       },
       spacing: {
-        'sidebar':           '260px',
+        'sidebar':           '180px',
         'sidebar-collapsed': '64px',
       },
       fontSize: {
