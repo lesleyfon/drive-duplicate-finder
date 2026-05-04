@@ -59,32 +59,38 @@ function RouteComponent() {
 	const [search, setSearch] = useState("");
 	const [showModal, setShowModal] = useState(false);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [_errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	const sizeRankMap = useMemo(() => new Map(files.map((f, i) => [f.id, i + 1])), [files]);
-	const maxBytes = useMemo(() => Math.max(...files.map((f) => f.size ?? 0), 0), [files]);
-	const combinedBytes = useMemo(() => files.reduce((s, f) => s + (f.size ?? 0), 0), [files]);
+	const sizeRankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
+	const maxBytes = useMemo(() => Math.max(...files.map((file) => file.size ?? 0), 0), [files]);
+	const combinedBytes = useMemo(
+		() => files.reduce((totalBytes, file) => totalBytes + (file.size ?? 0), 0),
+		[files],
+	);
 
 	const visibleFiles = useMemo(() => {
 		let result = [...files];
 		if (search.trim()) {
-			const q = search.trim().toLowerCase();
+			const query = search.trim().toLowerCase();
 			result = result.filter(
-				(f) =>
-					f.name.toLowerCase().includes(q) ||
-					f.mimeType.toLowerCase().includes(q) ||
-					(f.fullFileExtension ?? "").toLowerCase().includes(q),
+				(file) =>
+					file.name.toLowerCase().includes(query) ||
+					file.mimeType.toLowerCase().includes(query) ||
+					(file.fullFileExtension ?? "").toLowerCase().includes(query),
 			);
 		}
 		if (sort === "name") {
 			result.sort((a, b) => a.name.localeCompare(b.name));
-		} else if (sort === "date")
+		} else if (sort === "date") {
 			result.sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
-		else result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+		} else {
+			result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+		}
 		return result;
 	}, [files, sort, search]);
 
 	const allVisibleSelected =
-		visibleFiles.length > 0 && visibleFiles.every((f) => selected.has(f.id));
+		visibleFiles.length > 0 && visibleFiles.every((file) => selected.has(file.id));
 
 	const toggleSelect = (id: string) =>
 		setSelected((prev) => {
@@ -94,32 +100,44 @@ function RouteComponent() {
 		});
 
 	const toggleSelectAll = () => {
-		const ids = visibleFiles.map((f) => f.id);
+		const ids = visibleFiles.map((file) => file.id);
 		setSelected((prev) => {
 			const next = new Set(prev);
+
 			if (allVisibleSelected) {
-				for (const id of ids) next.delete(id);
+				ids.forEach((id) => {
+					next.delete(id);
+				});
 			} else {
-				for (const id of ids) next.add(id);
+				ids.forEach((id) => {
+					next.add(id);
+				});
 			}
 			return next;
 		});
 	};
 
-	const selectedFiles = files.filter((f) => selected.has(f.id));
-	const totalSelectedBytes = selectedFiles.reduce((s, f) => s + (f.size ?? 0), 0);
+	const selectedFiles = files.filter((file) => selected.has(file.id));
+	const totalSelectedBytes = selectedFiles.reduce((s, file) => s + (file.size ?? 0), 0);
 	const hasSelection = selected.size > 0;
 
 	const handleConfirmDelete = async () => {
 		const ids = Array.from(selected);
-		const freedBytes = selectedFiles.reduce((s, f) => s + (f.size ?? 0), 0);
-		const result = await deleteMutation.mutateAsync(ids);
-		setShowModal(false);
-		setFiles(useScanStore.getState().scanResults?.largeFiles ?? []);
-		setSelected(new Set());
-		setSuccessMessage(
-			`Deleted ${result.succeeded.length} file${result.succeeded.length !== 1 ? "s" : ""}. ${formatBytes(freedBytes)} freed.${result.failed.length > 0 ? ` ${result.failed.length} failed.` : ""}`,
-		);
+		const freedBytes = selectedFiles.reduce((total, f) => total + (f.size ?? 0), 0);
+
+		try {
+			const result = await deleteMutation.mutateAsync(ids);
+			setShowModal(false);
+			setFiles(useScanStore.getState().scanResults?.largeFiles ?? []);
+			setSelected(new Set());
+			setSuccessMessage(
+				`Deleted ${result.succeeded.length} file${result.succeeded.length !== 1 ? "s" : ""}. ${formatBytes(freedBytes)} freed.${result.failed.length > 0 ? ` ${result.failed.length} failed.` : ""}`,
+			);
+		} catch (err) {
+			// surface an error state
+			setShowModal(false);
+			setErrorMessage("Something went wrong. Please try again.");
+		}
 	};
 
 	if (!scanResult) {
@@ -178,6 +196,7 @@ function RouteComponent() {
 						type="button"
 						disabled={!hasSelection}
 						onClick={() => setShowModal(true)}
+						aria-label={`Delete ${selected.size} selected files`}
 						className={cn(
 							"px-[16px] py-[7px] rounded-sm border-none text-[11px] font-bold tracking-[0.08em] uppercase font-barlow-condensed transition-colors duration-150",
 							hasSelection
@@ -240,8 +259,7 @@ function RouteComponent() {
 				{/* ── Table header ── */}
 				<div
 					className={cn(
-						"px-6 py-[6px] border-b border-[var(--theme-border)] shrink-0 bg-[var(--theme-expanded-bg)]",
-						" border border-[var(--theme-card-border)] cursor-pointer duration-150 flex items-center justify-between px-5 py-[14px] rounded-t-[10px] text-left transition-colors w-full",
+						"px-5 py-[10px] border border-[var(--theme-card-border)] bg-[var(--theme-expanded-bg)] rounded-t-[10px] w-full shrink-0",
 					)}
 					style={{
 						display: "grid",
@@ -255,6 +273,7 @@ function RouteComponent() {
 							type="checkbox"
 							checked={allVisibleSelected}
 							onChange={toggleSelectAll}
+							aria-label="Select all visible files"
 						/>
 					</div>
 					{(["RANK", "TYPE", "FILENAME", "SIZE", "BAR", "MODIFIED"] as const).map(
@@ -318,6 +337,7 @@ function RouteComponent() {
 										type="checkbox"
 										checked={isSelected}
 										onChange={() => toggleSelect(file.id)}
+										aria-label={`Select ${file.name}`}
 									/>
 
 									{/* Rank */}
@@ -379,7 +399,7 @@ function RouteComponent() {
 			<div className="flex items-center justify-center gap-[6px] mb-5">
 				<InfoIcon size={11} className="text-[var(--theme-date-text)]" />
 				<span className="text-[10px] text-[#aaaaaa] font-semibold">
-					Showing the top ${LARGE_FILES_LIMIT} largest files in your Google Drive, sorted
+					Showing the top {LARGE_FILES_LIMIT} largest files in your Google Drive, sorted
 					by file size.
 				</span>
 			</div>
