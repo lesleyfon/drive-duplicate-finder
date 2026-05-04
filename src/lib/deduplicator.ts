@@ -9,6 +9,7 @@ import type {
 
 const GOOGLE_APPS_PREFIX = "application/vnd.google-apps.";
 export const LARGE_FILES_LIMIT = 20;
+export const OLD_FILES_LIMIT = 20;
 
 function isExcluded(file: FileRecord): boolean {
 	return file.mimeType.startsWith(GOOGLE_APPS_PREFIX);
@@ -177,6 +178,11 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		.sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
 		.slice(0, LARGE_FILES_LIMIT);
 
+	const oldFiles: FileRecord[] = [...allFiles]
+		.filter((f) => !isExcluded(f))
+		.sort((a, b) => a.createdTime.localeCompare(b.createdTime))
+		.slice(0, OLD_FILES_LIMIT);
+
 	return {
 		totalFilesScanned: allFiles.length,
 		excludedFiles,
@@ -186,6 +192,7 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		fileGroupBytes,
 		recentFiles,
 		largeFiles,
+		oldFiles,
 	};
 }
 
