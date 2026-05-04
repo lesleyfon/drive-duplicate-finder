@@ -3,6 +3,7 @@ import type {
 	DuplicateGroup,
 	FileRecord,
 	RecentFileEntry,
+	SameFolderGroup,
 	ScanResult,
 } from "../types/drive";
 
@@ -167,6 +168,7 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		totalFilesScanned: allFiles.length,
 		excludedFiles,
 		duplicateGroups: groups,
+		sameFolderGroups: buildSameFolderGroups(groups),
 		scannedAt: new Date(),
 		fileGroupBytes,
 		recentFiles,
@@ -185,6 +187,23 @@ function classifyMime(mimeType: string): "image" | "video" | "audio" | "document
 	)
 		return "document";
 	return "other";
+}
+
+function buildSameFolderGroups(groups: DuplicateGroup[]): SameFolderGroup[] {
+	const byFolder = new Map<string, DuplicateGroup[]>();
+	for (const group of groups) {
+		const parentId = group.files[0]?.parents?.[0];
+		if (!parentId) continue;
+		if (!group.files.every((f) => f.parents?.[0] === parentId)) continue;
+		const bucket = byFolder.get(parentId) ?? [];
+		bucket.push(group);
+		byFolder.set(parentId, bucket);
+	}
+	return [...byFolder.entries()].map(([folderId, sets]) => ({
+		folderId,
+		sets,
+		totalWastedBytes: sets.reduce((s, g) => s + g.totalWastedBytes, 0),
+	}));
 }
 
 function makeGroup(
