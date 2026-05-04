@@ -5,7 +5,7 @@ _Handoff spec for Claude Code. Implement pixel-precisely from this document._
 
 ## 1. Overview
 
-This document specifies the **Large Files** view — one of the "Files by Category" screens accessible from the left sidebar. It shows the user's 20 largest Google Drive files ranked by size, with a visual bar chart column, type-color coding, and a bulk-delete action.
+This document specifies the **Large Files** view — one of the "Files by Category" screens accessible from the left sidebar. It shows the user's 20 largest Google Drive files ranked by size, with type-color coding and a bulk-delete action.
 
 The view ships in **Light** and **Dark** themes using the existing token system defined in `RESULT_PAGE_REDESIGN.md`. Colors are expressed as CSS variable references (`var(--theme-xxx)`). Where new tokens are introduced they are marked **NEW TOKEN**.
 
@@ -146,7 +146,7 @@ Tabs in order: FILE SIZE, NAME, DATE MODIFIED
 
 `display: grid` with column template (see Section 6.3), `padding: 6px 24px`, background: `var(--theme-expanded-bg)`, `border-bottom: 1px solid var(--theme-border)`
 
-Column labels: _(blank for checkbox)_ | RANK | TYPE | FILENAME | SIZE | BAR | LOCATION | MODIFIED
+Column labels: _(blank for checkbox)_ | RANK | TYPE | FILENAME | SIZE | MODIFIED
 
 All labels: font-size `9px`, weight `700`, letter-spacing `0.08em`, uppercase, color `var(--theme-date-text)`
 
@@ -160,7 +160,7 @@ Each row: `display: grid` with same column template, `padding: 8px 24px`, `align
 ### 6.3 Column Template
 
 ```css
-grid-template-columns: 28px 36px 56px 1fr 72px 100px 140px 100px;
+grid-template-columns: 28px 36px 56px 1fr 72px 100px;
 ```
 
 | Col | Width | Content |
@@ -170,9 +170,7 @@ grid-template-columns: 28px 36px 56px 1fr 72px 100px 140px 100px;
 | 3 | `56px` | Type badge |
 | 4 | `1fr` | Filename |
 | 5 | `72px` | Size value |
-| 6 | `100px` | Bar chart |
-| 7 | `140px` | Location path |
-| 8 | `100px` | Date modified |
+| 6 | `100px` | Date modified |
 
 ---
 
@@ -235,28 +233,7 @@ For unknown/unlisted extensions: use the VMDK (gray) style.
 - Right-aligned within its column
 - Format: `4.7 GB`, `3.2 GB`, `980 MB`, `287 MB` etc. (1 decimal place for GB, whole number for MB)
 
-### 7.6 Size Bar (BAR column)
-
-A horizontal bar showing the file's size relative to the largest file in the list (#1).
-
-**Track**: `height: 4px`, full column width, background `var(--theme-border)` (light) / `var(--theme-delete-btn-bg)` (dark), `border-radius: 2px`
-
-**Fill**:
-- `height: 4px`, `border-radius: 2px`
-- Width: `(file_size / max_file_size) * 100%`  — e.g. #1 = 100%, #2 = ~68%, #15 ≈ 6%
-- Color: matches the **type text color** from Section 7.3
-
-So `#1 Family_Vacation_Raw_Footage.mp4` → 100% width, `var(--theme-type-video-text)` fill
-`#2 MacOS_Ventura_Install.dmg` → ~68% width, `var(--theme-type-archive-text)` fill
-etc.
-
-### 7.7 Location
-
-- Truncated Google Drive path, e.g. `PATH/TO/GOOGLE/…`
-- Font-size `11px`, color `var(--theme-path-text)`
-- `overflow: hidden`, `text-overflow: ellipsis`, `white-space: nowrap`
-
-### 7.8 Date Modified
+### 7.6 Date Modified
 
 - Format: `Aug 12, 2023` (month abbreviated, not uppercase)
 - Font-size `11px`, color `var(--theme-path-text)`
@@ -310,7 +287,7 @@ Typing in the search input filters the table rows in real time. Match against:
 
 The header stat "20 files shown" updates to reflect the filtered count (e.g. "3 files shown").
 
-The bar widths and rank numbers remain relative to the _original_ full list, not re-normalised to the filtered subset. (Rank #12 stays `#12` even if it's the only MP4 shown after filtering.)
+Rank numbers remain relative to the _original_ full list, not re-normalised to the filtered subset. (Rank #12 stays `#12` even if it's the only MP4 shown after filtering.)
 
 ---
 
