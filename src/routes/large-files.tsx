@@ -11,9 +11,9 @@ import type { FileRecord } from "../types/drive";
 import { MimeIcon } from "../components/FileThumbnail";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
 
-type LargeSortType = "size" | "name" | "date";
+export type LargeSortType = "size" | "name" | "date";
 
-const TYPE_COLORS: Record<string, { light: string; dark: string; text: string }> = {
+export const TYPE_COLORS: Record<string, { light: string; dark: string; text: string }> = {
 	video: { light: "#fde8e8", dark: "#2d1515", text: "#f5a623" },
 	audio: { light: "#fff8e6", dark: "#221a08", text: "#667eeae6" },
 	document: { light: "#e8f7f1", dark: "#102918", text: "#00c48c" },
@@ -21,7 +21,10 @@ const TYPE_COLORS: Record<string, { light: string; dark: string; text: string }>
 	other: { light: "#f0f0f0", dark: "#1a1a1a", text: "#849495" },
 };
 
-function getTypeStyle(mimeType: string, theme: "light" | "dark"): { bg: string; text: string } {
+export function getTypeStyle(
+	mimeType: string,
+	theme: "light" | "dark",
+): { bg: string; text: string } {
 	const family = classifyMime(mimeType);
 	const classStyle = TYPE_COLORS[family];
 
@@ -34,13 +37,13 @@ function getTypeStyle(mimeType: string, theme: "light" | "dark"): { bg: string; 
 	};
 }
 
-const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
+export const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
 	{ key: "size", label: "FILE SIZE" },
 	{ key: "name", label: "NAME" },
 	{ key: "date", label: "DATE MODIFIED" },
 ];
 
-const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px 100px";
+export const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px 100px";
 
 export const Route = createFileRoute("/large-files")({
 	component: RouteComponent,
