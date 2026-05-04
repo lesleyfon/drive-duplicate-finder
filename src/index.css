@@ -45,6 +45,8 @@
     --theme-date-text: #bbbbbb;
     --theme-filter-active: #00b894;
     --theme-filter-inactive: #999999;
+    --theme-accent-contrast: #ffffff;
+    --theme-row-hover: rgba(0,0,0,0.02);
   }
 
   [data-theme="dark"] {
@@ -88,6 +90,8 @@
     --theme-date-text: #3a3d4a;
     --theme-filter-active: #00c9a7;
     --theme-filter-inactive: #3a3d4a;
+    --theme-accent-contrast: #0a1a16;
+    --theme-row-hover: rgba(255,255,255,0.02);
   }
 
   html, body, #root {
@@ -168,6 +172,10 @@
     content: '▋';
     color: #00F0FF;
     animation: blink 1s step-end infinite;
+  }
+
+  .row-hover:hover {
+    background: var(--theme-row-hover);
   }
 }
 
