@@ -4,8 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 
-function useIsActiveFilter(filter: string) {
+function useIsActive({ filter, to }: { filter?: string; to?: string }) {
 	const state = useRouterState();
+	if (to) return state.location.pathname === to;
 	if (state.location.pathname !== "/results") return false;
 	const params = new URLSearchParams(state.location.searchStr.replace(/^\?/, ""));
 	return params.get("filter") === filter;
@@ -16,9 +17,9 @@ function useIsDashboard() {
 	return state.location.pathname === "/dashboard";
 }
 
-const NAV_ITEMS = [
+const NAV_ITEMS: Array<{ label: string; filter?: string; to?: string }> = [
 	{ label: "DUPLICATES", filter: "duplicates" },
-	{ label: "SAME FOLDER", filter: "same-folder" },
+	{ label: "SAME FOLDER", to: "/same-folder" },
 	{ label: "HIDDEN", filter: "hidden" },
 	{ label: "EMPTY", filter: "empty" },
 	{ label: "LARGE", filter: "large" },
@@ -31,8 +32,23 @@ const NAV_ITEMS = [
 const sidebarLinkClass =
 	"px-[18px] py-[5px] text-[9px] font-bold tracking-[0.12em] uppercase font-barlow-condensed cursor-pointer block no-underline text-[var(--theme-sidebar-text)]";
 
-function NavItem({ label, filter }: { label: string; filter: string }) {
-	const active = useIsActiveFilter(filter);
+function NavItem({ label, filter, to }: { label: string; filter?: string; to?: string }) {
+	const active = useIsActive({ filter, to });
+	if (to) {
+		return (
+			<Link
+				to={to as "/same-folder"}
+				className={sidebarLinkClass}
+				style={{
+					fontWeight: active ? 700 : 500,
+					color: active ? "var(--theme-sidebar-active)" : "var(--theme-sidebar-text)",
+					background: active ? "var(--theme-sidebar-active-bg)" : "transparent",
+				}}
+			>
+				{label}
+			</Link>
+		);
+	}
 	return (
 		<Link
 			to="/results"
@@ -99,7 +115,12 @@ function Sidebar() {
 					FILES BY CATEGORY
 				</div>
 				{NAV_ITEMS.map((item) => (
-					<NavItem key={item.filter} label={item.label} filter={item.filter} />
+					<NavItem
+						key={item.filter}
+						label={item.label}
+						filter={item.filter}
+						to={item.to}
+					/>
 				))}
 			</div>
 
