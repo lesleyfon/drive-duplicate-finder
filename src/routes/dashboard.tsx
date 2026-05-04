@@ -99,7 +99,6 @@ function DashboardPage() {
 				</div>
 
 				{/* Hero Storage Card */}
-				{/* borderLeft is dynamic (stateColor) so it stays as an inline style */}
 				<div
 					className="rounded-xl mb-4 py-6 px-7 bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] shadow-[var(--theme-card-shadow)]"
 					style={{ borderLeft: `4px solid ${stateColor}` }}
@@ -143,7 +142,6 @@ function DashboardPage() {
 								<div className="flex mt-2 gap-5">
 									{segments.map((seg) => (
 										<div key={seg.key} className="flex items-center gap-1">
-											{/* background is dynamic — must stay inline */}
 											<span
 												className="inline-block w-2 h-2 rounded-[2px] shrink-0"
 												style={{ background: seg.color }}
@@ -174,7 +172,6 @@ function DashboardPage() {
 								<p className="text-[9px] font-bold uppercase tracking-[0.12em] mb-1 font-barlow-condensed text-[var(--theme-text-secondary)]">
 									{seg.label}
 								</p>
-								{/* color is dynamic per-segment — must stay inline */}
 								<p
 									className="font-barlow-condensed font-black leading-none text-[24px]"
 									style={{ color: seg.color }}
