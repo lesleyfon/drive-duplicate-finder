@@ -35,10 +35,17 @@ export interface RecentFileEntry {
 	webViewLink: string;
 }
 
+export interface SameFolderGroup {
+	folderId: string;
+	sets: DuplicateGroup[];
+	totalWastedBytes: number;
+}
+
 export interface ScanResult {
 	totalFilesScanned: number;
 	excludedFiles: number;
 	duplicateGroups: DuplicateGroup[];
+	sameFolderGroups: SameFolderGroup[];
 	scannedAt: Date;
 	fileGroupBytes: {
 		image: number;
