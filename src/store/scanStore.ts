@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { PersistStorage, StorageValue } from "zustand/middleware";
-import type { ScanResult, DuplicateGroup, SameFolderGroup } from "../types/drive";
+import type {
+	ScanResult,
+	DuplicateGroup,
+	SameFolderGroup,
+} from "../types/drive";
 
 export type ScanStatus = "idle" | "scanning" | "complete" | "error";
 
@@ -19,7 +23,8 @@ interface ScanState {
 	removeFiles: (fileIds: string[]) => void;
 }
 
-interface SerializedDuplicateGroup extends Omit<DuplicateGroup, "selectedForDeletion"> {
+interface SerializedDuplicateGroup
+	extends Omit<DuplicateGroup, "selectedForDeletion"> {
 	selectedForDeletion: string[];
 }
 
@@ -27,22 +32,50 @@ interface SerializedSameFolderGroup extends Omit<SameFolderGroup, "sets"> {
 	sets: SerializedDuplicateGroup[];
 }
 
-interface SerializedScanResult extends Omit<ScanResult, "scannedAt" | "duplicateGroups" | "sameFolderGroups"> {
+interface SerializedScanResult
+	extends Omit<
+		ScanResult,
+		"scannedAt" | "duplicateGroups" | "sameFolderGroups"
+	> {
 	scannedAt: string;
 	duplicateGroups: SerializedDuplicateGroup[];
 	sameFolderGroups: SerializedSameFolderGroup[];
 }
 
-const serializeGroup = (g: DuplicateGroup): SerializedDuplicateGroup => ({
-	...g,
+/**
+ * The `serializeGroup` function takes a `DuplicateGroup` object and returns a
+ * `SerializedDuplicateGroup` object with an empty array for the `selectedForDeletion` property.
+ * @param {DuplicateGroup} group - The `group` parameter is of type `DuplicateGroup`, which is an
+ * object representing a group of duplicate items.
+ */
+const serializeGroup = (group: DuplicateGroup): SerializedDuplicateGroup => ({
+	...group,
 	selectedForDeletion: [],
 });
 
-const deserializeGroup = (g: SerializedDuplicateGroup): DuplicateGroup => ({
-	...g,
+/**
+ * The `deserializeGroup` function takes a serialized duplicate group and returns a `DuplicateGroup`
+ * object with an empty `selectedForDeletion` set.
+ * @param {SerializedDuplicateGroup} group - The `group` parameter is a serialized duplicate group that
+ * contains information about duplicate items.
+ */
+const deserializeGroup = (group: SerializedDuplicateGroup): DuplicateGroup => ({
+	...group,
 	selectedForDeletion: new Set<string>(),
 });
 
+/**
+ * The function `serializeScanResult` serializes a `ScanResult` object into a `SerializedScanResult`
+ * object by converting dates to ISO strings and mapping duplicate and same folder groups to their
+ * serialized versions.
+ * @param {ScanResult} result - The `result` parameter is an object of type `ScanResult` that contains
+ * information about a scan result. It likely includes properties such as `scannedAt` (a Date object),
+ * `duplicateGroups` (an array of groups containing duplicate items), and `sameFolderGroups` (an array
+ * @returns The function `serializeScanResult` takes a `ScanResult` object as input and returns a
+ * `SerializedScanResult` object. The returned object includes the properties of the input `ScanResult`
+ * object, but with the `scannedAt` property converted to an ISO string, and the `duplicateGroups` and
+ * `sameFolderGroups` properties mapped to serialized versions using the `serializeGroup` function
+ */
 function serializeScanResult(result: ScanResult): SerializedScanResult {
 	return {
 		...result,
@@ -54,20 +87,36 @@ function serializeScanResult(result: ScanResult): SerializedScanResult {
 		})),
 	};
 }
-
+/**
+ * The function `deserializeScanResult` deserializes a serialized scan result object into a structured
+ * `ScanResult` object.
+ * @param {SerializedScanResult} serialized - The `deserializeScanResult` function takes a `serialized`
+ * object of type `SerializedScanResult` as a parameter. This object likely contains data related to a
+ * scan result that needs to be deserialized into a `ScanResult` object. The function performs various
+ * transformations on the data within the `serialized
+ * @returns The function `deserializeScanResult` is returning a `ScanResult` object. The function
+ * deserializes a `SerializedScanResult` object by converting the `scannedAt` property to a `Date`
+ * object, deserializing the `duplicateGroups` array using the `deserializeGroup` function, and
+ * deserializing the `sameFolderGroups` array by mapping each element to an object with
+ */
 function deserializeScanResult(serialized: SerializedScanResult): ScanResult {
 	return {
 		...serialized,
 		scannedAt: new Date(serialized.scannedAt),
 		duplicateGroups: serialized.duplicateGroups.map(deserializeGroup),
-		sameFolderGroups: (serialized.sameFolderGroups ?? []).map((fg) => ({
-			...fg,
-			sets: fg.sets.map(deserializeGroup),
-		})),
+		sameFolderGroups: (serialized.sameFolderGroups ?? []).map(
+			(folderGroup) => ({
+				...folderGroup,
+				sets: folderGroup.sets.map(deserializeGroup),
+			}),
+		),
 	};
 }
 
-type PersistedState = Pick<ScanState, "status" | "totalFiles" | "scanResults" | "errorMessage">;
+type PersistedState = Pick<
+	ScanState,
+	"status" | "totalFiles" | "scanResults" | "errorMessage"
+>;
 
 interface SerializedPersistedState {
 	status: ScanStatus;
@@ -121,7 +170,12 @@ export const useScanStore = create<ScanState>()(
 			...initialState,
 
 			startScan: () =>
-				set({ status: "scanning", scanResults: null, totalFiles: 0, errorMessage: null }),
+				set({
+					status: "scanning",
+					scanResults: null,
+					totalFiles: 0,
+					errorMessage: null,
+				}),
 
 			updateProgress: (totalFiles) => set({ totalFiles }),
 
@@ -132,7 +186,8 @@ export const useScanStore = create<ScanState>()(
 					totalFiles: results.totalFilesScanned,
 				}),
 
-			setScanError: (error) => set({ status: "error", errorMessage: error.message }),
+			setScanError: (error) =>
+				set({ status: "error", errorMessage: error.message }),
 
 			resetScan: () => set(initialState),
 
@@ -140,39 +195,50 @@ export const useScanStore = create<ScanState>()(
 				const { scanResults } = get();
 				if (!scanResults) return;
 				const deletedSet = new Set(fileIds);
+
 				const updatedGroups = scanResults.duplicateGroups
-					.map((g) => ({
-						...g,
-						files: g.files.filter((f) => !deletedSet.has(f.id)),
+					.map((group) => ({
+						...group,
+						files: group.files.filter((file) => !deletedSet.has(file.id)),
 						selectedForDeletion: new Set(
-							[...g.selectedForDeletion].filter((id) => !deletedSet.has(id)),
+							[...group.selectedForDeletion].filter(
+								(id) => !deletedSet.has(id),
+							),
 						),
 					}))
-					.filter((g) => g.files.length >= 2);
+					.filter((group) => group.files.length >= 2);
+
 				const updatedSameFolderGroups = (scanResults.sameFolderGroups ?? [])
-					.map((fg) => {
-						const updatedSets = fg.sets
-							.map((s) => ({
-								...s,
-								files: s.files.filter((f) => !deletedSet.has(f.id)),
+					.map((folderGroup) => {
+						const updatedSets = folderGroup.sets
+							.map((set) => ({
+								...set,
+								files: set.files.filter((file) => !deletedSet.has(file.id)),
 								selectedForDeletion: new Set(
-									[...s.selectedForDeletion].filter((id) => !deletedSet.has(id)),
+									[...set.selectedForDeletion].filter(
+										(id) => !deletedSet.has(id),
+									),
 								),
 							}))
 							.filter((s) => s.files.length >= 2);
 						return {
-							...fg,
+							...folderGroup,
 							sets: updatedSets,
-							totalWastedBytes: updatedSets.reduce((sum, s) => sum + s.totalWastedBytes, 0),
+							totalWastedBytes: updatedSets.reduce(
+								(sum, s) => sum + s.totalWastedBytes,
+								0,
+							),
 						};
 					})
-					.filter((fg) => fg.sets.length > 0);
+					.filter((folderGroup) => folderGroup.sets.length > 0);
 				set({
 					scanResults: {
 						...scanResults,
 						duplicateGroups: updatedGroups,
 						sameFolderGroups: updatedSameFolderGroups,
-						largeFiles: scanResults.largeFiles.filter((f) => !deletedSet.has(f.id)),
+						largeFiles: scanResults.largeFiles.filter(
+							(file) => !deletedSet.has(file.id),
+						),
 					},
 				});
 			},
