@@ -20,8 +20,6 @@ function useIsDashboard() {
 const NAV_ITEMS: Array<{ label: string; filter?: string; to?: string }> = [
 	{ label: "DUPLICATES", filter: "duplicates" },
 	{ label: "SAME FOLDER", to: "/same-folder" },
-	{ label: "HIDDEN", filter: "hidden" },
-	{ label: "EMPTY", filter: "empty" },
 	{ label: "LARGE", filter: "large" },
 	{ label: "OLD", filter: "old" },
 	{ label: "NOT OWNED BY ME", filter: "not-owned" },
