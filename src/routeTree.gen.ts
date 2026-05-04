@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ScanRouteImport } from './routes/scan'
+import { Route as SameFolderRouteImport } from './routes/same-folder'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const ScanRoute = ScanRouteImport.update({
   id: '/scan',
   path: '/scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SameFolderRoute = SameFolderRouteImport.update({
+  id: '/same-folder',
+  path: '/same-folder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/results': typeof ResultsRoute
+  '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/results': typeof ResultsRoute
+  '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/results': typeof ResultsRoute
+  '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/results' | '/scan'
+  fullPaths: '/' | '/dashboard' | '/results' | '/same-folder' | '/scan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/results' | '/scan'
-  id: '__root__' | '/' | '/dashboard' | '/results' | '/scan'
+  to: '/' | '/dashboard' | '/results' | '/same-folder' | '/scan'
+  id: '__root__' | '/' | '/dashboard' | '/results' | '/same-folder' | '/scan'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   ResultsRoute: typeof ResultsRoute
+  SameFolderRoute: typeof SameFolderRoute
   ScanRoute: typeof ScanRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/scan'
       fullPath: '/scan'
       preLoaderRoute: typeof ScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/same-folder': {
+      id: '/same-folder'
+      path: '/same-folder'
+      fullPath: '/same-folder'
+      preLoaderRoute: typeof SameFolderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   ResultsRoute: ResultsRoute,
+  SameFolderRoute: SameFolderRoute,
   ScanRoute: ScanRoute,
 }
 export const routeTree = rootRouteImport
