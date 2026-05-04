@@ -56,6 +56,7 @@
     --theme-same-folder-border: rgba(0,184,148,0.25);
     --theme-same-folder-text: #00916e;
     --theme-file-sel-bg: rgba(0,184,148,0.04);
+    --theme-large-file-size: #f59e0b;
   }
 
   [data-theme="dark"] {
@@ -110,6 +111,7 @@
     --theme-same-folder-border: rgba(0,201,167,0.2);
     --theme-same-folder-text: #00c9a7;
     --theme-file-sel-bg: rgba(0,201,167,0.05);
+    --theme-large-file-size: #f59e0b;
   }
 
   html, body, #root {

@@ -55,4 +55,5 @@ export interface ScanResult {
 		other: number;
 	};
 	recentFiles: RecentFileEntry[];
+	largeFiles: FileRecord[];
 }

@@ -8,6 +8,7 @@ import type {
 } from "../types/drive";
 
 const GOOGLE_APPS_PREFIX = "application/vnd.google-apps.";
+export const LARGE_FILES_LIMIT = 20;
 
 function isExcluded(file: FileRecord): boolean {
 	return file.mimeType.startsWith(GOOGLE_APPS_PREFIX);
@@ -146,7 +147,13 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		return b.totalWastedBytes - a.totalWastedBytes;
 	});
 
-	const fileGroupBytes = { image: 0, video: 0, audio: 0, document: 0, other: 0 };
+	const fileGroupBytes = {
+		image: 0,
+		video: 0,
+		audio: 0,
+		document: 0,
+		other: 0,
+	};
 	for (const file of allFiles) {
 		if (file.size == null) continue;
 		fileGroupBytes[classifyMime(file.mimeType)] += file.size;
@@ -164,6 +171,12 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 			webViewLink: f.webViewLink,
 		}));
 
+	// Only keep the top 20 largest files to avoid overwhelming the UI
+	const largeFiles: FileRecord[] = [...allFiles]
+		.filter((f) => f.size != null)
+		.sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
+		.slice(0, LARGE_FILES_LIMIT);
+
 	return {
 		totalFilesScanned: allFiles.length,
 		excludedFiles,
@@ -172,10 +185,13 @@ export function runDeduplication(allFiles: FileRecord[]): ScanResult {
 		scannedAt: new Date(),
 		fileGroupBytes,
 		recentFiles,
+		largeFiles,
 	};
 }
 
-function classifyMime(mimeType: string): "image" | "video" | "audio" | "document" | "other" {
+export function classifyMime(
+	mimeType: string,
+): "image" | "video" | "audio" | "document" | "other" {
 	if (mimeType.startsWith("image/")) return "image";
 	if (mimeType.startsWith("video/")) return "video";
 	if (mimeType.startsWith("audio/")) return "audio";

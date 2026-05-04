@@ -18,7 +18,6 @@ const CATEGORY_LABELS: Record<string, { breadcrumb: string; title: string }> = {
 	duplicates: { breadcrumb: "DUPLICATE FILES", title: "DUPLICATE SCANNER" },
 	hidden: { breadcrumb: "HIDDEN FILES", title: "HIDDEN FILES" },
 	empty: { breadcrumb: "EMPTY FILES", title: "EMPTY FILES" },
-	large: { breadcrumb: "LARGE FILES", title: "LARGE FILES" },
 	old: { breadcrumb: "OLD FILES", title: "OLD FILES" },
 	"not-owned": { breadcrumb: "NOT OWNED BY ME", title: "NOT OWNED" },
 	type: { breadcrumb: "BY TYPE", title: "FILE TYPE" },
@@ -354,9 +353,7 @@ function ResultsPage() {
 	const searchParams = new URLSearchParams(location.searchStr.replace(/^\?/, ""));
 	const filter = searchParams.get("filter") ?? "duplicates";
 
-	if (filter !== "duplicates") {
-		return <StubPage filter={filter} />;
-	}
+	if (filter !== "duplicates") return <StubPage filter={filter} />;
 
 	return <DuplicatesView />;
 }

@@ -20,7 +20,7 @@ function useIsDashboard() {
 const NAV_ITEMS: Array<{ label: string; filter?: string; to?: string }> = [
 	{ label: "DUPLICATES", filter: "duplicates" },
 	{ label: "SAME FOLDER", to: "/same-folder" },
-	{ label: "LARGE", filter: "large" },
+	{ label: "LARGE", to: "/large-files" },
 	{ label: "OLD", filter: "old" },
 	{ label: "NOT OWNED BY ME", filter: "not-owned" },
 	{ label: "TYPE", filter: "type" },
@@ -35,7 +35,7 @@ function NavItem({ label, filter, to }: { label: string; filter?: string; to?: s
 	if (to) {
 		return (
 			<Link
-				to={to as "/same-folder"}
+				to={to as "/same-folder" | "/large-files"}
 				className={sidebarLinkClass}
 				style={{
 					fontWeight: active ? 700 : 500,
@@ -114,7 +114,7 @@ function Sidebar() {
 				</div>
 				{NAV_ITEMS.map((item) => (
 					<NavItem
-						key={item.filter}
+						key={item.label}
 						label={item.label}
 						filter={item.filter}
 						to={item.to}

@@ -172,6 +172,7 @@ export const useScanStore = create<ScanState>()(
 						...scanResults,
 						duplicateGroups: updatedGroups,
 						sameFolderGroups: updatedSameFolderGroups,
+						largeFiles: scanResults.largeFiles.filter((f) => !deletedSet.has(f.id)),
 					},
 				});
 			},

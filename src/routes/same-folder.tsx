@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, SearchIcon } from "lucide-react";
+import { ChevronDown, SearchIcon, FolderIcon, FileIcon, CircleAlertIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useAuth } from "../context/AuthContext";
@@ -23,9 +23,24 @@ const CONFIDENCE_COLORS = {
 		version: { bg: "#eff3ff", border: "#667eea", text: "#4a5bd4", label: "Possible Version" },
 	},
 	dark: {
-		exact: { bg: "rgba(0,201,167,0.08)", border: "#00c9a7", text: "#00c9a7", label: "Exact Match" },
-		likely: { bg: "rgba(245,166,35,0.08)", border: "#f5a623", text: "#f5a623", label: "Likely Duplicate" },
-		version: { bg: "rgba(102,126,234,0.08)", border: "#667eea", text: "#8b9ef0", label: "Possible Version" },
+		exact: {
+			bg: "rgba(0,201,167,0.08)",
+			border: "#00c9a7",
+			text: "#00c9a7",
+			label: "Exact Match",
+		},
+		likely: {
+			bg: "rgba(245,166,35,0.08)",
+			border: "#f5a623",
+			text: "#f5a623",
+			label: "Likely Duplicate",
+		},
+		version: {
+			bg: "rgba(102,126,234,0.08)",
+			border: "#667eea",
+			text: "#8b9ef0",
+			label: "Possible Version",
+		},
 	},
 };
 
@@ -38,62 +53,6 @@ function FolderName({ folderId }: { folderId: string }) {
 		staleTime: Infinity,
 	});
 	return <>{data ?? "…"}</>;
-}
-
-function FolderIcon({ size = 16, className = "" }: { size?: number; className?: string }) {
-	return (
-		<svg
-			width={size}
-			height={size}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className={className}
-		>
-			<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-		</svg>
-	);
-}
-
-function FileIcon({ size = 13, className = "" }: { size?: number; className?: string }) {
-	return (
-		<svg
-			width={size}
-			height={size}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className={className}
-		>
-			<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-			<polyline points="14 2 14 8 20 8" />
-		</svg>
-	);
-}
-
-function WarnIcon({ size = 13 }: { size?: number }) {
-	return (
-		<svg
-			width={size}
-			height={size}
-			viewBox="0 0 24 24"
-			fill="none"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className="shrink-0"
-		>
-			<circle cx="12" cy="12" r="10" stroke="#f5a623" />
-			<line x1="12" y1="8" x2="12" y2="12" stroke="#f5a623" />
-			<line x1="12" y1="16" x2="12.01" y2="16" stroke="#f5a623" strokeWidth="3" />
-		</svg>
-	);
 }
 
 function SameFolderPage() {
@@ -244,14 +203,19 @@ function SameFolderPage() {
 
 				<div className="flex-1 flex justify-center gap-5 text-[12px] text-[var(--theme-text-secondary)] font-barlow">
 					<span>
-						<b className="text-[var(--theme-text-primary)] text-[13px]">{groups.length}</b>{" "}
+						<b className="text-[var(--theme-text-primary)] text-[13px]">
+							{groups.length}
+						</b>{" "}
 						folders
 					</span>
 					<span>
-						<b className="text-[var(--theme-text-primary)] text-[13px]">{totalSets}</b> sets
+						<b className="text-[var(--theme-text-primary)] text-[13px]">{totalSets}</b>{" "}
+						sets
 					</span>
 					<span>
-						<b className="text-[var(--theme-accent)] text-[13px]">{formatBytes(totalBytes)}</b>{" "}
+						<b className="text-[var(--theme-accent)] text-[13px]">
+							{formatBytes(totalBytes)}
+						</b>{" "}
 						recoverable
 					</span>
 				</div>
@@ -267,7 +231,9 @@ function SameFolderPage() {
 							: "bg-[var(--theme-delete-btn-bg)] text-[var(--theme-delete-btn-text)] cursor-default",
 					)}
 				>
-					{hasSelection ? `Delete ${allSelectedRecords.length} selected` : "Delete selected"}
+					{hasSelection
+						? `Delete ${allSelectedRecords.length} selected`
+						: "Delete selected"}
 				</button>
 			</div>
 
@@ -313,10 +279,11 @@ function SameFolderPage() {
 			{/* ── Keep hint callout ── */}
 			<div className="px-8 pt-3 shrink-0">
 				<div className="flex items-start gap-2 bg-[var(--theme-warn-bg)] border border-[var(--theme-warn-border)] rounded-[7px] px-[14px] py-[9px]">
-					<WarnIcon size={13} />
+					<CircleAlertIcon size={13} stroke="#f5a623" />
 					<p className="text-[11px] font-semibold text-[var(--theme-warn-text)] font-barlow leading-[1.5]">
-						<strong>To keep a file:</strong> leave it unchecked. Only check the files you want
-						to <strong>delete</strong>. At least one file in each set must remain unchecked.
+						<strong>To keep a file:</strong> leave it unchecked. Only check the files
+						you want to <strong>delete</strong>. At least one file in each set must
+						remain unchecked.
 					</p>
 				</div>
 			</div>
@@ -421,7 +388,8 @@ function SameFolderPage() {
 												{group.sets.map((set) => {
 													const setExpanded = expandedSets.has(set.key);
 													const allInSetSelected = allSelectedInSet(set);
-													const setSelectedCount = selectedCountInSet(set);
+													const setSelectedCount =
+														selectedCountInSet(set);
 													const isSetSelected = setSelectedCount > 0;
 													const confidenceColor =
 														CONFIDENCE_COLORS[theme][set.confidence];
@@ -555,38 +523,48 @@ function SameFolderPage() {
 																					"var(--theme-warn-bg)",
 																			}}
 																		>
-																			<WarnIcon size={13} />
+																			<CircleAlertIcon
+																				size={13}
+																				stroke="#f5a623"
+																			/>
 																			<p className="text-[10px] font-semibold text-[var(--theme-warn-text)] font-barlow">
-																				Deselect at least one
-																				file to keep it — all
-																				files are currently
-																				selected for deletion.
+																				Deselect at least
+																				one file to keep it
+																				— all files are
+																				currently selected
+																				for deletion.
 																			</p>
 																		</div>
 																	)}
 																	{set.files.map((file, i) => {
 																		const fileKey = `${set.key}::${i}`;
 																		const isSelected =
-																			selectedFiles.has(fileKey);
+																			selectedFiles.has(
+																				fileKey,
+																			);
 																		return (
 																			<div
 																				key={file.id}
 																				className={cn(
 																					"flex items-center gap-[10px] pl-[44px] pr-[14px] py-[10px] transition-colors duration-150",
 																					i <
-																						set.files.length -
+																						set.files
+																							.length -
 																							1 &&
 																						"border-b border-[var(--theme-file-row-border)]",
 																				)}
 																				style={{
-																					background: isSelected
-																						? "var(--theme-file-sel-bg)"
-																						: "transparent",
+																					background:
+																						isSelected
+																							? "var(--theme-file-sel-bg)"
+																							: "transparent",
 																				}}
 																			>
 																				<input
 																					type="checkbox"
-																					checked={isSelected}
+																					checked={
+																						isSelected
+																					}
 																					onChange={() =>
 																						toggleFile(
 																							set.key,

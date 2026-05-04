@@ -2,17 +2,18 @@ import { useState, useRef } from "react";
 import ReactDOM from "react-dom";
 import { FileText, Image, Film, Music, Archive } from "lucide-react";
 import type { FileRecord } from "../types/drive";
+import { cn } from "../lib/cn";
 
-export function MimeIcon({ mimeType }: { mimeType: string }) {
+export function MimeIcon({ mimeType, className }: { mimeType: string; className?: string }) {
 	if (mimeType.startsWith("image/"))
-		return <Image className="w-5 h-5 text-[var(--theme-accent)]" />;
+		return <Image className={cn("w-5 h-5 text-[var(--theme-accent)]", className)} />;
 	if (mimeType.startsWith("video/"))
-		return <Film className="w-5 h-5 text-[var(--theme-body-text)]" />;
+		return <Film className={cn("w-5 h-5 text-[var(--theme-body-text)]", className)} />;
 	if (mimeType.startsWith("audio/"))
-		return <Music className="w-5 h-5 text-[var(--theme-body-text)]" />;
+		return <Music className={cn("w-5 h-5 text-[var(--theme-body-text)]", className)} />;
 	if (mimeType.includes("zip") || mimeType.includes("tar") || mimeType.includes("archive"))
-		return <Archive className="w-5 h-5 text-[var(--theme-size-text)]" />;
-	return <FileText className="w-5 h-5 text-[var(--theme-caret-color)]" />;
+		return <Archive className={cn("w-5 h-5 text-[var(--theme-size-text)]", className)} />;
+	return <FileText className={cn("w-5 h-5 text-[var(--theme-caret-color)]", className)} />;
 }
 
 interface FileThumbnailProps {
