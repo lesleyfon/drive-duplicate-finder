@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { PersistStorage, StorageValue } from "zustand/middleware";
-import type { ScanResult, DuplicateGroup } from "../types/drive";
+import type { ScanResult, DuplicateGroup, SameFolderGroup } from "../types/drive";
 
 export type ScanStatus = "idle" | "scanning" | "complete" | "error";
 
@@ -23,18 +23,34 @@ interface SerializedDuplicateGroup extends Omit<DuplicateGroup, "selectedForDele
 	selectedForDeletion: string[];
 }
 
-interface SerializedScanResult extends Omit<ScanResult, "scannedAt" | "duplicateGroups"> {
+interface SerializedSameFolderGroup extends Omit<SameFolderGroup, "sets"> {
+	sets: SerializedDuplicateGroup[];
+}
+
+interface SerializedScanResult extends Omit<ScanResult, "scannedAt" | "duplicateGroups" | "sameFolderGroups"> {
 	scannedAt: string;
 	duplicateGroups: SerializedDuplicateGroup[];
+	sameFolderGroups: SerializedSameFolderGroup[];
 }
+
+const serializeGroup = (g: DuplicateGroup): SerializedDuplicateGroup => ({
+	...g,
+	selectedForDeletion: [],
+});
+
+const deserializeGroup = (g: SerializedDuplicateGroup): DuplicateGroup => ({
+	...g,
+	selectedForDeletion: new Set<string>(),
+});
 
 function serializeScanResult(result: ScanResult): SerializedScanResult {
 	return {
 		...result,
 		scannedAt: result.scannedAt.toISOString(),
-		duplicateGroups: result.duplicateGroups.map((g) => ({
-			...g,
-			selectedForDeletion: [],
+		duplicateGroups: result.duplicateGroups.map(serializeGroup),
+		sameFolderGroups: result.sameFolderGroups.map((fg) => ({
+			...fg,
+			sets: fg.sets.map(serializeGroup),
 		})),
 	};
 }
@@ -43,9 +59,10 @@ function deserializeScanResult(serialized: SerializedScanResult): ScanResult {
 	return {
 		...serialized,
 		scannedAt: new Date(serialized.scannedAt),
-		duplicateGroups: serialized.duplicateGroups.map((g) => ({
-			...g,
-			selectedForDeletion: new Set<string>(),
+		duplicateGroups: serialized.duplicateGroups.map(deserializeGroup),
+		sameFolderGroups: (serialized.sameFolderGroups ?? []).map((fg) => ({
+			...fg,
+			sets: fg.sets.map(deserializeGroup),
 		})),
 	};
 }
@@ -132,7 +149,31 @@ export const useScanStore = create<ScanState>()(
 						),
 					}))
 					.filter((g) => g.files.length >= 2);
-				set({ scanResults: { ...scanResults, duplicateGroups: updatedGroups } });
+				const updatedSameFolderGroups = (scanResults.sameFolderGroups ?? [])
+					.map((fg) => {
+						const updatedSets = fg.sets
+							.map((s) => ({
+								...s,
+								files: s.files.filter((f) => !deletedSet.has(f.id)),
+								selectedForDeletion: new Set(
+									[...s.selectedForDeletion].filter((id) => !deletedSet.has(id)),
+								),
+							}))
+							.filter((s) => s.files.length >= 2);
+						return {
+							...fg,
+							sets: updatedSets,
+							totalWastedBytes: updatedSets.reduce((sum, s) => sum + s.totalWastedBytes, 0),
+						};
+					})
+					.filter((fg) => fg.sets.length > 0);
+				set({
+					scanResults: {
+						...scanResults,
+						duplicateGroups: updatedGroups,
+						sameFolderGroups: updatedSameFolderGroups,
+					},
+				});
 			},
 		}),
 		{
