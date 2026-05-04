@@ -1,16 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Clock, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useTheme } from "../context/ThemeContext";
+import { useFileListState } from "../hooks/useFileListState";
 import { cn } from "../lib/cn";
 import { OLD_FILES_LIMIT } from "../lib/deduplicator";
 import { formatBytes, formatDate } from "../lib/formatters";
+import { getTypeStyle } from "../lib/mimeStyles";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
 import { MimeIcon } from "../components/FileThumbnail";
-import { useDeleteFiles } from "../hooks/useDeleteFiles";
-import { getTypeStyle } from "./large-files";
 
 export type OldSortType = "date" | "name" | "size";
 
@@ -20,107 +20,61 @@ const OLD_SORT_TABS: { key: OldSortType; label: string }[] = [
 	{ key: "size", label: "FILE SIZE" },
 ];
 
-const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 110px 90px 72px";
+const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 110px 72px";
 
 export const Route = createFileRoute("/old-files")({
 	component: RouteComponent,
 });
 
+function sortOldFiles(files: FileRecord[], sort: OldSortType): FileRecord[] {
+	const result = [...files];
+	if (sort === "name") {
+		result.sort((a, b) => a.name.localeCompare(b.name));
+	} else if (sort === "size") {
+		result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+	} else {
+		result.sort((a, b) => a.createdTime.localeCompare(b.createdTime));
+	}
+	return result;
+}
+
 function RouteComponent() {
 	const navigate = useNavigate();
 	const { theme } = useTheme();
 	const scanResult = useScanStore((s) => s.scanResults);
-	const deleteMutation = useDeleteFiles();
 
-	const [files, setFiles] = useState<FileRecord[]>(() => scanResult?.oldFiles ?? []);
+	const files = useScanStore((s) => s.scanResults?.oldFiles ?? []);
 
-	const [selected, setSelected] = useState<Set<string>>(new Set());
-	const [sort, setSort] = useState<OldSortType>("date");
-	const [search, setSearch] = useState("");
-	const [showModal, setShowModal] = useState(false);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-	const now = useMemo(() => Date.now(), []);
-	const ageMs = useCallback((file: FileRecord) => now - new Date(file.createdTime).getTime(), [now]);
+	const {
+		selected,
+		sort,
+		setSort,
+		search,
+		setSearch,
+		showModal,
+		setShowModal,
+		successMessage,
+		errorMessage,
+		visibleFiles,
+		allVisibleSelected,
+		selectedFiles,
+		totalSelectedBytes,
+		hasSelection,
+		toggleSelect,
+		toggleSelectAll,
+		handleConfirmDelete,
+		isPending,
+	} = useFileListState<OldSortType>({
+		files,
+		defaultSort: "date",
+		sortFn: sortOldFiles,
+	});
 
 	const ageRankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
-	const maxAgeMs = useMemo(() => Math.max(...files.map(ageMs), 0), [files, ageMs]);
 	const combinedBytes = useMemo(
 		() => files.reduce((total, file) => total + (file.size ?? 0), 0),
 		[files],
 	);
-
-	const visibleFiles = useMemo(() => {
-		let result = [...files];
-		if (search.trim()) {
-			const query = search.trim().toLowerCase();
-			result = result.filter(
-				(file) =>
-					file.name.toLowerCase().includes(query) ||
-					file.mimeType.toLowerCase().includes(query) ||
-					(file.fullFileExtension ?? "").toLowerCase().includes(query),
-			);
-		}
-		if (sort === "name") {
-			result.sort((a, b) => a.name.localeCompare(b.name));
-		} else if (sort === "size") {
-			result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
-		} else {
-			// date: oldest first
-			result.sort((a, b) => a.createdTime.localeCompare(b.createdTime));
-		}
-		return result;
-	}, [files, sort, search]);
-
-	const allVisibleSelected =
-		visibleFiles.length > 0 && visibleFiles.every((file) => selected.has(file.id));
-
-	const toggleSelect = (id: string) =>
-		setSelected((prev) => {
-			const next = new Set(prev);
-			next.has(id) ? next.delete(id) : next.add(id);
-			return next;
-		});
-
-	const toggleSelectAll = () => {
-		const ids = visibleFiles.map((file) => file.id);
-		setSelected((prev) => {
-			const next = new Set(prev);
-			if (allVisibleSelected) {
-				ids.forEach((id) => {
-					next.delete(id);
-				});
-			} else {
-				ids.forEach((id) => {
-					next.add(id);
-				});
-			}
-			return next;
-		});
-	};
-
-	const selectedFiles = files.filter((file) => selected.has(file.id));
-	const totalSelectedBytes = selectedFiles.reduce((s, file) => s + (file.size ?? 0), 0);
-	const hasSelection = selected.size > 0;
-
-	const handleConfirmDelete = async () => {
-		const ids = Array.from(selected);
-		const freedBytes = selectedFiles.reduce((total, f) => total + (f.size ?? 0), 0);
-
-		try {
-			const result = await deleteMutation.mutateAsync(ids);
-			setShowModal(false);
-			setFiles(useScanStore.getState().scanResults?.oldFiles ?? []);
-			setSelected(new Set());
-			setSuccessMessage(
-				`Deleted ${result.succeeded.length} file${result.succeeded.length !== 1 ? "s" : ""}. ${formatBytes(freedBytes)} freed.${result.failed.length > 0 ? ` ${result.failed.length} failed.` : ""}`,
-			);
-		} catch (err) {
-			setShowModal(false);
-			setErrorMessage("Something went wrong. Please try again.");
-		}
-	};
 
 	if (!scanResult) {
 		return (
@@ -267,16 +221,14 @@ function RouteComponent() {
 							aria-label="Select all visible files"
 						/>
 					</div>
-					{(["RANK", "TYPE", "FILENAME", "CREATED", "AGE", "SIZE"] as const).map(
-						(label) => (
-							<span
-								key={label}
-								className="text-[9px] font-bold tracking-[0.08em] uppercase text-[var(--theme-date-text)]"
-							>
-								{label}
-							</span>
-						),
-					)}
+					{(["RANK", "TYPE", "FILENAME", "CREATED", "SIZE"] as const).map((label) => (
+						<span
+							key={label}
+							className="text-[9px] font-bold tracking-[0.08em] uppercase text-[var(--theme-date-text)]"
+						>
+							{label}
+						</span>
+					))}
 				</div>
 
 				{/* ── Table body ── */}
@@ -305,8 +257,6 @@ function RouteComponent() {
 					) : (
 						visibleFiles.map((file) => {
 							const typeStyle = getTypeStyle(file.mimeType, theme);
-							const fileAge = ageMs(file);
-							const barPct = maxAgeMs > 0 ? (fileAge / maxAgeMs) * 100 : 0;
 							const rank = ageRankMap.get(file.id) ?? 0;
 							const isSelected = selected.has(file.id);
 
@@ -364,22 +314,6 @@ function RouteComponent() {
 										{formatDate(file.createdTime)}
 									</span>
 
-									{/* Age bar */}
-									<div className="px-2 flex items-center">
-										<div
-											className="w-full h-[4px] rounded-[2px]"
-											style={{ background: "var(--theme-border)" }}
-										>
-											<div
-												className="h-[4px] rounded-[2px]"
-												style={{
-													width: `${barPct}%`,
-													background: typeStyle.text,
-												}}
-											/>
-										</div>
-									</div>
-
 									{/* Size */}
 									<span className="text-[11px] text-[var(--theme-path-text)] text-left">
 										{formatBytes(file.size ?? 0)}
@@ -406,7 +340,7 @@ function RouteComponent() {
 					totalBytes={totalSelectedBytes}
 					onConfirm={handleConfirmDelete}
 					onCancel={() => setShowModal(false)}
-					isPending={deleteMutation.isPending}
+					isPending={isPending}
 				/>
 			)}
 		</div>
