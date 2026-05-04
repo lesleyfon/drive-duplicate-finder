@@ -239,6 +239,12 @@ export const useScanStore = create<ScanState>()(
 						largeFiles: scanResults.largeFiles.filter(
 							(file) => !deletedSet.has(file.id),
 						),
+						oldFiles: scanResults.oldFiles.filter(
+							(file) => !deletedSet.has(file.id),
+						),
+						recentFiles: scanResults.recentFiles.filter(
+							(file) => !deletedSet.has(file.id),
+						),
 					},
 				});
 			},
