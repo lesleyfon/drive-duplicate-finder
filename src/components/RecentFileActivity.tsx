@@ -44,7 +44,7 @@ const MIME_ICONS: Record<string, LucideIcon> = {
 	"application/vnd.google-apps.unknown": HelpCircle,
 	"application/vnd.google-apps.vid": Video,
 	"application/vnd.google-apps.video": Video,
-	"application/vnd.google-gemini.gem": Sparkles,
+	"application/vnd.google.gemini.gem": Sparkles,
 };
 
 interface Props {
@@ -55,59 +55,57 @@ export function RecentFileActivity({ scanResults }: Props) {
 	const recentFiles = scanResults?.recentFiles ?? null;
 
 	return (
-		<div className="border border-border-dim bg-surface-low flex flex-col">
-			<div className="px-5 py-3 border-b border-border-dim flex items-center justify-between">
-				<p className="text-nav uppercase tracking-widest text-text-primary">
-					RECENT_FILE_ACTIVITY
-				</p>
-				<span className="px-2 py-0.5 border border-status-ok text-status-ok text-label uppercase tracking-widest">
+		<div className="rounded-xl overflow-hidden flex flex-col bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] shadow-[var(--theme-card-shadow)]">
+			{/* Panel header */}
+			<div className="flex items-center justify-between py-4 px-5 border-b border-b-[var(--theme-card-border)]">
+				<h2 className="font-barlow-condensed font-black uppercase tracking-[0.1em] text-[11px] text-[var(--theme-text-primary)]">
+					RECENT FILE ACTIVITY
+				</h2>
+				<span
+					className="font-barlow-condensed uppercase rounded py-1 px-[10px] text-[10px] font-extrabold tracking-[0.12em] text-[var(--theme-accent)]"
+					style={{
+						background: "color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+						border: "1px solid color-mix(in srgb, var(--theme-accent) 27%, transparent)",
+					}}
+				>
 					Storage Size
 				</span>
 			</div>
 
-			<div className="flex flex-col divide-y divide-border-dim">
-				{recentFiles ? (
-					<>
-						<div>
+			{/* Table header */}
+			<div className="grid grid-cols-[120px_1fr_80px] py-2 px-5 bg-[var(--theme-page-bg)]">
+				{(["DATE MODIFIED", "NAME", "SIZE"] as const).map((col, i) => (
+					<span
+						key={col}
+						className={`text-[9px] font-bold uppercase tracking-[0.12em] font-barlow-condensed text-[var(--theme-text-dim)] ${i === 2 ? "text-right" : "text-left"}`}
+					>
+						{col}
+					</span>
+				))}
+			</div>
+
+			{/* File rows */}
+			<div className="flex flex-col">
+				{recentFiles
+					? recentFiles.map((file) => <RecentFileRow key={file.id} file={file} />)
+					: Array.from({ length: 8 }).map((_, i) => (
 							<div
-								rel="noopener noreferrer"
-								className="flex items-center gap-3 px-5 py-3 hover:bg-surface-high transition-colors group"
+								// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton rows, not dynamic list
+								key={i}
+								className="grid items-center opacity-20 grid-cols-[120px_1fr_80px] py-[10px] px-5 border-b border-b-[var(--theme-file-row-border)]"
 							>
-								<span className="text-label text-text-muted flex-shrink-0 w-28 font-mono">
-									Date Modified
-								</span>
-								<span className="w-3 h-3 flex-shrink-0" />
-								<span className="text-sm text-text-secondary truncate flex-1 group-hover:text-text-primary transition-colors">
-									Name
-								</span>
-								<span className="text-sm text-text-muted flex-shrink-0 text-right w-16">
-									Size
-								</span>
+								<div className="h-3 rounded bg-[var(--theme-border)] w-[70px]" />
+								<div className="h-3 rounded bg-[var(--theme-border)] w-[80%]" />
+								<div className="h-3 rounded ml-auto bg-[var(--theme-border)] w-[50px]" />
 							</div>
-						</div>
-						{recentFiles.map((file) => (
-							<RecentFileRow key={file.id} file={file} />
 						))}
-					</>
-				) : (
-					Array.from({ length: 8 }).map((_, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: As this is a static skeleton, using index as key is fine
-						<div key={i} className="flex items-center gap-3 px-5 py-3 opacity-20">
-							<div className="w-16 h-3 bg-surface-top" />
-							<div className="w-3 h-3 bg-surface-top" />
-							<div className="flex-1 h-3 bg-surface-top" />
-							<div className="w-16 h-3 bg-surface-top" />
-						</div>
-					))
-				)}
 			</div>
 		</div>
 	);
 }
 
 function RecentFileRow({ file }: { file: RecentFileEntry }) {
-	const date = new Date(file.modifiedTime);
-	const formattedDate = date.toLocaleDateString(undefined, {
+	const formattedDate = new Date(file.modifiedTime).toLocaleDateString(undefined, {
 		year: "numeric",
 		month: "short",
 		day: "numeric",
@@ -119,18 +117,18 @@ function RecentFileRow({ file }: { file: RecentFileEntry }) {
 			href={file.webViewLink}
 			target="_blank"
 			rel="noopener noreferrer"
-			className="flex items-center gap-3 px-5 py-3 hover:bg-surface-high transition-colors group"
+			className="row-hover grid items-center transition-colors cursor-pointer no-underline grid-cols-[120px_1fr_80px] py-[10px] px-5 border-b border-b-[var(--theme-file-row-border)]"
 		>
-			<span className="text-label text-text-muted flex-shrink-0 w-28 font-mono">
+			<span className="text-[11px] font-jetbrains text-[var(--theme-text-secondary)]">
 				{formattedDate}
 			</span>
-			<span className="w-3 h-3 flex-shrink-0">
-				<Icon size={12} color={getMimeColor(file.mimeType)} />
+			<span className="flex items-center gap-2 min-w-0">
+				<Icon size={13} color={getMimeColor(file.mimeType)} className="shrink-0" />
+				<span className="text-[12px] truncate text-[var(--theme-body-text)]">
+					{file.name}
+				</span>
 			</span>
-			<span className="text-sm text-text-secondary truncate flex-1 group-hover:text-text-primary transition-colors">
-				{file.name}
-			</span>
-			<span className="text-sm text-text-muted flex-shrink-0 text-right w-16">
+			<span className="text-[11px] font-jetbrains text-right text-[var(--theme-text-secondary)]">
 				{formatBytes(file.size)}
 			</span>
 		</a>
