@@ -306,8 +306,8 @@ function RouteComponent() {
 					) : (
 						visibleFiles.map((file) => {
 							const typeStyle = getTypeStyle(file.mimeType, theme);
-							const filAge = ageMs(file);
-							const barPct = maxAgeMs > 0 ? (filAge / maxAgeMs) * 100 : 0;
+							const fileAge = ageMs(file);
+							const barPct = maxAgeMs > 0 ? (fileAge / maxAgeMs) * 100 : 0;
 							const rank = ageRankMap.get(file.id) ?? 0;
 							const isSelected = selected.has(file.id);
 
