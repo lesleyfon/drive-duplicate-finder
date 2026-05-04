@@ -11,8 +11,14 @@ export function useScanFiles(enabled: boolean) {
 	const { accessToken } = useAuth();
 	const startTimeRef = useRef<number | null>(null);
 
-	const { status: storeStatus, totalFiles: storeTotalFiles, startScan, updateProgress, completeScan, setScanError } =
-		useScanStore();
+	const {
+		status: storeStatus,
+		totalFiles: storeTotalFiles,
+		startScan,
+		updateProgress,
+		completeScan,
+		setScanError,
+	} = useScanStore();
 	const isAlreadyComplete = storeStatus === "complete";
 
 	const query = useInfiniteQuery({
@@ -28,7 +34,8 @@ export function useScanFiles(enabled: boolean) {
 		gcTime: Infinity,
 	});
 
-	const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } = query;
+	const { data, hasNextPage, isFetchingNextPage, fetchNextPage, status } =
+		query;
 
 	// Kick off scan when enabled and store is idle
 	useEffect(() => {
