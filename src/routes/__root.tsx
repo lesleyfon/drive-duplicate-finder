@@ -16,12 +16,13 @@ function useIsDashboard() {
 	const state = useRouterState();
 	return state.location.pathname === "/dashboard";
 }
+type NavigationPath = "/same-folder" | "/large-files" | "/old-files";
 
-const NAV_ITEMS: Array<{ label: string; filter?: string; to?: string }> = [
+const NAV_ITEMS: Array<{ label: string; filter?: string; to?: NavigationPath }> = [
 	{ label: "DUPLICATES", filter: "duplicates" },
 	{ label: "SAME FOLDER", to: "/same-folder" },
 	{ label: "LARGE", to: "/large-files" },
-	{ label: "OLD", filter: "old" },
+	{ label: "OLD", to: "/old-files" },
 	{ label: "NOT OWNED BY ME", filter: "not-owned" },
 	{ label: "TYPE", filter: "type" },
 	{ label: "ALL FILES", filter: "all-files" },
@@ -30,12 +31,12 @@ const NAV_ITEMS: Array<{ label: string; filter?: string; to?: string }> = [
 const sidebarLinkClass =
 	"px-[18px] py-[5px] text-[9px] font-bold tracking-[0.12em] uppercase font-barlow-condensed cursor-pointer block no-underline text-[var(--theme-sidebar-text)]";
 
-function NavItem({ label, filter, to }: { label: string; filter?: string; to?: string }) {
+function NavItem({ label, filter, to }: { label: string; filter?: string; to?: NavigationPath }) {
 	const active = useIsActive({ filter, to });
 	if (to) {
 		return (
 			<Link
-				to={to as "/same-folder" | "/large-files"}
+				to={to as NavigationPath}
 				className={sidebarLinkClass}
 				style={{
 					fontWeight: active ? 700 : 500,
@@ -50,8 +51,7 @@ function NavItem({ label, filter, to }: { label: string; filter?: string; to?: s
 	return (
 		<Link
 			to="/results"
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			search={{ filter } as any}
+			search={{ filter } as unknown as { [key: string]: string }}
 			className={sidebarLinkClass}
 			style={{
 				fontWeight: active ? 700 : 500,
