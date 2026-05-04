@@ -20,3 +20,6 @@ client_secret*.json
 
 # OS
 .DS_Store
+
+# TanStack Query Devtools
+.tanstack
