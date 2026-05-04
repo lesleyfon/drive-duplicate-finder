@@ -193,17 +193,6 @@ function DuplicatesView() {
 
 				{/* Right: sort + delete */}
 				<div className="flex items-center gap-3">
-					<select
-						value={sort}
-						onChange={(e) => setSort(e.target.value as SortType)}
-						className="text-[11px] font-bold tracking-[0.06em] uppercase font-barlow border border-[var(--theme-topbar-border)] bg-[var(--theme-search-bg)] text-[var(--theme-text-secondary)] px-[10px] py-[5px] rounded cursor-pointer"
-					>
-						<option value="size">Largest first</option>
-						<option value="copies">Most copies</option>
-						<option value="type">File type</option>
-						<option value="name">Name</option>
-					</select>
-
 					<button
 						type="button"
 						disabled={!hasSelection}
@@ -260,7 +249,25 @@ function DuplicatesView() {
 								</button>
 							);
 						})}
-
+						<div>
+							<label
+								htmlFor="select-sort"
+								className="text-[11px] font-bold tracking-[0.06em] uppercase font-barlow"
+							>
+								Sort By:
+							</label>
+							<select
+								value={sort}
+								id="select-sort"
+								onChange={(e) => setSort(e.target.value as SortType)}
+								className="text-[11px] font-bold tracking-[0.06em] uppercase font-barlow border border-[var(--theme-topbar-border)] bg-[var(--theme-search-bg)] text-[var(--theme-text-secondary)] px-[10px] py-[5px] rounded cursor-pointer"
+							>
+								<option value="size">Largest first</option>
+								<option value="copies">Most copies</option>
+								<option value="type">File type</option>
+								<option value="name">Name</option>
+							</select>
+						</div>
 						<div className="flex-1" />
 
 						{/* Search */}
