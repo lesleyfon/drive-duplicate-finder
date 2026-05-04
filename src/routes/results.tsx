@@ -16,7 +16,6 @@ export const Route = createFileRoute("/results")({
 
 const CATEGORY_LABELS: Record<string, { breadcrumb: string; title: string }> = {
 	duplicates: { breadcrumb: "DUPLICATE FILES", title: "DUPLICATE SCANNER" },
-	"same-folder": { breadcrumb: "SAME FOLDER", title: "SAME FOLDER" },
 	hidden: { breadcrumb: "HIDDEN FILES", title: "HIDDEN FILES" },
 	empty: { breadcrumb: "EMPTY FILES", title: "EMPTY FILES" },
 	large: { breadcrumb: "LARGE FILES", title: "LARGE FILES" },
