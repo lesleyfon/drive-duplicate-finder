@@ -47,6 +47,15 @@
     --theme-filter-inactive: #999999;
     --theme-accent-contrast: #ffffff;
     --theme-row-hover: rgba(0,0,0,0.02);
+    --theme-warn-bg: rgba(245,166,35,0.08);
+    --theme-warn-border: rgba(245,166,35,0.3);
+    --theme-warn-text: #b8750f;
+    --theme-folder-path-bg: rgba(0,184,148,0.06);
+    --theme-folder-path-border: rgba(0,184,148,0.2);
+    --theme-same-folder-bg: rgba(0,184,148,0.08);
+    --theme-same-folder-border: rgba(0,184,148,0.25);
+    --theme-same-folder-text: #00916e;
+    --theme-file-sel-bg: rgba(0,184,148,0.04);
   }
 
   [data-theme="dark"] {
@@ -92,6 +101,15 @@
     --theme-filter-inactive: #3a3d4a;
     --theme-accent-contrast: #0a1a16;
     --theme-row-hover: rgba(255,255,255,0.02);
+    --theme-warn-bg: rgba(245,166,35,0.07);
+    --theme-warn-border: rgba(245,166,35,0.2);
+    --theme-warn-text: #f5a623;
+    --theme-folder-path-bg: rgba(0,201,167,0.06);
+    --theme-folder-path-border: rgba(0,201,167,0.15);
+    --theme-same-folder-bg: rgba(0,201,167,0.08);
+    --theme-same-folder-border: rgba(0,201,167,0.2);
+    --theme-same-folder-text: #00c9a7;
+    --theme-file-sel-bg: rgba(0,201,167,0.05);
   }
 
   html, body, #root {
