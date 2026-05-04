@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Clock, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useTheme } from "../context/ThemeContext";
 import { cn } from "../lib/cn";
@@ -41,12 +41,11 @@ function RouteComponent() {
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	const now = Date.now();
-	const ageMs = (file: FileRecord) => now - new Date(file.createdTime).getTime();
+	const now = useMemo(() => Date.now(), []);
+	const ageMs = useCallback((file: FileRecord) => now - new Date(file.createdTime).getTime(), [now]);
 
 	const ageRankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: ageMs is a stable function that doesn't need to be in the dependency array
-	const maxAgeMs = useMemo(() => Math.max(...files.map(ageMs), 0), [files]);
+	const maxAgeMs = useMemo(() => Math.max(...files.map(ageMs), 0), [files, ageMs]);
 	const combinedBytes = useMemo(
 		() => files.reduce((total, file) => total + (file.size ?? 0), 0),
 		[files],
