@@ -1,41 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BarChart2, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useTheme } from "../context/ThemeContext";
+import { useFileListState } from "../hooks/useFileListState";
 import { cn } from "../lib/cn";
-import { classifyMime, LARGE_FILES_LIMIT } from "../lib/deduplicator";
+import { LARGE_FILES_LIMIT } from "../lib/deduplicator";
 import { formatBytes, formatDate } from "../lib/formatters";
+import { getTypeStyle } from "../lib/mimeStyles";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
 import { MimeIcon } from "../components/FileThumbnail";
-import { useDeleteFiles } from "../hooks/useDeleteFiles";
 
 export type LargeSortType = "size" | "name" | "date";
 
-export const TYPE_COLORS: Record<string, { light: string; dark: string; text: string }> = {
-	video: { light: "#fde8e8", dark: "#2d1515", text: "#f5a623" },
-	audio: { light: "#fff8e6", dark: "#221a08", text: "#667eeae6" },
-	document: { light: "#e8f7f1", dark: "#102918", text: "#00c48c" },
-	image: { light: "#e8f9fd", dark: "#0b1f22", text: "#00f0ff" },
-	other: { light: "#f0f0f0", dark: "#1a1a1a", text: "#849495" },
-};
-
-export function getTypeStyle(
-	mimeType: string,
-	theme: "light" | "dark",
-): { bg: string; text: string } {
-	const family = classifyMime(mimeType);
-	const classStyle = TYPE_COLORS[family];
-
-	if (classStyle) {
-		return { bg: classStyle[theme], text: classStyle.text };
-	}
-	return {
-		bg: theme === "light" ? "var(--theme-count-badge-bg)" : "var(--theme-border)",
-		text: "var(--theme-text-secondary)",
-	};
-}
 
 export const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
 	{ key: "size", label: "FILE SIZE" },
@@ -43,105 +21,57 @@ export const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
 	{ key: "date", label: "DATE MODIFIED" },
 ];
 
-export const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px 100px";
+export const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px";
 
 export const Route = createFileRoute("/large-files")({
 	component: RouteComponent,
 });
 
+function sortLargeFiles(files: FileRecord[], sort: LargeSortType): FileRecord[] {
+	const result = [...files];
+	if (sort === "name") {
+		result.sort((a, b) => a.name.localeCompare(b.name));
+	} else if (sort === "date") {
+		result.sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
+	} else {
+		result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+	}
+	return result;
+}
+
 function RouteComponent() {
 	const navigate = useNavigate();
 	const { theme } = useTheme();
 	const scanResult = useScanStore((s) => s.scanResults);
-	const deleteMutation = useDeleteFiles();
+	const files = useScanStore((s) => s.scanResults?.largeFiles ?? []);
 
-	const [files, setFiles] = useState<FileRecord[]>(() => scanResult?.largeFiles ?? []);
-
-	const [selected, setSelected] = useState<Set<string>>(new Set());
-	const [sort, setSort] = useState<LargeSortType>("size");
-	const [search, setSearch] = useState("");
-	const [showModal, setShowModal] = useState(false);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	const [_errorMessage, setErrorMessage] = useState<string | null>(null);
+	const {
+		selected,
+		sort, setSort,
+		search, setSearch,
+		showModal, setShowModal,
+		successMessage,
+		errorMessage: _errorMessage,
+		visibleFiles,
+		allVisibleSelected,
+		selectedFiles,
+		totalSelectedBytes,
+		hasSelection,
+		toggleSelect,
+		toggleSelectAll,
+		handleConfirmDelete,
+		isPending,
+	} = useFileListState<LargeSortType>({
+		files,
+		defaultSort: "size",
+		sortFn: sortLargeFiles,
+	});
 
 	const sizeRankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
-	const maxBytes = useMemo(() => Math.max(...files.map((file) => file.size ?? 0), 0), [files]);
 	const combinedBytes = useMemo(
 		() => files.reduce((totalBytes, file) => totalBytes + (file.size ?? 0), 0),
 		[files],
 	);
-
-	const visibleFiles = useMemo(() => {
-		let result = [...files];
-		if (search.trim()) {
-			const query = search.trim().toLowerCase();
-			result = result.filter(
-				(file) =>
-					file.name.toLowerCase().includes(query) ||
-					file.mimeType.toLowerCase().includes(query) ||
-					(file.fullFileExtension ?? "").toLowerCase().includes(query),
-			);
-		}
-		if (sort === "name") {
-			result.sort((a, b) => a.name.localeCompare(b.name));
-		} else if (sort === "date") {
-			result.sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime));
-		} else {
-			result.sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
-		}
-		return result;
-	}, [files, sort, search]);
-
-	const allVisibleSelected =
-		visibleFiles.length > 0 && visibleFiles.every((file) => selected.has(file.id));
-
-	const toggleSelect = (id: string) =>
-		setSelected((prev) => {
-			const next = new Set(prev);
-			next.has(id) ? next.delete(id) : next.add(id);
-			return next;
-		});
-
-	const toggleSelectAll = () => {
-		const ids = visibleFiles.map((file) => file.id);
-		setSelected((prev) => {
-			const next = new Set(prev);
-
-			if (allVisibleSelected) {
-				ids.forEach((id) => {
-					next.delete(id);
-				});
-			} else {
-				ids.forEach((id) => {
-					next.add(id);
-				});
-			}
-			return next;
-		});
-	};
-
-	const selectedFiles = files.filter((file) => selected.has(file.id));
-	const totalSelectedBytes = selectedFiles.reduce((s, file) => s + (file.size ?? 0), 0);
-	const hasSelection = selected.size > 0;
-
-	const handleConfirmDelete = async () => {
-		const ids = Array.from(selected);
-		const freedBytes = selectedFiles.reduce((total, f) => total + (f.size ?? 0), 0);
-
-		try {
-			const result = await deleteMutation.mutateAsync(ids);
-			setShowModal(false);
-			setFiles(useScanStore.getState().scanResults?.largeFiles ?? []);
-			setSelected(new Set());
-			setSuccessMessage(
-				`Deleted ${result.succeeded.length} file${result.succeeded.length !== 1 ? "s" : ""}. ${formatBytes(freedBytes)} freed.${result.failed.length > 0 ? ` ${result.failed.length} failed.` : ""}`,
-			);
-		} catch (err) {
-			// surface an error state
-			setShowModal(false);
-			setErrorMessage("Something went wrong. Please try again.");
-		}
-	};
 
 	if (!scanResult) {
 		return (
@@ -279,7 +209,7 @@ function RouteComponent() {
 							aria-label="Select all visible files"
 						/>
 					</div>
-					{(["RANK", "TYPE", "FILENAME", "SIZE", "BAR", "MODIFIED"] as const).map(
+					{(["RANK", "TYPE", "FILENAME", "SIZE", "MODIFIED"] as const).map(
 						(label) => (
 							<span
 								key={label}
@@ -317,7 +247,6 @@ function RouteComponent() {
 					) : (
 						visibleFiles.map((file) => {
 							const typeStyle = getTypeStyle(file.mimeType, theme);
-							const barPct = maxBytes > 0 ? ((file.size ?? 0) / maxBytes) * 100 : 0;
 							const rank = sizeRankMap.get(file.id) ?? 0;
 							const isSelected = selected.has(file.id);
 
@@ -372,22 +301,6 @@ function RouteComponent() {
 										{formatBytes(file.size ?? 0)}
 									</span>
 
-									{/* Bar */}
-									<div className="px-2 flex items-center">
-										<div
-											className="w-full h-[4px] rounded-[2px]"
-											style={{ background: "var(--theme-border)" }}
-										>
-											<div
-												className="h-[4px] rounded-[2px]"
-												style={{
-													width: `${barPct}%`,
-													background: typeStyle.text,
-												}}
-											/>
-										</div>
-									</div>
-
 									{/* Date */}
 									<span className="text-[11px] text-[var(--theme-path-text)] text-left">
 										{formatDate(file.modifiedTime)}
@@ -414,7 +327,7 @@ function RouteComponent() {
 					totalBytes={totalSelectedBytes}
 					onConfirm={handleConfirmDelete}
 					onCancel={() => setShowModal(false)}
-					isPending={deleteMutation.isPending}
+					isPending={isPending}
 				/>
 			)}
 		</div>
