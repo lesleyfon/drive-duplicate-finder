@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BarChart2, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useTheme } from "../context/ThemeContext";
 import { useFileListState } from "../hooks/useFileListState";
@@ -10,10 +10,9 @@ import { formatBytes, formatDate } from "../lib/formatters";
 import { getTypeStyle } from "../lib/mimeStyles";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
-import { MimeIcon } from "../components/FileThumbnail";
+import { FileThumbnail, MimeIcon } from "../components/FileThumbnail";
 
 export type LargeSortType = "size" | "name" | "date";
-
 
 export const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
 	{ key: "size", label: "FILE SIZE" },
@@ -44,12 +43,16 @@ function RouteComponent() {
 	const { theme } = useTheme();
 	const scanResult = useScanStore((s) => s.scanResults);
 	const files = useScanStore((s) => s.scanResults?.largeFiles ?? []);
+	const [_showPlayer, setShowPlayer] = useState(false);
 
 	const {
 		selected,
-		sort, setSort,
-		search, setSearch,
-		showModal, setShowModal,
+		sort,
+		setSort,
+		search,
+		setSearch,
+		showModal,
+		setShowModal,
 		successMessage,
 		errorMessage: _errorMessage,
 		visibleFiles,
@@ -209,16 +212,14 @@ function RouteComponent() {
 							aria-label="Select all visible files"
 						/>
 					</div>
-					{(["RANK", "TYPE", "FILENAME", "SIZE", "MODIFIED"] as const).map(
-						(label) => (
-							<span
-								key={label}
-								className="text-[9px] font-bold tracking-[0.08em] uppercase text-[var(--theme-date-text)]"
-							>
-								{label}
-							</span>
-						),
-					)}
+					{(["RANK", "TYPE", "FILENAME", "SIZE", "MODIFIED"] as const).map((label) => (
+						<span
+							key={label}
+							className="text-[9px] font-bold tracking-[0.08em] uppercase text-[var(--theme-date-text)]"
+						>
+							{label}
+						</span>
+					))}
 				</div>
 				{/* ── Table body ── */}
 				<div
@@ -249,6 +250,10 @@ function RouteComponent() {
 							const typeStyle = getTypeStyle(file.mimeType, theme);
 							const rank = sizeRankMap.get(file.id) ?? 0;
 							const isSelected = selected.has(file.id);
+
+							const isMedia =
+								file.mimeType.startsWith("audio/") ||
+								file.mimeType.startsWith("video/");
 
 							return (
 								<div
@@ -282,16 +287,18 @@ function RouteComponent() {
 
 									{/* Type badge */}
 									<span className="inline-block px-[6px] py-[2px] rounded-sm font-barlow-condensed font-bold text-[10px] tracking-[0.04em] uppercase w-fit">
-										<MimeIcon
-											mimeType={file.mimeType ?? ""}
-											className="shrink-0"
-										/>
+										<FileThumbnail file={file} />
 									</span>
 
 									{/* Filename */}
-									<span className="text-[13px] font-medium text-[var(--theme-text-primary)] overflow-hidden text-ellipsis whitespace-nowrap pr-3 min-w-0">
+									<a
+										href={file.webViewLink}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-[13px] font-medium text-[var(--theme-text-primary)] overflow-hidden text-ellipsis whitespace-nowrap pr-3 min-w-0"
+									>
 										{file.name}
-									</span>
+									</a>
 
 									{/* Size */}
 									<span
