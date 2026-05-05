@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Clock, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DeleteModal } from "../components/DeleteModal";
 import { useTheme } from "../context/ThemeContext";
 import { useFileListState } from "../hooks/useFileListState";
@@ -10,7 +10,7 @@ import { formatBytes, formatDate } from "../lib/formatters";
 import { getTypeStyle } from "../lib/mimeStyles";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
-import { MimeIcon } from "../components/FileThumbnail";
+import { FileThumbnail } from "../components/FileThumbnail";
 
 export type OldSortType = "date" | "name" | "size";
 
@@ -42,6 +42,8 @@ function RouteComponent() {
 	const navigate = useNavigate();
 	const { theme } = useTheme();
 	const scanResult = useScanStore((s) => s.scanResults);
+
+	const [_showPlayer, setShowPlayer] = useState(false);
 
 	const files = useScanStore((s) => s.scanResults?.oldFiles ?? []);
 
@@ -260,6 +262,10 @@ function RouteComponent() {
 							const rank = ageRankMap.get(file.id) ?? 0;
 							const isSelected = selected.has(file.id);
 
+							const isMedia =
+								file.mimeType.startsWith("audio/") ||
+								file.mimeType.startsWith("video/");
+
 							return (
 								<div
 									key={file.id}
@@ -292,9 +298,11 @@ function RouteComponent() {
 
 									{/* Type badge */}
 									<span className="inline-block px-[6px] py-[2px] rounded-sm font-barlow-condensed font-bold text-[10px] tracking-[0.04em] uppercase w-fit">
-										<MimeIcon
-											mimeType={file.mimeType ?? ""}
-											className="shrink-0"
+										<FileThumbnail
+											file={file}
+											onPreviewClick={
+												isMedia ? () => setShowPlayer(true) : undefined
+											}
 										/>
 									</span>
 									<a
