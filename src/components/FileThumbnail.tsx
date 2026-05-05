@@ -72,18 +72,15 @@ export function FileThumbnail({ file, onPreviewClick }: FileThumbnailProps) {
 				ReactDOM.createPortal(
 					<div
 						style={{
-							position: "fixed",
 							top: popupPos.top,
 							left: popupPos.left,
-							transform: "translateY(-100%)",
-							zIndex: 9999,
 						}}
-						className="bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] rounded-lg overflow-hidden p-2 pointer-events-none shadow-[var(--theme-card-shadow)]"
+						className="fixed -translate-y-full z-[9999] bg-[var(--theme-card-bg)] border border-[var(--theme-card-border)] rounded-lg overflow-hidden p-2 pointer-events-none shadow-[var(--theme-card-shadow)]"
 					>
 						<img
 							src={file.thumbnailLink ?? ""}
 							alt={file.name}
-							className="max-w-[280px] max-h-[280px] object-contain block rounded"
+							className="max-w-[280px] max-h-[280px] object-contain block rounded mx-auto"
 						/>
 						<p className="text-[11px] font-barlow text-[var(--theme-path-text)] text-center mt-1.5 px-1 w-[280px] truncate tracking-[0.04em]">
 							{file.name}
