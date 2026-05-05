@@ -1,26 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BarChart2, HardDrive, InfoIcon, SearchIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { BarChart2, InfoIcon, SearchIcon } from "lucide-react";
+import { useMemo } from "react";
 import { DeleteModal } from "../components/DeleteModal";
-import { useTheme } from "../context/ThemeContext";
 import { useFileListState } from "../hooks/useFileListState";
 import { cn } from "../lib/cn";
 import { LARGE_FILES_LIMIT } from "../lib/deduplicator";
 import { formatBytes, formatDate } from "../lib/formatters";
-import { getTypeStyle } from "../lib/mimeStyles";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
-import { FileThumbnail, MimeIcon } from "../components/FileThumbnail";
+import { Table } from "../components/table";
 
-export type LargeSortType = "size" | "name" | "date";
+type LargeSortType = "size" | "name" | "date";
 
-export const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
+const LARGE_SORT_TABS: { key: LargeSortType; label: string }[] = [
 	{ key: "size", label: "FILE SIZE" },
 	{ key: "name", label: "NAME" },
 	{ key: "date", label: "DATE MODIFIED" },
 ];
 
-export const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px";
+const TABLE_COL_TEMPLATE = "28px 36px 56px 1fr 72px 100px";
 
 export const Route = createFileRoute("/large-files")({
 	component: RouteComponent,
@@ -40,10 +38,10 @@ function sortLargeFiles(files: FileRecord[], sort: LargeSortType): FileRecord[] 
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { theme } = useTheme();
-	const scanResult = useScanStore((s) => s.scanResults);
-	const files = useScanStore((s) => s.scanResults?.largeFiles ?? []);
-	const [_showPlayer, setShowPlayer] = useState(false);
+	const { files, hasScanned } = useScanStore((s) => ({
+		files: s.scanResults?.largeFiles ?? [],
+		hasScanned: s.scanResults !== null,
+	}));
 
 	const {
 		selected,
@@ -54,29 +52,28 @@ function RouteComponent() {
 		showModal,
 		setShowModal,
 		successMessage,
-		errorMessage: _errorMessage,
+		errorMessage,
 		visibleFiles,
-		allVisibleSelected,
 		selectedFiles,
 		totalSelectedBytes,
 		hasSelection,
-		toggleSelect,
-		toggleSelectAll,
 		handleConfirmDelete,
 		isPending,
+		allVisibleSelected,
+		toggleSelect,
+		toggleSelectAll,
 	} = useFileListState<LargeSortType>({
 		files,
 		defaultSort: "size",
 		sortFn: sortLargeFiles,
 	});
 
-	const sizeRankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
 	const combinedBytes = useMemo(
 		() => files.reduce((totalBytes, file) => totalBytes + (file.size ?? 0), 0),
 		[files],
 	);
 
-	if (!scanResult) {
+	if (!hasScanned) {
 		return (
 			<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">
 				<div className="px-6 py-[14px] flex items-center gap-[10px] bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-border)] shrink-0">
@@ -154,6 +151,15 @@ function RouteComponent() {
 				</div>
 			)}
 
+			{/* ── Error banner ── */}
+			{errorMessage && (
+				<div className="px-6 py-[10px] border-b border-[var(--theme-border)] flex items-center justify-between gap-4 bg-[var(--theme-topbar-bg)] shrink-0">
+					<p className="text-[12px] font-semibold text-[var(--theme-delete-btn-active-bg)] font-barlow tracking-[0.04em]">
+						{errorMessage}
+					</p>
+				</div>
+			)}
+
 			{/* ── Sort / filter bar ── */}
 			<div className="h-[40px] px-6 flex items-center justify-between bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-border)] shrink-0">
 				<div className="flex items-center h-full">
@@ -191,133 +197,32 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<div className="px-8 py-4 flex flex-col items-center justify-between overflow-auto">
-				{/* ── Table header ── */}
-				<div
-					className={cn(
-						"px-5 py-[10px] border border-[var(--theme-card-border)] bg-[var(--theme-expanded-bg)] rounded-t-[10px] w-full shrink-0",
-					)}
-					style={{
-						display: "grid",
-						gridTemplateColumns: TABLE_COL_TEMPLATE,
-						alignItems: "center",
-						width: "100%",
-					}}
-				>
-					<div>
-						<input
-							type="checkbox"
-							checked={allVisibleSelected}
-							onChange={toggleSelectAll}
-							aria-label="Select all visible files"
-						/>
-					</div>
-					{(["RANK", "TYPE", "FILENAME", "SIZE", "MODIFIED"] as const).map((label) => (
+			{/* Table */}
+			<Table
+				files={files}
+				visibleFiles={visibleFiles}
+				selected={selected}
+				allVisibleSelected={allVisibleSelected}
+				toggleSelect={toggleSelect}
+				toggleSelectAll={toggleSelectAll}
+				tableHeaderLabels={["RANK", "TYPE", "FILENAME", "SIZE", "MODIFIED"]}
+				colTemplate={TABLE_COL_TEMPLATE}
+				renderMetricCols={(file, typeStyle) => (
+					<>
 						<span
-							key={label}
-							className="text-[9px] font-bold tracking-[0.08em] uppercase text-[var(--theme-date-text)]"
+							className="text-left text-[13px] font-bold font-barlow-condensed"
+							style={{ color: typeStyle.text }}
 						>
-							{label}
+							{formatBytes(file.size ?? 0)}
 						</span>
-					))}
-				</div>
-				{/* ── Table body ── */}
-				<div
-					className={cn(
-						"flex-1 overflow-y-auto w-full",
-						"border border-t-0 border-[var(--theme-card-border)] rounded-b-[10px] px-4 pb-4 pt-3 bg-[var(--theme-card-bg)]",
-					)}
-				>
-					{files.length === 0 ? (
-						<div className="h-full flex flex-col items-center justify-center gap-3">
-							<HardDrive size={40} className="text-[var(--theme-file-icon-color)]" />
-							<p className="text-[16px] font-semibold text-[var(--theme-text-secondary)]">
-								No large files found
-							</p>
-							<p className="text-[13px] text-[var(--theme-path-text)]">
-								Your {LARGE_FILES_LIMIT} largest Google Drive files will appear
-								here.
-							</p>
-						</div>
-					) : visibleFiles.length === 0 ? (
-						<div className="flex items-center justify-center p-16">
-							<p className="text-[12px] font-semibold text-[var(--theme-text-secondary)] font-barlow tracking-[0.06em] uppercase">
-								No results — adjust search
-							</p>
-						</div>
-					) : (
-						visibleFiles.map((file) => {
-							const typeStyle = getTypeStyle(file.mimeType, theme);
-							const rank = sizeRankMap.get(file.id) ?? 0;
-							const isSelected = selected.has(file.id);
-
-							const isMedia =
-								file.mimeType.startsWith("audio/") ||
-								file.mimeType.startsWith("video/");
-
-							return (
-								<div
-									key={file.id}
-									className="py-[8px] border-b border-[var(--theme-file-row-border)] row-hover transition-colors duration-100"
-									style={{
-										width: "100%",
-										display: "grid",
-										gridTemplateColumns: TABLE_COL_TEMPLATE,
-										alignItems: "center",
-										background: isSelected
-											? "var(--theme-file-sel-bg)"
-											: undefined,
-									}}
-								>
-									{/* Checkbox */}
-									<input
-										type="checkbox"
-										checked={isSelected}
-										onChange={() => toggleSelect(file.id)}
-										aria-label={`Select ${file.name}`}
-									/>
-
-									{/* Rank */}
-									<span
-										className="font-barlow-condensed font-extrabold text-[13px]"
-										style={{ color: typeStyle.text }}
-									>
-										#{rank}
-									</span>
-
-									{/* Type badge */}
-									<span className="inline-block px-[6px] py-[2px] rounded-sm font-barlow-condensed font-bold text-[10px] tracking-[0.04em] uppercase w-fit">
-										<FileThumbnail file={file} />
-									</span>
-
-									{/* Filename */}
-									<a
-										href={file.webViewLink}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="text-[13px] font-medium text-[var(--theme-text-primary)] overflow-hidden text-ellipsis whitespace-nowrap pr-3 min-w-0"
-									>
-										{file.name}
-									</a>
-
-									{/* Size */}
-									<span
-										className="text-left text-[13px] font-bold font-barlow-condensed"
-										style={{ color: typeStyle.text }}
-									>
-										{formatBytes(file.size ?? 0)}
-									</span>
-
-									{/* Date */}
-									<span className="text-[11px] text-[var(--theme-path-text)] text-left">
-										{formatDate(file.modifiedTime)}
-									</span>
-								</div>
-							);
-						})
-					)}
-				</div>
-			</div>
+						<span className="text-[11px] text-[var(--theme-path-text)] text-left">
+							{formatDate(file.modifiedTime)}
+						</span>
+					</>
+				)}
+				emptyTitle="No large files found"
+				emptyDescription={`Your ${LARGE_FILES_LIMIT} largest Google Drive files will appear here.`}
+			/>
 
 			<div className="flex items-center justify-center gap-[6px] mb-5">
 				<InfoIcon size={11} className="text-[var(--theme-date-text)]" />
