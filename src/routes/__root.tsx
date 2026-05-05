@@ -23,9 +23,8 @@ const NAV_ITEMS: Array<{ label: string; filter?: string; to?: NavigationPath }> 
 	{ label: "SAME FOLDER", to: "/same-folder" },
 	{ label: "LARGE", to: "/large-files" },
 	{ label: "OLD", to: "/old-files" },
-	{ label: "NOT OWNED BY ME", filter: "not-owned" },
-	{ label: "TYPE", filter: "type" },
 	{ label: "ALL FILES", filter: "all-files" },
+	{ label: "Browse by File Groups", filter: "Browse by File Groups" },
 ];
 
 const sidebarLinkClass =
