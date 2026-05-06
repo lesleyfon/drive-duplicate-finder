@@ -9,6 +9,7 @@ import { formatBytes, formatDate } from "../lib/formatters";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
 import { Table } from "../components/table";
+import { NoResult } from "../components/no-result";
 
 type LargeSortType = "size" | "name" | "date";
 
@@ -38,10 +39,9 @@ function sortLargeFiles(files: FileRecord[], sort: LargeSortType): FileRecord[] 
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { files, hasScanned } = useScanStore((s) => ({
-		files: s.scanResults?.largeFiles ?? [],
-		hasScanned: s.scanResults !== null,
-	}));
+	const scanResults = useScanStore((s) => s.scanResults);
+	const hasScanned = scanResults !== null;
+	const files = scanResults?.largeFiles ?? [];
 
 	const {
 		selected,
@@ -74,28 +74,7 @@ function RouteComponent() {
 	);
 
 	if (!hasScanned) {
-		return (
-			<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">
-				<div className="px-6 py-[14px] flex items-center gap-[10px] bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-border)] shrink-0">
-					<BarChart2 size={18} className="text-[var(--theme-accent)]" />
-					<span className="font-barlow-condensed font-extrabold text-[20px] uppercase tracking-[0.04em] text-[var(--theme-sidebar-active)]">
-						Large Files
-					</span>
-				</div>
-				<div className="flex-1 flex flex-col items-center justify-center gap-4">
-					<p className="text-[11px] font-bold text-[var(--theme-text-secondary)] tracking-[0.08em] uppercase font-barlow">
-						No scan data — run a scan first
-					</p>
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/dashboard" })}
-						className="px-5 py-2 rounded bg-[var(--theme-accent)] text-white text-[12px] font-bold tracking-[0.06em] uppercase font-barlow border-none cursor-pointer"
-					>
-						Back to Dashboard
-					</button>
-				</div>
-			</div>
-		);
+		return <NoResult title="Large Files" description="No scan data — run a scan first" />;
 	}
 
 	return (

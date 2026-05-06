@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Clock, InfoIcon, SearchIcon } from "lucide-react";
 import { useMemo } from "react";
 import { DeleteModal } from "../components/DeleteModal";
@@ -9,6 +9,7 @@ import { formatBytes, formatDate } from "../lib/formatters";
 import { useScanStore } from "../store/scanStore";
 import type { FileRecord } from "../types/drive";
 import { Table } from "../components/table";
+import { NoResult } from "../components/no-result";
 
 export type OldSortType = "date" | "name" | "size";
 
@@ -37,11 +38,9 @@ function sortOldFiles(files: FileRecord[], sort: OldSortType): FileRecord[] {
 }
 
 function RouteComponent() {
-	const navigate = useNavigate();
-	const { files, hasScanned } = useScanStore((s) => ({
-		files: s.scanResults?.oldFiles ?? [],
-		hasScanned: s.scanResults !== null,
-	}));
+	const scanResults = useScanStore((s) => s.scanResults);
+	const files = scanResults?.oldFiles ?? [];
+	const hasScanned = scanResults !== null;
 
 	const {
 		selected,
@@ -74,28 +73,7 @@ function RouteComponent() {
 	);
 
 	if (!hasScanned) {
-		return (
-			<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">
-				<div className="px-6 py-[14px] flex items-center gap-[10px] bg-[var(--theme-topbar-bg)] border-b border-[var(--theme-border)] shrink-0">
-					<Clock size={18} className="text-[var(--theme-accent)]" />
-					<span className="font-barlow-condensed font-extrabold text-[20px] uppercase tracking-[0.04em] text-[var(--theme-sidebar-active)]">
-						Old Files
-					</span>
-				</div>
-				<div className="flex-1 flex flex-col items-center justify-center gap-4">
-					<p className="text-[11px] font-bold text-[var(--theme-text-secondary)] tracking-[0.08em] uppercase font-barlow">
-						No scan data — run a scan first
-					</p>
-					<button
-						type="button"
-						onClick={() => navigate({ to: "/dashboard" })}
-						className="px-5 py-2 rounded bg-[var(--theme-accent)] text-white text-[12px] font-bold tracking-[0.06em] uppercase font-barlow border-none cursor-pointer"
-					>
-						Back to Dashboard
-					</button>
-				</div>
-			</div>
-		);
+		return <NoResult title="Old Files" description="No scan data — run a scan first" />;
 	}
 
 	return (
