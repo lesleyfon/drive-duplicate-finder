@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrashRouteImport } from './routes/trash'
 import { Route as ScanRouteImport } from './routes/scan'
 import { Route as SameFolderRouteImport } from './routes/same-folder'
 import { Route as ResultsRouteImport } from './routes/results'
@@ -17,6 +18,11 @@ import { Route as LargeFilesRouteImport } from './routes/large-files'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrashRoute = TrashRouteImport.update({
+  id: '/trash',
+  path: '/trash',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScanRoute = ScanRouteImport.update({
   id: '/scan',
   path: '/scan',
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/results': typeof ResultsRoute
   '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/results': typeof ResultsRoute
   '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/results': typeof ResultsRoute
   '/same-folder': typeof SameFolderRoute
   '/scan': typeof ScanRoute
+  '/trash': typeof TrashRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/same-folder'
     | '/scan'
+    | '/trash'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/same-folder'
     | '/scan'
+    | '/trash'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/same-folder'
     | '/scan'
+    | '/trash'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,10 +131,18 @@ export interface RootRouteChildren {
   ResultsRoute: typeof ResultsRoute
   SameFolderRoute: typeof SameFolderRoute
   ScanRoute: typeof ScanRoute
+  TrashRoute: typeof TrashRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trash': {
+      id: '/trash'
+      path: '/trash'
+      fullPath: '/trash'
+      preLoaderRoute: typeof TrashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/scan': {
       id: '/scan'
       path: '/scan'
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultsRoute: ResultsRoute,
   SameFolderRoute: SameFolderRoute,
   ScanRoute: ScanRoute,
+  TrashRoute: TrashRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
