@@ -8,6 +8,7 @@ import { cn } from "../lib/cn";
 import { formatBytes, formatPercent } from "../lib/formatters";
 import { clearScanCache, readScanCache } from "../lib/scanCache";
 import { useScanStore } from "../store/scanStore";
+import { clearTrashCache } from "../lib/trashCache";
 
 export const Route = createFileRoute("/dashboard")({
 	component: DashboardPage,
@@ -60,6 +61,7 @@ function DashboardPage() {
 
 	const handleForceScan = () => {
 		clearScanCache();
+		clearTrashCache();
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
 		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });
@@ -195,7 +197,12 @@ function DashboardPage() {
 
 				{/* Bottom Grid */}
 				<div className="grid gap-4 grid-cols-[1fr_1.6fr]">
-					<QuickScanCard scanResults={scanResults} onStartScan={handleStartScan} onForceScan={handleForceScan} showForceRescan={hasCache} />
+					<QuickScanCard
+						scanResults={scanResults}
+						onStartScan={handleStartScan}
+						onForceScan={handleForceScan}
+						showForceRescan={hasCache}
+					/>
 					<RecentFileActivity scanResults={scanResults} />
 				</div>
 			</div>
