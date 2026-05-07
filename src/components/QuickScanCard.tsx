@@ -5,9 +5,11 @@ import type { ScanResult } from "../types/drive";
 interface Props {
 	scanResults: ScanResult | null;
 	onStartScan: () => void;
+	onForceScan: () => void;
+	showForceRescan: boolean;
 }
 
-export function QuickScanCard({ scanResults, onStartScan }: Props) {
+export function QuickScanCard({ scanResults, onStartScan, onForceScan, showForceRescan }: Props) {
 	// TODO: verify duplicate count — should equal total excess files across all groups
 	const duplicateCount = scanResults
 		? scanResults.duplicateGroups.reduce((n, g) => n + g.files.length - 1, 0)
@@ -19,7 +21,7 @@ export function QuickScanCard({ scanResults, onStartScan }: Props) {
 			<div className="flex items-start justify-between mb-3">
 				<div className="flex-1 mr-3">
 					<h2 className="font-barlow-condensed font-black uppercase tracking-[0.1em] mb-2 text-[13px] text-[var(--theme-accent)]">
-						QUICK SCAN V2
+						QUICK SCAN
 					</h2>
 					<p className="text-[12px] leading-relaxed text-[var(--theme-text-secondary)] max-w-[220px]">
 						Locate duplicate assets, temporary data, and abandoned clusters in your
@@ -68,6 +70,15 @@ export function QuickScanCard({ scanResults, onStartScan }: Props) {
 				<RefreshCw size={14} />
 				{scanResults ? "RE-EXECUTE SCAN" : "EXECUTE SCAN"}
 			</button>
+			{showForceRescan && (
+				<button
+					type="button"
+					onClick={onForceScan}
+					className="w-full text-center font-barlow-condensed font-bold uppercase text-[10px] tracking-[0.1em] text-[var(--theme-text-dim)] hover:text-[var(--theme-text-secondary)] transition-colors py-1 cursor-pointer bg-transparent border-none"
+				>
+					FORCE FULL RESCAN
+				</button>
+			)}
 		</div>
 	);
 }

@@ -1,3 +1,6 @@
+import { formatRelativeTime } from "../lib/formatters";
+import { useScanStore } from "../store/scanStore";
+
 interface ScanProgressProps {
 	totalFiles: number;
 	isComplete: boolean;
@@ -5,11 +8,20 @@ interface ScanProgressProps {
 }
 
 export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgressProps) {
+	const scanMode = useScanStore((s) => s.scanMode);
+	const cachedAt = useScanStore((s) => s.cachedAt);
+
+	const isIncremental = scanMode === "incremental";
+
+	const headline = isComplete
+		? "SCAN COMPLETE"
+		: isIncremental
+			? `INCREMENTAL SCAN — cached ${cachedAt ? formatRelativeTime(cachedAt) : "recently"}`
+			: "SCAN IN PROGRESS";
+
 	return (
 		<div className="flex flex-col items-center gap-6">
-			<h2 className="text-md uppercase tracking-widest text-text-primary">
-				{isComplete ? "SCAN COMPLETE" : "SCAN IN PROGRESS"}
-			</h2>
+			<h2 className="text-md uppercase tracking-widest text-text-primary">{headline}</h2>
 
 			<div className="w-full h-1 bg-surface-high border border-border-dim overflow-hidden relative">
 				{isComplete ? (
@@ -26,10 +38,14 @@ export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgres
 						<span className="text-status-ok">{totalFiles.toLocaleString()}</span>
 					</>
 				) : isFetching ? (
-					<>
-						OBJECTS PARSED:{" "}
-						<span className="text-text-primary">{totalFiles.toLocaleString()}</span>
-					</>
+					isIncremental ? (
+						"FETCHING CHANGES ONLY…"
+					) : (
+						<>
+							OBJECTS PARSED:{" "}
+							<span className="text-text-primary">{totalFiles.toLocaleString()}</span>
+						</>
+					)
 				) : (
 					"INITIALIZING..."
 				)}
