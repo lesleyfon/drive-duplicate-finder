@@ -38,7 +38,6 @@ function sortLargeFiles(files: FileRecord[], sort: LargeSortType): FileRecord[] 
 }
 
 function RouteComponent() {
-	const navigate = useNavigate();
 	const scanResults = useScanStore((s) => s.scanResults);
 	const hasScanned = scanResults !== null;
 	const files = scanResults?.largeFiles ?? [];
