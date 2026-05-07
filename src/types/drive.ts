@@ -13,6 +13,7 @@ export interface FileRecord {
 	thumbnailLink: string | null;
 	fullFileExtension: string | null;
 	trashed: boolean;
+	trashedTime?: string;
 }
 
 export type ConfidenceLevel = "exact" | "likely" | "version";
