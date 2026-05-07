@@ -1,11 +1,13 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useStorageQuota } from "../hooks/useStorageQuota";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+
 import { QuickScanCard } from "../components/QuickScanCard";
 import { RecentFileActivity } from "../components/RecentFileActivity";
-import { formatBytes, formatPercent } from "../lib/formatters";
-import { useScanStore } from "../store/scanStore";
+import { useStorageQuota } from "../hooks/useStorageQuota";
 import { cn } from "../lib/cn";
+import { formatBytes, formatPercent } from "../lib/formatters";
+import { clearScanCache, readScanCache } from "../lib/scanCache";
+import { useScanStore } from "../store/scanStore";
 
 export const Route = createFileRoute("/dashboard")({
 	component: DashboardPage,
@@ -48,8 +50,16 @@ function DashboardPage() {
 	const queryClient = useQueryClient();
 	const { data: quota } = useStorageQuota();
 	const scanResults = useScanStore((s) => s.scanResults);
+	const hasCache = readScanCache() !== null;
 
 	const handleStartScan = () => {
+		queryClient.removeQueries({ queryKey: ["scanFiles"] });
+		useScanStore.getState().resetScan();
+		navigate({ to: "/scan" });
+	};
+
+	const handleForceScan = () => {
+		clearScanCache();
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
 		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });
@@ -185,7 +195,7 @@ function DashboardPage() {
 
 				{/* Bottom Grid */}
 				<div className="grid gap-4 grid-cols-[1fr_1.6fr]">
-					<QuickScanCard scanResults={scanResults} onStartScan={handleStartScan} />
+					<QuickScanCard scanResults={scanResults} onStartScan={handleStartScan} onForceScan={handleForceScan} showForceRescan={hasCache} />
 					<RecentFileActivity scanResults={scanResults} />
 				</div>
 			</div>

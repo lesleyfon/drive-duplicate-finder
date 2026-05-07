@@ -8,6 +8,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
 import { cn } from "../lib/cn";
 import { getFolderName } from "../lib/driveApi";
+import { clearScanCache } from "../lib/scanCache";
 import { formatBytes, formatDate } from "../lib/formatters";
 import { useScanStore } from "../store/scanStore";
 import type { DuplicateGroup, FileRecord, SameFolderGroup } from "../types/drive";
@@ -160,6 +161,7 @@ function SameFolderPage() {
 	};
 
 	const handleNewScan = () => {
+		clearScanCache();
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
 		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });

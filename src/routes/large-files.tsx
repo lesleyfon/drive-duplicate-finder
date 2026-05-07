@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { BarChart2, InfoIcon, SearchIcon } from "lucide-react";
 import { useMemo } from "react";
 import { DeleteModal } from "../components/DeleteModal";

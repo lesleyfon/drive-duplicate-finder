@@ -29,7 +29,7 @@ function ScanPage() {
 	}, [storeStatus, navigate]);
 
 	useEffect(() => {
-		if (isError && "status" in error && error.status === 401) {
+		if (isError && error && "status" in error && error.status === 401) {
 			signOut();
 			navigate({ to: "/" });
 		}

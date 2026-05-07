@@ -7,6 +7,7 @@ import { DuplicateGroupCard } from "../components/DuplicateGroupCard";
 import { useDeleteFiles } from "../hooks/useDeleteFiles";
 import { cn } from "../lib/cn";
 import { formatBytes } from "../lib/formatters";
+import { clearScanCache } from "../lib/scanCache";
 import { useScanStore } from "../store/scanStore";
 import type { DuplicateGroup, FileRecord } from "../types/drive";
 import { NoResult } from "../components/no-result";
@@ -124,6 +125,7 @@ function DuplicatesView() {
 	};
 
 	const handleNewScan = () => {
+		clearScanCache();
 		queryClient.removeQueries({ queryKey: ["scanFiles"] });
 		useScanStore.getState().resetScan();
 		navigate({ to: "/scan" });
