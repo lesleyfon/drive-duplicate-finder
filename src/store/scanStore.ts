@@ -14,6 +14,8 @@ interface ScanState {
 	totalFiles: number;
 	scanResults: ScanResult | null;
 	errorMessage: string | null;
+	scanMode: "full" | "incremental" | null;
+	cachedAt: string | null;
 
 	startScan: () => void;
 	updateProgress: (totalFiles: number) => void;
@@ -21,6 +23,8 @@ interface ScanState {
 	setScanError: (error: Error) => void;
 	resetScan: () => void;
 	removeFiles: (fileIds: string[]) => void;
+	setScanMode: (mode: "full" | "incremental") => void;
+	setCachedAt: (ts: string) => void;
 }
 
 interface SerializedDuplicateGroup
@@ -162,6 +166,8 @@ const initialState = {
 	totalFiles: 0,
 	scanResults: null,
 	errorMessage: null,
+	scanMode: null as "full" | "incremental" | null,
+	cachedAt: null as string | null,
 };
 
 export const useScanStore = create<ScanState>()(
@@ -175,6 +181,8 @@ export const useScanStore = create<ScanState>()(
 					scanResults: null,
 					totalFiles: 0,
 					errorMessage: null,
+					scanMode: null,
+					cachedAt: null,
 				}),
 
 			updateProgress: (totalFiles) => set({ totalFiles }),
@@ -190,6 +198,10 @@ export const useScanStore = create<ScanState>()(
 				set({ status: "error", errorMessage: error.message }),
 
 			resetScan: () => set(initialState),
+
+			setScanMode: (mode) => set({ scanMode: mode }),
+
+			setCachedAt: (ts) => set({ cachedAt: ts }),
 
 			removeFiles: (fileIds) => {
 				const { scanResults } = get();
