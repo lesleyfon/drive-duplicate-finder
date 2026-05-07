@@ -7,6 +7,23 @@ function authHeaders(token: string) {
 	return { Authorization: `Bearer ${token}` };
 }
 
+const mapFileRecord = (f: Partial<FileRecord>) => ({
+	id: f.id ?? "",
+	name: f.name ?? "",
+	mimeType: f.mimeType ?? "",
+	size: f.size != null ? Number(f.size) : null,
+	md5Checksum: f.md5Checksum ?? null,
+	createdTime: f.createdTime ?? "",
+	modifiedTime: f.modifiedTime ?? "",
+	owners: f.owners ?? [],
+	parents: f.parents ?? [],
+	webViewLink: f.webViewLink ?? "",
+	thumbnailLink: f.thumbnailLink ?? null,
+	fullFileExtension: f.fullFileExtension ?? null,
+	trashed: f.trashed ?? true,
+	trashedTime: f?.trashedTime,
+});
+
 async function handleResponse<T>(res: Response): Promise<T> {
 	if (!res.ok) {
 		const body = await res.json().catch(() => ({}));
@@ -42,15 +59,27 @@ export interface FilePage {
 	nextPageToken?: string;
 }
 
+// Drive API requires RFC 3339 without milliseconds for modifiedTime comparisons
+function toRFC3339NoMs(iso: string): string {
+	return iso.replace(/\.\d+Z$/, "Z");
+}
+
 export async function listFilesPage(
 	token: string,
 	pageToken?: string,
+	folderId?: string, // preparation for issue 04 (folder-scoped scanning) — unused for now
+	modifiedSince?: string,
 ): Promise<FilePage> {
+	const qParts = ["trashed=false"];
+	if (folderId) qParts.push(`'${folderId}' in parents`);
+	if (modifiedSince)
+		qParts.push(`modifiedTime > '${toRFC3339NoMs(modifiedSince)}'`);
+
 	const params = new URLSearchParams({
 		pageSize: "1000",
 		fields:
 			"nextPageToken,files(id,name,mimeType,size,md5Checksum,createdTime,modifiedTime,owners,parents,webViewLink,thumbnailLink,fullFileExtension,trashed)",
-		q: "trashed=false",
+		q: qParts.join(" and "),
 		supportsAllDrives: "true",
 		includeItemsFromAllDrives: "true",
 	});
@@ -66,21 +95,43 @@ export async function listFilesPage(
 
 	const files: FileRecord[] = data.files
 		.filter((f) => f.owners?.some((o) => o.me)) // Only include files owned by the user, to avoid duplicates and permission issues
-		.map((f) => ({
-			id: f.id ?? "",
-			name: f.name ?? "",
-			mimeType: f.mimeType ?? "",
-			size: f.size != null ? Number(f.size) : null,
-			md5Checksum: f.md5Checksum ?? null,
-			createdTime: f.createdTime ?? "",
-			modifiedTime: f.modifiedTime ?? "",
-			owners: f.owners ?? [],
-			parents: f.parents ?? [],
-			webViewLink: f.webViewLink ?? "",
-			thumbnailLink: f.thumbnailLink ?? null,
-			fullFileExtension: f.fullFileExtension ?? null,
-			trashed: f.trashed ?? false,
-		}));
+		.map(mapFileRecord);
+
+	return { files, nextPageToken: data.nextPageToken };
+}
+
+// 6.2a — List files modified since a given time (for incremental scan deletion detection)
+// NOTE (v1 limitation): filters by modifiedTime, not by trash action time. A file trashed
+// without recent edits will have an old modifiedTime and won't appear in incremental scans.
+export async function listRecentlyTrashedPage(
+	token: string,
+	since: string,
+	pageToken?: string,
+): Promise<FilePage> {
+	const qParts = ["trashed=true"];
+	if (since) qParts.push(`modifiedTime > '${toRFC3339NoMs(since)}'`);
+
+	const params = new URLSearchParams({
+		pageSize: "1000",
+		fields:
+			"nextPageToken,files(id,name,mimeType,size,md5Checksum,createdTime,modifiedTime,owners,parents,webViewLink,thumbnailLink,fullFileExtension,trashed)",
+		q: qParts.join(" and "),
+		supportsAllDrives: "true",
+		includeItemsFromAllDrives: "true",
+	});
+	if (pageToken) params.set("pageToken", pageToken);
+
+	const res = await fetch(`${BASE}/files?${params}`, {
+		headers: authHeaders(token),
+	});
+	const data = await handleResponse<{
+		files: Partial<FileRecord>[];
+		nextPageToken?: string;
+	}>(res);
+
+	const files: FileRecord[] = data.files
+		.filter((f) => f.owners?.some((o) => o.me))
+		.map(mapFileRecord);
 
 	return { files, nextPageToken: data.nextPageToken };
 }
@@ -193,22 +244,7 @@ export async function listTrashedFilesPage(
 
 	const files: FileRecord[] = data.files
 		.filter((f) => f.owners?.some((o) => o.me))
-		.map((f) => ({
-			id: f.id ?? "",
-			name: f.name ?? "",
-			mimeType: f.mimeType ?? "",
-			size: f.size != null ? Number(f.size) : null,
-			md5Checksum: f.md5Checksum ?? null,
-			createdTime: f.createdTime ?? "",
-			modifiedTime: f.modifiedTime ?? "",
-			owners: f.owners ?? [],
-			parents: f.parents ?? [],
-			webViewLink: f.webViewLink ?? "",
-			thumbnailLink: f.thumbnailLink ?? null,
-			fullFileExtension: f.fullFileExtension ?? null,
-			trashed: f.trashed ?? true,
-			trashedTime: f.trashedTime ?? undefined,
-		}));
+		.map(mapFileRecord);
 
 	return {
 		files: files,
