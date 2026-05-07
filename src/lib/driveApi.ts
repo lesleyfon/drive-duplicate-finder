@@ -1,6 +1,7 @@
 import type { FileRecord } from "../types/drive";
 
 const BASE = "https://www.googleapis.com/drive/v3";
+const ACTIVITY_BASE = "https://driveactivity.googleapis.com/v2";
 
 function authHeaders(token: string) {
 	return { Authorization: `Bearer ${token}` };
@@ -97,7 +98,141 @@ export async function trashFile(token: string, fileId: string): Promise<void> {
 	await handleResponse<unknown>(res);
 }
 
-// 6.4 — Get folder name
+async function getTrashedTime(
+	token: string,
+	fileId: string,
+): Promise<string | undefined> {
+	try {
+		const res = await fetch(`${ACTIVITY_BASE}/activity:query`, {
+			method: "POST",
+			headers: {
+				...authHeaders(token),
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				itemName: `items/${fileId}`,
+				filter: "detail.action_detail_case:DELETE",
+			}),
+		});
+
+		if (!res.ok) return undefined;
+
+		const data = await res.json();
+		const activities: any[] = data.activities ?? [];
+
+		// Find the most recent TRASH action (array comes back newest-first)
+		const trashActivity = activities.find(
+			(a) => a.primaryActionDetail?.delete?.type === "TRASH",
+		);
+
+		if (!trashActivity) return undefined;
+
+		return trashActivity.timestamp ?? trashActivity.timeRange?.endTime;
+	} catch {
+		return undefined;
+	}
+}
+
+export async function enrichWithTrashedTimes(
+	token: string,
+	files: FileRecord[],
+	concurrency = 10,
+): Promise<FileRecord[]> {
+	const trashedMap = new Map<string, string | undefined>();
+
+	// Process in chunks to respect rate limits
+	for (let i = 0; i < files.length; i += concurrency) {
+		const chunk = files.slice(i, i + concurrency);
+		const results = await Promise.allSettled(
+			chunk.map((f) =>
+				getTrashedTime(token, f.id).then((t) => ({ id: f.id, trashedTime: t })),
+			),
+		);
+
+		for (const result of results) {
+			if (result.status === "fulfilled") {
+				trashedMap.set(result.value.id, result.value.trashedTime);
+			}
+		}
+	}
+
+	return files.map((f) => ({
+		...f,
+		trashedTime: trashedMap.get(f.id) ?? f.trashedTime,
+	}));
+}
+
+// 6.4 — List trashed files page
+export interface TrashedFilePage {
+	files: FileRecord[];
+	nextPageToken?: string;
+}
+export async function listTrashedFilesPage(
+	token: string,
+	pageToken?: string,
+): Promise<TrashedFilePage> {
+	const params = new URLSearchParams({
+		pageSize: "100",
+		fields:
+			"nextPageToken,files(id,name,mimeType,size,md5Checksum,createdTime,modifiedTime,owners,parents,webViewLink,thumbnailLink,fullFileExtension,trashed,trashedTime)",
+		q: "trashed=true",
+		orderBy: "modifiedTime desc",
+		supportsAllDrives: "true",
+		includeItemsFromAllDrives: "true",
+	});
+	if (pageToken) params.set("pageToken", pageToken);
+
+	const res = await fetch(`${BASE}/files?${params}`, {
+		headers: authHeaders(token),
+	});
+
+	const data = await handleResponse<{
+		files: Partial<FileRecord>[];
+		nextPageToken?: string;
+	}>(res);
+
+	const files: FileRecord[] = data.files
+		.filter((f) => f.owners?.some((o) => o.me))
+		.map((f) => ({
+			id: f.id ?? "",
+			name: f.name ?? "",
+			mimeType: f.mimeType ?? "",
+			size: f.size != null ? Number(f.size) : null,
+			md5Checksum: f.md5Checksum ?? null,
+			createdTime: f.createdTime ?? "",
+			modifiedTime: f.modifiedTime ?? "",
+			owners: f.owners ?? [],
+			parents: f.parents ?? [],
+			webViewLink: f.webViewLink ?? "",
+			thumbnailLink: f.thumbnailLink ?? null,
+			fullFileExtension: f.fullFileExtension ?? null,
+			trashed: f.trashed ?? true,
+			trashedTime: f.trashedTime ?? undefined,
+		}));
+
+	return {
+		files: files,
+		nextPageToken: data.nextPageToken,
+	};
+}
+
+// 6.5 — Restore a trashed file
+export async function untrashFile(
+	token: string,
+	fileId: string,
+): Promise<void> {
+	const res = await fetch(`${BASE}/files/${fileId}?supportsAllDrives=true`, {
+		method: "PATCH",
+		headers: {
+			...authHeaders(token),
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ trashed: false }),
+	});
+	await handleResponse<unknown>(res);
+}
+
+// 6.6 — Get folder name
 export async function getFolderName(
 	token: string,
 	folderId: string,
