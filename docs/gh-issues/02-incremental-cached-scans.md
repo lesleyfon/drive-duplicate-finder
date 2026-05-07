@@ -44,17 +44,19 @@ export function writeScanCache(cache: ScanCache): void
 export function clearScanCache(): void
 ```
 
-**Size concern:** A Drive with 10,000 files × ~300 bytes per `FileRecord` ≈ 3 MB. `localStorage` is typically limited to 5–10 MB. If serialization would exceed 4 MB, log a warning and skip caching (fall back to full scan silently). Implement a size check before `setItem`.
+> **Note on `scanScope`:** Folder-scoped scanning (issue 04) is not yet implemented. Until it is, `scanScope` will always be written as `null`. The scope-matching guard in the invalidation rules must still be implemented so the cache correctly invalidates when folder scanning lands.
+
+**Size concern:** A Drive with 10,000 files × ~300 bytes per `FileRecord` ≈ 3 MB. `localStorage` is typically limited to 5–10 MB. If serialization would exceed 4 MB, log a `console.warn` and skip caching (fall back to full scan silently — no UI notification). Implement a size check before `setItem`.
 
 ### 2. Drive API change — `src/lib/driveApi.ts`
 
-Add an optional `modifiedSince` parameter to `listFilesPage`:
+Add optional `folderId` and `modifiedSince` parameters to `listFilesPage`:
 
 ```ts
 export async function listFilesPage(
   token: string,
   pageToken?: string,
-  folderId?: string,
+  folderId?: string,       // preparation for issue 04 (folder-scoped scanning) — unused for now
   modifiedSince?: string,  // ISO timestamp — NEW
 ): Promise<FilePage>
 ```
@@ -87,19 +89,25 @@ Introduce two scan modes controlled by a new `ScanMode` type:
 type ScanMode = "full" | "incremental";
 ```
 
+**React Query restructuring:** The hook currently uses `useInfiniteQuery` for all scanning. The two modes require different fetch strategies, so the hook is restructured as follows:
+
+- **Full mode** continues to use `useInfiniteQuery`, fetching all pages and writing the cache on completion — unchanged from today except for the `writeScanCache` call.
+- **Incremental mode** uses a single `useQuery` whose `queryFn` handles all pagination internally (a plain `while` loop accumulating pages), then returns a merged `FileRecord[]`. This keeps React Query as the state/error/caching layer while avoiding `useInfiniteQuery`'s page-splitting model, which doesn't fit a pre-merged result.
+
+The mode is determined synchronously at hook mount (before any fetch begins) by reading the cache and checking validity. The resolved `ScanMode` is written to the store immediately so the UI can reflect it.
+
 **On scan start:**
 1. Read the cache via `readScanCache()`.
 2. If cache is valid and `scanScope` matches the cached scope → use `"incremental"` mode; set `modifiedSince` to `cache.lastFetchedAt`.
 3. Otherwise → use `"full"` mode.
 
-**During incremental mode:**
-- Fetch only changed files (using `modifiedSince`).
-- Fetch recently trashed files (using `listRecentlyTrashedPage`) to identify deletions.
-- Merge: remove trashed file IDs from the cached list, then upsert (replace by `id`) changed files into the cached list.
+**During incremental mode (`useQuery`):**
+- `queryFn` fetches all changed-file pages (using `modifiedSince`) and all recently-trashed pages in parallel, then returns both lists.
+- After the query succeeds: remove trashed file IDs from the cached list, upsert (replace by `id`) changed files into the cached list.
 - Run `runDeduplication` on the merged list.
 - Write the updated cache via `writeScanCache`.
 
-**During full mode:**
+**During full mode (`useInfiniteQuery`):**
 - Fetch all pages as today.
 - On completion, write the full file list to `writeScanCache`.
 
@@ -148,6 +156,7 @@ The cache must be treated as invalid and a full scan forced when:
 - The cached `files` array is empty.
 - `localStorage` read fails (JSON parse error, quota exceeded, etc.).
 - The user explicitly requests a full rescan.
+- The cache is older than **30 days** (`Date.now() - new Date(lastFetchedAt).getTime() > 30 * 24 * 60 * 60 * 1000`). This ensures permanently deleted files (which `listRecentlyTrashedPage` cannot detect) are eventually reconciled without requiring user action.
 
 ---
 
@@ -167,7 +176,7 @@ The cache must be treated as invalid and a full scan forced when:
 ## Edge Cases
 
 - `localStorage` is unavailable (private browsing, quota exceeded) — catch the error and fall back to full scan silently.
-- File deleted from Drive since last scan but `trashed` flag was not set (e.g. permanent delete via API) — `listRecentlyTrashedPage` won't catch this. Accept this limitation for v1; a full rescan will always correct it.
+- File deleted from Drive since last scan but `trashed` flag was not set (e.g. permanent delete via API) — `listRecentlyTrashedPage` won't catch this. The 30-day cache expiry rule (see §7) acts as a periodic correction; users can also trigger a full rescan manually at any time.
 - Clock skew: if the local clock is significantly behind Drive's server time, `modifiedSince` may miss recent changes. Subtract a 60-second buffer from `lastFetchedAt` before using it as the filter timestamp.
 - The user scans in full-Drive mode, then switches to folder-scoped mode — the cache from the full scan must not be used for the scoped scan (check `scanScope` match).
 
