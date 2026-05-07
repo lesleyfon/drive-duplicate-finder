@@ -16,15 +16,16 @@ function useIsDashboard() {
 	const state = useRouterState();
 	return state.location.pathname === "/dashboard";
 }
-type NavigationPath = "/same-folder" | "/large-files" | "/old-files";
+type NavigationPath = "/same-folder" | "/large-files" | "/old-files" | "/trash";
 
 const NAV_ITEMS: Array<{ label: string; filter?: string; to?: NavigationPath }> = [
-	{ label: "DUPLICATES", filter: "duplicates" },
-	{ label: "SAME FOLDER", to: "/same-folder" },
-	{ label: "LARGE", to: "/large-files" },
-	{ label: "OLD", to: "/old-files" },
-	{ label: "ALL FILES", filter: "all-files" },
+	{ label: "Duplicates", filter: "duplicates" },
+	{ label: "Same Folder", to: "/same-folder" },
+	{ label: "Large Files", to: "/large-files" },
+	{ label: "Old Files", to: "/old-files" },
+	{ label: "All Files", filter: "all-files" },
 	{ label: "Browse by File Groups", filter: "Browse by File Groups" },
+	{ label: "Recently Deleted", to: "/trash" },
 ];
 
 const sidebarLinkClass =
