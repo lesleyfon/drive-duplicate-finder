@@ -110,8 +110,9 @@ export function useScanFiles(enabled: boolean) {
 		if (fullQuery.status === "success" && !fullQuery.hasNextPage && fullQuery.data) {
 			const allFiles = fullQuery.data.pages.flatMap((p) => p.files);
 			const now = new Date().toISOString();
-			writeScanCache({ lastFetchedAt: now, files: allFiles, scanScope: null });
-			setCachedAt(now);
+			if (writeScanCache({ lastFetchedAt: now, files: allFiles, scanScope: null })) {
+				setCachedAt(now);
+			}
 			completeScan(runDeduplication(allFiles));
 		}
 	}, [fullQuery.status, fullQuery.hasNextPage, fullQuery.data, completeScan, setCachedAt]);
@@ -124,6 +125,10 @@ export function useScanFiles(enabled: boolean) {
 			const changedById = new Map(changedFiles.map((f) => [f.id, f]));
 			const cachedIds = new Set(cachedFilesRef.current.map((f) => f.id));
 
+			// v1 limitation: files deleted via "Delete forever" (bypassing trash) are not
+			// returned by the Drive API as changed or trashed, so they remain in the cache
+			// until the next full scan. A future fix could cross-reference Drive's file count.
+
 			// Remove trashed, update modified files in-place
 			const merged: FileRecord[] = cachedFilesRef.current
 				.filter((f) => !trashedIds.has(f.id))
@@ -135,8 +140,9 @@ export function useScanFiles(enabled: boolean) {
 			}
 
 			const now = new Date().toISOString();
-			writeScanCache({ lastFetchedAt: now, files: merged, scanScope: null });
-			setCachedAt(now);
+			if (writeScanCache({ lastFetchedAt: now, files: merged, scanScope: null })) {
+				setCachedAt(now);
+			}
 			completeScan(runDeduplication(merged));
 		}
 	}, [incrementalQuery.status, incrementalQuery.data, completeScan, setCachedAt]);
