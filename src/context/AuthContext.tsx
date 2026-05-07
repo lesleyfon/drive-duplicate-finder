@@ -1,4 +1,6 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { clearScanCache } from "../lib/scanCache";
+import { clearTrashCache } from "../lib/trashCache";
 import { useScanStore } from "../store/scanStore";
 
 interface UserInfo {
@@ -83,7 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		if (auth.accessToken) {
 			google.accounts.oauth2.revoke(auth.accessToken);
 		}
-		// Clear scan state on logout to prevent showing stale results if a different user logs in.
+		// Clear all cached state on logout to prevent cross-user data leaks.
+		clearScanCache();
+		clearTrashCache();
 		useScanStore.getState().resetScan();
 		setAuthState({ accessToken: null, expiresAt: null, userInfo: null });
 		setIsAuthLoading(false);
