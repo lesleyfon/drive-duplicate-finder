@@ -14,7 +14,7 @@ export const Route = createFileRoute("/trash")({
 });
 
 function TrashPage() {
-	const { allFiles, status, error, refetch, hasNextPage, isFetchingNextPage } =
+	const { allFiles, status, error, refetch, hasNextPage, isFetchingNextPage, isRefreshing } =
 		useListTrashedFiles();
 	const restore = useRestoreFiles();
 
@@ -22,7 +22,7 @@ function TrashPage() {
 	const [restoreResult, setRestoreResult] = useState<RestoreResult | null>(null);
 
 	const isInitialLoading = status === "pending";
-	const isLoadingMore = status === "success" && (hasNextPage || isFetchingNextPage);
+	const isLoadingMore = status === "success" && (hasNextPage || isFetchingNextPage || isRefreshing);
 	const hasSelection = selected.size > 0;
 	const allSelected = allFiles.length > 0 && selected.size === allFiles.length;
 
