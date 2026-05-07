@@ -222,7 +222,7 @@ function TrashFileRow({
 				<p className="text-[13px] font-semibold text-[var(--theme-text-primary)] font-barlow truncate">
 					{file.name}
 				</p>
-				<p className="text-[11px] text-[var(--theme-text-secondary)] font-barlow flex flex-row items-center justify-start gap-1">
+				<div className="text-[11px] text-[var(--theme-text-secondary)] font-barlow flex flex-row items-center justify-start gap-1">
 					<span>{getMimeLabel(file.mimeType)}: </span>
 					<span className=" font-extrabold">{formatBytes(file.size)}</span>
 					<span>
@@ -236,7 +236,7 @@ function TrashFileRow({
 							<div className="relative h-2 w-14 overflow-hidden rounded-sm bg-[var(--theme-text-secondary)] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/40 before:to-transparent" />
 						)}
 					</span>
-				</p>
+				</div>
 			</div>
 			<button
 				type="button"
