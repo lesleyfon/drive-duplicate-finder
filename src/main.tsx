@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
 import "./index.css";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { router } from "./router";
 
 const queryClient = new QueryClient({
@@ -22,12 +22,20 @@ const queryClient = new QueryClient({
 	},
 });
 
+function RouterWithAuth() {
+	const { isAuthenticated } = useAuth();
+	useEffect(() => {
+		router.invalidate();
+	}, [isAuthenticated]);
+	return <RouterProvider router={router} context={{ isAuthenticated }} />;
+}
+
 const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
-				<RouterProvider router={router} />
+				<RouterWithAuth />
 			</AuthProvider>
 		</QueryClientProvider>
 	</StrictMode>,
