@@ -1,7 +1,7 @@
-import { LogOut, HardDrive } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { HardDrive, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import { useNavigate } from "@tanstack/react-router";
 
 export function NavBar() {
 	const { userInfo } = useAuth();

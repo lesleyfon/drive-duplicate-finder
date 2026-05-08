@@ -1,6 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { routeTree } from "./routeTree.gen";
 
 export const router = createRouter({
 	routeTree,
