@@ -2,7 +2,7 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: "bg-[var(--theme-page-bg)]";
+  background: "var(--theme-page-bg)";
   color: "var(--theme-accent)";
 }
 
