@@ -2,6 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { Google as GoogleIcon } from "@thesvg/react";
+import "./sign-in-buttons-styles.css";
+import { cn } from "../lib/cn";
 
 export const Route = createFileRoute("/")({
 	component: LoginPage,
@@ -10,6 +14,7 @@ export const Route = createFileRoute("/")({
 function LoginPage() {
 	const { signIn } = useGoogleAuth();
 	const { isAuthenticated } = useAuth();
+	const { theme, toggleTheme } = useTheme();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -19,33 +24,83 @@ function LoginPage() {
 	}, [isAuthenticated, navigate]);
 
 	return (
-		<div className="min-h-screen bg-ink flex items-center justify-center">
-			<div className="border border-border-dim bg-surface p-10 w-full max-w-sm">
+		<div className="min-h-screen flex items-center justify-center relative">
+			{/* Theme toggle */}
+			<button
+				type="button"
+				onClick={toggleTheme}
+				className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-[0.1em] font-barlow-condensed border border-[var(--theme-border)] px-3 py-[6px] rounded cursor-pointer transition-colors bg-[var(--theme-surface)]"
+				style={{ color: "var(--theme-body-text)" }}
+			>
+				{theme === "light" ? "◑ DARK" : "◐ LIGHT"}
+			</button>
+
+			{/* Login card */}
+			<div
+				className="border rounded-xl p-10 w-full max-w-sm"
+				style={{
+					background: "var(--theme-surface)",
+					borderColor: "var(--theme-border)",
+					boxShadow: "var(--theme-card-shadow)",
+				}}
+			>
 				{/* Logo */}
-				<div className="mb-8">
-					<h1 className="text-lg font-bold uppercase tracking-widest text-cyan-bright">
-						CLEANUP
-					</h1>
-					<p className="text-label uppercase tracking-widest text-text-muted mt-1">
-						DRIVE_SCANNER_V1
-					</p>
+				<div className="mb-7">
+					<div
+						className="text-[22px] font-black leading-[1.1] uppercase font-barlow-condensed"
+						style={{ color: "var(--theme-accent)" }}
+					>
+						Drive
+						<br />
+						Duplicate
+						<br />
+						Cleaner
+					</div>
+					<div
+						className="text-[9px] font-bold tracking-[0.12em] mt-2 uppercase font-barlow-condensed"
+						style={{ color: "var(--theme-text-secondary)" }}
+					>
+						DRIVE SCANNER V1
+					</div>
 				</div>
 
-				<p className="text-sm text-text-secondary mb-8 leading-relaxed">
+				{/* Divider */}
+				<div className="border-t mb-7" style={{ borderColor: "var(--theme-border)" }} />
+
+				{/* Description */}
+				<p
+					className="text-[13px] mb-7 leading-relaxed font-barlow"
+					style={{ color: "var(--theme-body-text)" }}
+				>
 					Find and remove duplicate files from your Google Drive. No backend required.
 				</p>
 
+				{/* Sign in button */}
 				<button
 					type="button"
 					onClick={signIn}
-					className="w-full py-3 bg-cyan-bright text-ink font-semibold text-label uppercase tracking-widest hover:bg-cyan-dim transition-colors flex items-center justify-center gap-2"
+					className={cn(
+						"w-full py-[11px] font-barlow-condensed text-[13px] font-bold tracking-[0.1em] rounded-[7px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer",
+						"relative overflow-hidden isolate", // ← these three
+						"btn",
+					)}
+					style={{
+						background: "var(--theme-page-bg)",
+						color: "var(--theme-accent)",
+					}}
 				>
-					AUTHENTICATE_GOOGLE
+					<GoogleIcon className="w-5 h-5" />
+					Sign In With Google
 				</button>
 
-				<p className="text-sm text-text-muted mt-5 leading-relaxed">
+				{/* Unverified app note */}
+				<p
+					className="text-[11px] mt-5 leading-relaxed font-barlow"
+					style={{ color: "var(--theme-size-text)" }}
+				>
 					You may see an &ldquo;unverified app&rdquo; warning from Google. Click{" "}
-					<strong className="text-text-secondary">Advanced → Continue</strong> to proceed.
+					<strong style={{ color: "var(--theme-body-text)" }}>Advanced → Continue</strong>{" "}
+					to proceed.
 				</p>
 			</div>
 		</div>

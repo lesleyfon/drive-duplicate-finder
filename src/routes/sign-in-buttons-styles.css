@@ -1,0 +1,35 @@
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: "bg-[var(--theme-page-bg)]";
+  color: "var(--theme-accent)";
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg,
+    rgba(48, 134, 255, .12) 0%,
+    #3086ff 18%,
+    #0fbc5c 34%,
+    #fdcd04 50%,
+    #ff4541 66%,
+    #3086ff 82%,
+    rgba(48, 134, 255, .12) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: rainbow-sweep 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rainbow-sweep {
+  0%   { background-position: 150% center; }
+  100% { background-position: -150% center; }
+}
