@@ -26,7 +26,7 @@ This page is built to be **highly discoverable** by both traditional search engi
 <title>Drive Duplicate Cleaner — Free Tool to Find & Remove Duplicate Files in Google Drive</title>
 <meta name="description" content="Free, open-source tool to find and delete duplicate files in your Google Drive. Recover gigabytes of storage space. Runs entirely in your browser — no backend, no data stored, complete privacy.">
 <meta name="keywords" content="google drive duplicate finder, remove duplicate files google drive, free up google drive storage, open source google drive cleaner, find duplicate files google drive, delete duplicates google drive, google drive cleanup tool">
-<link rel="canonical" href="https://driveduplicatecleaner.com/">
+<link rel="canonical" href="https://drive-duplicate-finder.vercel.app/">
 ```
 
 ### 2. Open Graph + Twitter Card
