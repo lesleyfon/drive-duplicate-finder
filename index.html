@@ -4,8 +4,117 @@
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Drive Duplicate Cleaner</title>
+		<title>
+			Drive Duplicate Cleaner — Free Tool to Find &amp; Remove Duplicate Files in Google Drive
+		</title>
+		<meta
+			name="description"
+			content="Free, open-source tool to find and delete duplicate files in your Google Drive. Recover gigabytes of storage space. Runs entirely in your browser — no backend, no data stored, complete privacy."
+		/>
+		<meta
+			name="keywords"
+			content="google drive duplicate finder, remove duplicate files google drive, free up google drive storage, open source google drive cleaner, find duplicate files google drive, delete duplicates google drive, google drive cleanup tool"
+		/>
+		<link rel="canonical" href="https://drive-duplicate-finder.vercel.app/" />
+
+		<!-- Open Graph -->
+		<meta
+			property="og:title"
+			content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
+		/>
+		<meta
+			property="og:description"
+			content="Find and remove duplicate files from your Google Drive. Free, open-source, runs entirely in your browser. No backend, no data stored."
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://drive-duplicate-finder.vercel.app/" />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary" />
+		<meta
+			name="twitter:title"
+			content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
+		/>
+		<meta
+			name="twitter:description"
+			content="Free, open-source tool to find and remove duplicate files from Google Drive. Runs entirely in your browser."
+		/>
+
+		<!-- JSON-LD: SoftwareApplication -->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "SoftwareApplication",
+				"name": "Drive Duplicate Cleaner",
+				"description": "Free, open-source web app that scans your Google Drive for duplicate files and helps you safely remove them.",
+				"applicationCategory": "UtilitiesApplication",
+				"operatingSystem": "Web Browser",
+				"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+				"url": "https://drive-duplicate-finder.vercel.app/",
+				"author": { "@type": "Organization", "name": "Drive Duplicate Cleaner" }
+			}
+		</script>
+
+		<!-- JSON-LD: FAQPage -->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "FAQPage",
+				"mainEntity": [
+					{
+						"@type": "Question",
+						"name": "Is Drive Duplicate Cleaner free to use?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Yes — completely free and open source under the MIT license. There are no paid tiers, no premium features, and no data sold."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "Does this tool store my Google Drive files?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "No. The app runs entirely in your browser. There is no backend server, no database, and your files never leave your device."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "How does it detect duplicate files?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Files are compared using MD5 checksums for exact matches, then by name and size for likely duplicates. You can review every match before deleting."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "Are deletions permanent?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "No — files are moved to your Google Drive Trash, where they remain recoverable for 30 days."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "What permissions does it need?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "Drive read access to scan files and list metadata, and Drive write access to move duplicates to Trash. The app never touches files you don't explicitly select."
+						}
+					},
+					{
+						"@type": "Question",
+						"name": "Why does Google show an 'unverified app' warning?",
+						"acceptedAnswer": {
+							"@type": "Answer",
+							"text": "This is a personal, open-source app that hasn't gone through Google's paid public-app verification process. Click Advanced → Continue to proceed. The code is on GitHub if you want to audit it first."
+						}
+					}
+				]
+			}
+		</script>
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
