@@ -1,4 +1,5 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import type { RouterContext } from "../types/router";
 import Sidebar from "../components/sidebar";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
@@ -49,7 +50,7 @@ function AppRoot() {
 	);
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
 	component: AppRoot,
 	errorComponent: ({ error, reset }) => <ErrorBoundary error={error} reset={reset} />,
 });
