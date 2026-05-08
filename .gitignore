@@ -16,6 +16,8 @@ client_secret*.json
 .vscode/
 .claude/
 
+codebook.toml
+
 
 
 # OS
