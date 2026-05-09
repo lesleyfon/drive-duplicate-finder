@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CircleAlertIcon, DotIcon, Loader2, RotateCcw } from "lucide-react";
 import { useState } from "react";
+
 import { FileThumbnail } from "../../components/FileThumbnail";
 import type { RestoreResult } from "../../hooks/useTrashFiles";
 import {
@@ -45,8 +46,12 @@ function TrashPage() {
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -63,6 +68,7 @@ function TrashPage() {
     setRestoreResult(null);
     try {
       const result = await restore.mutateAsync(fileIds);
+
       setRestoreResult(result);
       setSelected(new Set());
     } catch {
@@ -71,10 +77,15 @@ function TrashPage() {
   };
 
   const successMessage = (() => {
-    if (!restoreResult) return null;
+    if (!restoreResult) {
+      return null;
+    }
+
     const { succeeded, failed } = restoreResult;
-    if (failed.length === 0)
+
+    if (failed.length === 0) {
       return `${succeeded.length} file${succeeded.length !== 1 ? "s" : ""} restored to Drive.`;
+    }
     return `${succeeded.length} file${succeeded.length !== 1 ? "s" : ""} restored. ${failed.length} file${failed.length !== 1 ? "s" : ""} could not be restored — check your connection and try again.`;
   })();
 
@@ -89,7 +100,7 @@ function TrashPage() {
           </span>
         </div>
 
-        {allFiles.length > 0 && (
+        {allFiles.length > 0 ? (
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -98,7 +109,7 @@ function TrashPage() {
             >
               {allSelected ? "Deselect All" : "Select All"}
             </button>
-            {hasSelection && (
+            {hasSelection ? (
               <button
                 type="button"
                 disabled={restore.isPending}
@@ -114,9 +125,9 @@ function TrashPage() {
                   ? "RESTORING…"
                   : `Restore Selected (${selected.size})`}
               </button>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* ── Keep hint callout ── */}
@@ -131,22 +142,22 @@ function TrashPage() {
       </div>
 
       {/* Success / partial-failure banner */}
-      {successMessage && (
+      {successMessage ? (
         <div className="px-6 py-[10px] border-b border-[var(--theme-border)] bg-[var(--theme-topbar-bg)] shrink-0 space-y-1">
           <p className="text-[12px] font-semibold text-[var(--theme-accent)] font-barlow tracking-[0.04em]">
             {successMessage}
           </p>
-          {restoreResult && restoreResult.succeeded.length > 0 && (
+          {restoreResult && restoreResult.succeeded.length > 0 ? (
             <p className="text-[11px] text-[var(--theme-text-secondary)] font-barlow">
               Your scan results may be out of date. Run a new scan to see
               restored files.
             </p>
-          )}
+          ) : null}
         </div>
-      )}
+      ) : null}
 
       {/* API error banner */}
-      {status === "error" && (
+      {status === "error" ? (
         <div className="px-6 py-[10px] border-b border-[var(--theme-border)] bg-[var(--theme-topbar-bg)] shrink-0 flex items-center gap-4">
           <p className="text-[12px] font-semibold text-[var(--theme-delete-btn-active-bg)] font-barlow tracking-[0.04em] flex-1">
             Failed to load trash: {(error as Error)?.message ?? "Unknown error"}
@@ -159,20 +170,20 @@ function TrashPage() {
             Retry
           </button>
         </div>
-      )}
+      ) : null}
 
       {/* Initial loading spinner */}
-      {isInitialLoading && (
+      {isInitialLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Loader2
             size={24}
             className="animate-spin text-[var(--theme-accent)]"
           />
         </div>
-      )}
+      ) : null}
 
       {/* Empty state */}
-      {!isInitialLoading && status === "success" && allFiles.length === 0 && (
+      {!isInitialLoading && status === "success" && allFiles.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-2">
           <p className="font-barlow-condensed font-black text-[22px] uppercase tracking-[0.06em] text-[var(--theme-text-primary)]">
             NO FILES IN TRASH
@@ -181,10 +192,10 @@ function TrashPage() {
             Files you delete will appear here for 30 days.
           </p>
         </div>
-      )}
+      ) : null}
 
       {/* File list */}
-      {!isInitialLoading && allFiles.length > 0 && (
+      {!isInitialLoading && allFiles.length > 0 ? (
         <div className="flex-1 overflow-y-auto">
           {allFiles.map((file) => (
             <TrashFileRow
@@ -196,19 +207,27 @@ function TrashPage() {
               isRestoring={restore.isPending}
             />
           ))}
-          {isLoadingMore && (
+          {isLoadingMore ? (
             <div className="flex items-center justify-center py-4">
               <Loader2
                 size={16}
                 className="animate-spin text-[var(--theme-accent)]"
               />
             </div>
-          )}
+          ) : null}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
+
+type TrashFileRowProps = {
+  file: FileRecord;
+  isSelected: boolean;
+  onToggle: () => void;
+  onRestore: () => void;
+  isRestoring: boolean;
+};
 
 function TrashFileRow({
   file,
@@ -216,13 +235,7 @@ function TrashFileRow({
   onToggle,
   onRestore,
   isRestoring,
-}: {
-  file: FileRecord;
-  isSelected: boolean;
-  onToggle: () => void;
-  onRestore: () => void;
-  isRestoring: boolean;
-}) {
+}: TrashFileRowProps) {
   return (
     <div
       className={cn(

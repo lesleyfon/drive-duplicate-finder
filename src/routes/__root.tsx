@@ -1,10 +1,11 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import type { RouterContext } from "../types/router";
-import Sidebar from "../components/sidebar";
-import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import { ThemeProvider, useTheme } from "../context/ThemeContext";
-import { useAuth } from "../context/AuthContext";
+
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import Sidebar from "../components/sidebar";
+import { useAuth } from "../context/AuthContext";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import type { RouterContext } from "../types/router";
 
 function RootComponent() {
   useGoogleAuth();
