@@ -23,11 +23,12 @@ function ScanPage() {
   useEffect(() => {
     if (storeStatus !== "complete") return;
     const delay = wasAlreadyCompleteRef.current ? 0 : 800;
-    const t = setTimeout(
-      () => navigate({ to: "/results", search: { filter: "duplicates" } }),
-      delay,
-    );
-    return () => clearTimeout(t);
+
+    const timeoutId = setTimeout(() => {
+      navigate({ to: "/results", search: { filter: "duplicates" } });
+    }, delay);
+
+    return () => clearTimeout(timeoutId);
   }, [storeStatus, navigate]);
 
   useEffect(() => {
@@ -59,7 +60,7 @@ function ScanPage() {
           isFetching={isFetching || isFetchingNextPage}
         />
 
-        {isError && (
+        {isError ? (
           <div className="w-full border border-status-error bg-surface-low p-4">
             <p className="text-label uppercase tracking-widest text-status-error mb-1">
               SCAN INTERRUPTED
@@ -68,7 +69,7 @@ function ScanPage() {
               {(error as Error)?.message ?? "Unknown error. Please retry."}
             </p>
           </div>
-        )}
+        ) : null}
 
         <button
           type="button"

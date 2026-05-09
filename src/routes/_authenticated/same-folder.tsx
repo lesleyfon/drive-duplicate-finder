@@ -23,6 +23,7 @@ import type {
   FileRecord,
   SameFolderGroup,
 } from "../../types/drive";
+import type { ScanState } from "../../types/scan-store";
 
 export const Route = createFileRoute("/_authenticated/same-folder")({
   component: SameFolderPage,
@@ -87,10 +88,8 @@ function SameFolderPage() {
   const queryClient = useQueryClient();
   const { theme } = useTheme();
 
-  const scanResult = useScanStore((s) => s.scanResults);
-  const [groups, setGroups] = useState<SameFolderGroup[]>(
-    () => scanResult?.sameFolderGroups ?? [],
-  );
+  const scanResult = useScanStore((s: ScanState) => s.scanResults);
+  const sameFolderGroups = scanResult?.sameFolderGroups ?? [];
 
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(
@@ -104,44 +103,58 @@ function SameFolderPage() {
   const deleteMutation = useDeleteFiles();
 
   const filteredGroups = useMemo(() => {
-    if (!search.trim()) return groups;
-    const q = search.trim().toLowerCase();
-    return groups.filter(
-      (g) =>
-        g.folderId.toLowerCase().includes(q) ||
-        g.sets.some((s) =>
-          s.files.some((f) => f.name.toLowerCase().includes(q)),
+    if (!search.trim()) return sameFolderGroups;
+    const query = search.trim().toLowerCase();
+    return sameFolderGroups.filter(
+      (group) =>
+        group.folderId.toLowerCase().includes(query) ||
+        group.sets.some((set) =>
+          set.files.some((file) => file.name.toLowerCase().includes(query)),
         ),
     );
-  }, [groups, search]);
+  }, [sameFolderGroups, search]);
 
-  const totalSets = groups.reduce((s, g) => s + g.sets.length, 0);
-  const totalBytes = groups.reduce((s, g) => s + g.totalWastedBytes, 0);
+  const totalSets = sameFolderGroups.reduce(
+    (groupSets, group) => groupSets + group.sets.length,
+    0,
+  );
+  const totalBytes = sameFolderGroups.reduce(
+    (s, group) => s + group.totalWastedBytes,
+    0,
+  );
 
   const allSelectedRecords = useMemo(() => {
     const result: FileRecord[] = [];
-    for (const g of groups) {
+
+    for (const g of sameFolderGroups) {
       for (const set of g.sets) {
         set.files.forEach((file, i) => {
-          if (selectedFiles.has(`${set.key}::${i}`)) result.push(file);
+          if (selectedFiles.has(`${set.key}::${i}`)) {
+            result.push(file);
+          }
         });
       }
     }
     return result;
-  }, [groups, selectedFiles]);
+  }, [sameFolderGroups, selectedFiles]);
 
   const totalSelectedBytes = allSelectedRecords.reduce(
-    (s, f) => s + (f.size ?? 0),
+    (totalBytes, file) => totalBytes + (file.size ?? 0),
     0,
   );
   const hasSelection = allSelectedRecords.length > 0;
 
   const toggleFile = (setKey: string, fileIndex: number) => {
     const key = `${setKey}::${fileIndex}`;
+
     setSelectedFiles((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
       return next;
     });
   };
@@ -149,8 +162,13 @@ function SameFolderPage() {
   const toggleFolder = (folderId: string) => {
     setCollapsedFolders((prev) => {
       const next = new Set(prev);
-      if (next.has(folderId)) next.delete(folderId);
-      else next.add(folderId);
+
+      if (next.has(folderId)) {
+        next.delete(folderId);
+      } else {
+        next.add(folderId);
+      }
+
       return next;
     });
   };
@@ -158,8 +176,13 @@ function SameFolderPage() {
   const toggleSet = (setKey: string) => {
     setExpandedSets((prev) => {
       const next = new Set(prev);
-      if (next.has(setKey)) next.delete(setKey);
-      else next.add(setKey);
+
+      if (next.has(setKey)) {
+        next.delete(setKey);
+      } else {
+        next.add(setKey);
+      }
+
       return next;
     });
   };
@@ -172,9 +195,12 @@ function SameFolderPage() {
 
   const selectedCountInFolder = (group: SameFolderGroup) => {
     let count = 0;
+
     for (const set of group.sets) {
       set.files.forEach((_, i) => {
-        if (selectedFiles.has(`${set.key}::${i}`)) count++;
+        if (selectedFiles.has(`${set.key}::${i}`)) {
+          count++;
+        }
       });
     }
     return count;
@@ -182,12 +208,14 @@ function SameFolderPage() {
 
   const handleConfirmDelete = async () => {
     const ids = allSelectedRecords.map((f) => f.id);
+
     const result = await deleteMutation.mutateAsync(ids);
+
     setShowModal(false);
     setSelectedFiles(new Set());
-    const updated = useScanStore.getState().scanResults;
-    if (updated) setGroups(updated.sameFolderGroups);
+
     const freed = allSelectedRecords.reduce((s, f) => s + (f.size ?? 0), 0);
+
     setSuccessMessage(
       `Deleted ${result.succeeded.length} file${result.succeeded.length !== 1 ? "s" : ""}. ${formatBytes(freed)} freed.${result.failed.length > 0 ? ` ${result.failed.length} failed.` : ""}`,
     );
@@ -195,8 +223,10 @@ function SameFolderPage() {
 
   const handleNewScan = () => {
     clearScanCache();
+
     queryClient.removeQueries({ queryKey: ["scanFiles"] });
     useScanStore.getState().resetScan();
+
     navigate({ to: "/scan" });
   };
 
@@ -239,7 +269,7 @@ function SameFolderPage() {
         <div className="flex-1 flex justify-center gap-5 text-[12px] text-[var(--theme-text-secondary)] font-barlow">
           <span>
             <b className="text-[var(--theme-text-primary)] text-[13px]">
-              {groups.length}
+              {sameFolderGroups.length}
             </b>{" "}
             folders
           </span>
@@ -330,7 +360,7 @@ function SameFolderPage() {
 
       {/* ── Folder group list ── */}
       <div className="flex-1 overflow-auto px-8 py-4 flex flex-col gap-4">
-        {groups.length === 0 ? (
+        {sameFolderGroups.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4">
             <p className="text-[13px] font-semibold text-[var(--theme-accent)] font-barlow tracking-[0.06em]">
               No same-folder duplicates found
