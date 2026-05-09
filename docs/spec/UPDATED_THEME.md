@@ -125,7 +125,7 @@ Replace the existing file entirely:
   html, body, #root {
     height: 100%;
     background-color: #131313;
-    color: #E2E2E2;
+    color: var(--theme-text-primary)
     font-family: 'Space Grotesk', monospace;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;

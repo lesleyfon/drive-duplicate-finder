@@ -9,48 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrashRouteImport } from './routes/trash'
-import { Route as ScanRouteImport } from './routes/scan'
-import { Route as SameFolderRouteImport } from './routes/same-folder'
-import { Route as ResultsRouteImport } from './routes/results'
-import { Route as OldFilesRouteImport } from './routes/old-files'
-import { Route as LargeFilesRouteImport } from './routes/large-files'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedTrashRouteImport } from './routes/_authenticated/trash'
+import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
+import { Route as AuthenticatedSameFolderRouteImport } from './routes/_authenticated/same-folder'
+import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
+import { Route as AuthenticatedOldFilesRouteImport } from './routes/_authenticated/old-files'
+import { Route as AuthenticatedLargeFilesRouteImport } from './routes/_authenticated/large-files'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
-const TrashRoute = TrashRouteImport.update({
-  id: '/trash',
-  path: '/trash',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScanRoute = ScanRouteImport.update({
-  id: '/scan',
-  path: '/scan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SameFolderRoute = SameFolderRouteImport.update({
-  id: '/same-folder',
-  path: '/same-folder',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultsRoute = ResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OldFilesRoute = OldFilesRouteImport.update({
-  id: '/old-files',
-  path: '/old-files',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LargeFilesRoute = LargeFilesRouteImport.update({
-  id: '/large-files',
-  path: '/large-files',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,37 +28,73 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTrashRoute = AuthenticatedTrashRouteImport.update({
+  id: '/trash',
+  path: '/trash',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSameFolderRoute = AuthenticatedSameFolderRouteImport.update({
+  id: '/same-folder',
+  path: '/same-folder',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedOldFilesRoute = AuthenticatedOldFilesRouteImport.update({
+  id: '/old-files',
+  path: '/old-files',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedLargeFilesRoute = AuthenticatedLargeFilesRouteImport.update({
+  id: '/large-files',
+  path: '/large-files',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/large-files': typeof LargeFilesRoute
-  '/old-files': typeof OldFilesRoute
-  '/results': typeof ResultsRoute
-  '/same-folder': typeof SameFolderRoute
-  '/scan': typeof ScanRoute
-  '/trash': typeof TrashRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/large-files': typeof AuthenticatedLargeFilesRoute
+  '/old-files': typeof AuthenticatedOldFilesRoute
+  '/results': typeof AuthenticatedResultsRoute
+  '/same-folder': typeof AuthenticatedSameFolderRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/trash': typeof AuthenticatedTrashRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/large-files': typeof LargeFilesRoute
-  '/old-files': typeof OldFilesRoute
-  '/results': typeof ResultsRoute
-  '/same-folder': typeof SameFolderRoute
-  '/scan': typeof ScanRoute
-  '/trash': typeof TrashRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/large-files': typeof AuthenticatedLargeFilesRoute
+  '/old-files': typeof AuthenticatedOldFilesRoute
+  '/results': typeof AuthenticatedResultsRoute
+  '/same-folder': typeof AuthenticatedSameFolderRoute
+  '/scan': typeof AuthenticatedScanRoute
+  '/trash': typeof AuthenticatedTrashRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/large-files': typeof LargeFilesRoute
-  '/old-files': typeof OldFilesRoute
-  '/results': typeof ResultsRoute
-  '/same-folder': typeof SameFolderRoute
-  '/scan': typeof ScanRoute
-  '/trash': typeof TrashRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/large-files': typeof AuthenticatedLargeFilesRoute
+  '/_authenticated/old-files': typeof AuthenticatedOldFilesRoute
+  '/_authenticated/results': typeof AuthenticatedResultsRoute
+  '/_authenticated/same-folder': typeof AuthenticatedSameFolderRoute
+  '/_authenticated/scan': typeof AuthenticatedScanRoute
+  '/_authenticated/trash': typeof AuthenticatedTrashRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,75 +120,28 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
-    | '/large-files'
-    | '/old-files'
-    | '/results'
-    | '/same-folder'
-    | '/scan'
-    | '/trash'
+    | '/_authenticated'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/large-files'
+    | '/_authenticated/old-files'
+    | '/_authenticated/results'
+    | '/_authenticated/same-folder'
+    | '/_authenticated/scan'
+    | '/_authenticated/trash'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  LargeFilesRoute: typeof LargeFilesRoute
-  OldFilesRoute: typeof OldFilesRoute
-  ResultsRoute: typeof ResultsRoute
-  SameFolderRoute: typeof SameFolderRoute
-  ScanRoute: typeof ScanRoute
-  TrashRoute: typeof TrashRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trash': {
-      id: '/trash'
-      path: '/trash'
-      fullPath: '/trash'
-      preLoaderRoute: typeof TrashRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scan': {
-      id: '/scan'
-      path: '/scan'
-      fullPath: '/scan'
-      preLoaderRoute: typeof ScanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/same-folder': {
-      id: '/same-folder'
-      path: '/same-folder'
-      fullPath: '/same-folder'
-      preLoaderRoute: typeof SameFolderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/results': {
-      id: '/results'
-      path: '/results'
-      fullPath: '/results'
-      preLoaderRoute: typeof ResultsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/old-files': {
-      id: '/old-files'
-      path: '/old-files'
-      fullPath: '/old-files'
-      preLoaderRoute: typeof OldFilesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/large-files': {
-      id: '/large-files'
-      path: '/large-files'
-      fullPath: '/large-files'
-      preLoaderRoute: typeof LargeFilesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -192,18 +151,85 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/trash': {
+      id: '/_authenticated/trash'
+      path: '/trash'
+      fullPath: '/trash'
+      preLoaderRoute: typeof AuthenticatedTrashRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/scan': {
+      id: '/_authenticated/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof AuthenticatedScanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/same-folder': {
+      id: '/_authenticated/same-folder'
+      path: '/same-folder'
+      fullPath: '/same-folder'
+      preLoaderRoute: typeof AuthenticatedSameFolderRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/results': {
+      id: '/_authenticated/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof AuthenticatedResultsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/old-files': {
+      id: '/_authenticated/old-files'
+      path: '/old-files'
+      fullPath: '/old-files'
+      preLoaderRoute: typeof AuthenticatedOldFilesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/large-files': {
+      id: '/_authenticated/large-files'
+      path: '/large-files'
+      fullPath: '/large-files'
+      preLoaderRoute: typeof AuthenticatedLargeFilesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLargeFilesRoute: typeof AuthenticatedLargeFilesRoute
+  AuthenticatedOldFilesRoute: typeof AuthenticatedOldFilesRoute
+  AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
+  AuthenticatedSameFolderRoute: typeof AuthenticatedSameFolderRoute
+  AuthenticatedScanRoute: typeof AuthenticatedScanRoute
+  AuthenticatedTrashRoute: typeof AuthenticatedTrashRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLargeFilesRoute: AuthenticatedLargeFilesRoute,
+  AuthenticatedOldFilesRoute: AuthenticatedOldFilesRoute,
+  AuthenticatedResultsRoute: AuthenticatedResultsRoute,
+  AuthenticatedSameFolderRoute: AuthenticatedSameFolderRoute,
+  AuthenticatedScanRoute: AuthenticatedScanRoute,
+  AuthenticatedTrashRoute: AuthenticatedTrashRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  LargeFilesRoute: LargeFilesRoute,
-  OldFilesRoute: OldFilesRoute,
-  ResultsRoute: ResultsRoute,
-  SameFolderRoute: SameFolderRoute,
-  ScanRoute: ScanRoute,
-  TrashRoute: TrashRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
