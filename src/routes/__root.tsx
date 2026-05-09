@@ -25,6 +25,7 @@ function RootComponent() {
 	}
 
 	if (!isAuthenticated) {
+		console.log("User not authenticated, showing sign-in page");
 		return (
 			<div data-theme={theme} className="min-h-screen bg-[var(--theme-page-bg)]">
 				<Outlet />
