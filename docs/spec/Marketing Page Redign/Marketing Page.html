@@ -1,1974 +1,1988 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<!-- ───────── SEO ───────── -->
-		<title>
-			Drive Duplicate Cleaner — Free Tool to Find &amp; Remove Duplicate Files in Google Drive
-		</title>
-		<meta
-			name="description"
-			content="Free, open-source tool to find and delete duplicate files in your Google Drive. Recover gigabytes of storage space. Runs entirely in your browser — no backend, no data stored, complete privacy."
-		/>
-		<meta
-			name="keywords"
-			content="google drive duplicate finder, remove duplicate files google drive, free up google drive storage, open source google drive cleaner, find duplicate files google drive, delete duplicates google drive, google drive cleanup tool"
-		/>
-		<link rel="canonical" href="https://drive-duplicate-finder.vercel.app/" />
+    <!-- ───────── SEO ───────── -->
+    <title>
+      Drive Duplicate Cleaner — Free Tool to Find &amp; Remove Duplicate Files
+      in Google Drive
+    </title>
+    <meta
+      name="description"
+      content="Free, open-source tool to find and delete duplicate files in your Google Drive. Recover gigabytes of storage space. Runs entirely in your browser — no backend, no data stored, complete privacy."
+    />
+    <meta
+      name="keywords"
+      content="google drive duplicate finder, remove duplicate files google drive, free up google drive storage, open source google drive cleaner, find duplicate files google drive, delete duplicates google drive, google drive cleanup tool"
+    />
+    <link rel="canonical" href="https://drive-duplicate-finder.vercel.app/" />
 
-		<!-- Open Graph -->
-		<meta
-			property="og:title"
-			content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
-		/>
-		<meta
-			property="og:description"
-			content="Find and remove duplicate files from your Google Drive. Free, open-source, runs entirely in your browser. No backend, no data stored."
-		/>
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://drive-duplicate-finder.vercel.app/" />
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
+    />
+    <meta
+      property="og:description"
+      content="Find and remove duplicate files from your Google Drive. Free, open-source, runs entirely in your browser. No backend, no data stored."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://drive-duplicate-finder.vercel.app/"
+    />
 
-		<!-- Twitter -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta
-			name="twitter:title"
-			content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
-		/>
-		<meta
-			name="twitter:description"
-			content="Free, open-source tool to find and remove duplicate files from Google Drive. Runs entirely in your browser."
-		/>
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Drive Duplicate Cleaner — Free Google Drive Duplicate Finder"
+    />
+    <meta
+      name="twitter:description"
+      content="Free, open-source tool to find and remove duplicate files from Google Drive. Runs entirely in your browser."
+    />
 
-		<!-- ───────── JSON-LD: SoftwareApplication ───────── -->
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "SoftwareApplication",
-				"name": "Drive Duplicate Cleaner",
-				"description": "Free, open-source web app that scans your Google Drive for duplicate files and helps you safely remove them.",
-				"applicationCategory": "UtilitiesApplication",
-				"operatingSystem": "Web Browser",
-				"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-				"aggregateRating": {
-					"@type": "AggregateRating",
-					"ratingValue": "4.9",
-					"ratingCount": "284"
-				},
-				"url": "https://drive-duplicate-finder.vercel.app/",
-				"author": { "@type": "Organization", "name": "Drive Duplicate Cleaner" }
-			}
-		</script>
+    <!-- ───────── JSON-LD: SoftwareApplication ───────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Drive Duplicate Cleaner",
+        "description": "Free, open-source web app that scans your Google Drive for duplicate files and helps you safely remove them.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "284"
+        },
+        "url": "https://drive-duplicate-finder.vercel.app/",
+        "author": { "@type": "Organization", "name": "Drive Duplicate Cleaner" }
+      }
+    </script>
 
-		<!-- ───────── JSON-LD: FAQPage ───────── -->
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "FAQPage",
-				"mainEntity": [
-					{
-						"@type": "Question",
-						"name": "Is Drive Duplicate Cleaner free to use?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Yes — completely free and open source under the MIT license. There are no paid tiers, no premium features, and no data sold."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "Does this tool store my Google Drive files?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "No. The app runs entirely in your browser. There is no backend server, no database, and your files never leave your device."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "How does it detect duplicate files?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Files are compared using MD5 checksums for exact matches, then by name and size for likely duplicates. You can review every match before deleting."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "Are deletions permanent?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "No — files are moved to your Google Drive Trash, where they remain recoverable for 30 days."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "What permissions does it need?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Drive read access to scan files and list metadata, and Drive write access to move duplicates to Trash. The app never touches files you don't explicitly select."
-						}
-					}
-				]
-			}
-		</script>
+    <!-- ───────── JSON-LD: FAQPage ───────── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Drive Duplicate Cleaner free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes — completely free and open source under the MIT license. There are no paid tiers, no premium features, and no data sold."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this tool store my Google Drive files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The app runs entirely in your browser. There is no backend server, no database, and your files never leave your device."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does it detect duplicate files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Files are compared using MD5 checksums for exact matches, then by name and size for likely duplicates. You can review every match before deleting."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are deletions permanent?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No — files are moved to your Google Drive Trash, where they remain recoverable for 30 days."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What permissions does it need?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Drive read access to scan files and list metadata, and Drive write access to move duplicates to Trash. The app never touches files you don't explicitly select."
+            }
+          }
+        ]
+      }
+    </script>
 
-		<link
-			href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-			rel="stylesheet"
-		/>
-		<style>
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
-			body {
-				background: #1a1a1a;
-				font-family: "Barlow", sans-serif;
-			}
-		</style>
-		<script
-			src="https://unpkg.com/react@18.3.1/umd/react.development.js"
-			integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
-			integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
-			integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
-			crossorigin="anonymous"
-		></script>
-		<script type="text/babel" src="design-canvas.jsx"></script>
-	</head>
-	<body>
-		<script type="text/babel">
-			// ─────────────────────────────────────────────
-			// THEME TOKENS
-			// ─────────────────────────────────────────────
-			const THEMES = {
-				light: {
-					pageBg: "#f5f5f0",
-					surface: "#ffffff",
-					surfaceAlt: "#fafaf8",
-					border: "#e8e8e2",
-					borderSoft: "#f0f0ec",
-					titleText: "#111111",
-					bodyText: "#333333",
-					metaText: "#888888",
-					dimText: "#aaaaaa",
-					accent: "#00b894",
-					accentText: "#00b894",
-					accentDim: "rgba(0,184,148,0.08)",
-					accentBg: "rgba(0,184,148,0.05)",
-					accentBorder: "rgba(0,184,148,0.25)",
-					amber: "#f5a623",
-					amberDim: "rgba(245,166,35,0.08)",
-					cardShadow: "0 1px 4px rgba(0,0,0,0.06)",
-					btnBg: "#111111",
-					btnText: "#ffffff",
-					btnBorder: "#111111",
-					btnSecondaryBg: "#ffffff",
-					btnSecondaryText: "#111111",
-					btnSecondaryBorder: "#e0e0d8",
-					chipBg: "#ffffff",
-					chipBorder: "#e0e0d8",
-					chipText: "#666666",
-					statText: "#111111",
-					grid: "rgba(0,0,0,0.04)",
-				},
-				dark: {
-					pageBg: "#0a0b0f",
-					surface: "#13141a",
-					surfaceAlt: "#16171c",
-					border: "#22242c",
-					borderSoft: "#1a1c22",
-					titleText: "#e8eaf2",
-					bodyText: "#c8cad4",
-					metaText: "#6a6d7a",
-					dimText: "#3a3d4a",
-					accent: "#00c9a7",
-					accentText: "#00c9a7",
-					accentDim: "rgba(0,201,167,0.08)",
-					accentBg: "rgba(0,201,167,0.05)",
-					accentBorder: "rgba(0,201,167,0.22)",
-					amber: "#f5a623",
-					amberDim: "rgba(245,166,35,0.08)",
-					cardShadow: "0 1px 6px rgba(0,0,0,0.3)",
-					btnBg: "#00c9a7",
-					btnText: "#0a1a16",
-					btnBorder: "#00c9a7",
-					btnSecondaryBg: "transparent",
-					btnSecondaryText: "#e8eaf2",
-					btnSecondaryBorder: "#2a2d38",
-					chipBg: "#16171c",
-					chipBorder: "#22242c",
-					chipText: "#9a9daa",
-					statText: "#e8eaf2",
-					grid: "rgba(255,255,255,0.025)",
-				},
-			};
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #1a1a1a;
+        font-family: "Barlow", sans-serif;
+      }
+    </style>
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/babel" src="design-canvas.jsx"></script>
+  </head>
+  <body>
+    <script type="text/babel">
+      // ─────────────────────────────────────────────
+      // THEME TOKENS
+      // ─────────────────────────────────────────────
+      const THEMES = {
+        light: {
+          pageBg: "#f5f5f0",
+          surface: "#ffffff",
+          surfaceAlt: "#fafaf8",
+          border: "#e8e8e2",
+          borderSoft: "#f0f0ec",
+          titleText: "#111111",
+          bodyText: "#333333",
+          metaText: "#888888",
+          dimText: "#aaaaaa",
+          accent: "#00b894",
+          accentText: "#00b894",
+          accentDim: "rgba(0,184,148,0.08)",
+          accentBg: "rgba(0,184,148,0.05)",
+          accentBorder: "rgba(0,184,148,0.25)",
+          amber: "#f5a623",
+          amberDim: "rgba(245,166,35,0.08)",
+          cardShadow: "0 1px 4px rgba(0,0,0,0.06)",
+          btnBg: "#111111",
+          btnText: "#ffffff",
+          btnBorder: "#111111",
+          btnSecondaryBg: "#ffffff",
+          btnSecondaryText: "#111111",
+          btnSecondaryBorder: "#e0e0d8",
+          chipBg: "#ffffff",
+          chipBorder: "#e0e0d8",
+          chipText: "#666666",
+          statText: "#111111",
+          grid: "rgba(0,0,0,0.04)",
+        },
+        dark: {
+          pageBg: "#0a0b0f",
+          surface: "#13141a",
+          surfaceAlt: "#16171c",
+          border: "#22242c",
+          borderSoft: "#1a1c22",
+          titleText: "#e8eaf2",
+          bodyText: "#c8cad4",
+          metaText: "#6a6d7a",
+          dimText: "#3a3d4a",
+          accent: "#00c9a7",
+          accentText: "#00c9a7",
+          accentDim: "rgba(0,201,167,0.08)",
+          accentBg: "rgba(0,201,167,0.05)",
+          accentBorder: "rgba(0,201,167,0.22)",
+          amber: "#f5a623",
+          amberDim: "rgba(245,166,35,0.08)",
+          cardShadow: "0 1px 6px rgba(0,0,0,0.3)",
+          btnBg: "#00c9a7",
+          btnText: "#0a1a16",
+          btnBorder: "#00c9a7",
+          btnSecondaryBg: "transparent",
+          btnSecondaryText: "#e8eaf2",
+          btnSecondaryBorder: "#2a2d38",
+          chipBg: "#16171c",
+          chipBorder: "#22242c",
+          chipText: "#9a9daa",
+          statText: "#e8eaf2",
+          grid: "rgba(255,255,255,0.025)",
+        },
+      };
 
-			// ─────────────────────────────────────────────
-			// ICONS
-			// ─────────────────────────────────────────────
-			const I = {
-				Google: () => (
-					<svg
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							fill="#4285F4"
-							d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-						/>
-						<path
-							fill="#34A853"
-							d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-						/>
-						<path
-							fill="#FBBC05"
-							d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09 0-.73.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-						/>
-						<path
-							fill="#EA4335"
-							d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-						/>
-					</svg>
-				),
-				Github: ({ c }) => (
-					<svg width="14" height="14" viewBox="0 0 24 24" fill={c}>
-						<path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.4 3.6 1 .1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3" />
-					</svg>
-				),
-				Check: ({ c }) => (
-					<svg
-						width="14"
-						height="14"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="3"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polyline points="20 6 9 17 4 12" />
-					</svg>
-				),
-				Lock: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-						<path d="M7 11V7a5 5 0 0 1 10 0v4" />
-					</svg>
-				),
-				Code: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polyline points="16 18 22 12 16 6" />
-						<polyline points="8 6 2 12 8 18" />
-					</svg>
-				),
-				Zap: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-					</svg>
-				),
-				Eye: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-						<circle cx="12" cy="12" r="3" />
-					</svg>
-				),
-				Trash: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polyline points="3 6 5 6 21 6" />
-						<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-						<path d="M10 11v6M14 11v6" />
-					</svg>
-				),
-				Layers: ({ c }) => (
-					<svg
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke={c}
-						strokeWidth="1.7"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					>
-						<polygon points="12 2 2 7 12 12 22 7 12 2" />
-						<polyline points="2 17 12 22 22 17" />
-						<polyline points="2 12 12 17 22 12" />
-					</svg>
-				),
-			};
+      // ─────────────────────────────────────────────
+      // ICONS
+      // ─────────────────────────────────────────────
+      const I = {
+        Google: () => (
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09 0-.73.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            />
+          </svg>
+        ),
+        Github: ({ c }) => (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill={c}>
+            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.2 1.9 1.2 1.1 1.9 2.9 1.4 3.6 1 .1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3" />
+          </svg>
+        ),
+        Check: ({ c }) => (
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ),
+        Lock: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        ),
+        Code: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+          </svg>
+        ),
+        Zap: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+        ),
+        Eye: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        ),
+        Trash: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6M14 11v6" />
+          </svg>
+        ),
+        Layers: ({ c }) => (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={c}
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+            <polyline points="2 12 12 17 22 12" />
+          </svg>
+        ),
+      };
 
-			// ─────────────────────────────────────────────
-			// MOCKUP — stylized results page preview
-			// ─────────────────────────────────────────────
-			function ResultsMockup({ t }) {
-				return (
-					<div
-						style={{
-							background: t.surface,
-							border: `1px solid ${t.border}`,
-							borderRadius: 14,
-							boxShadow: t.cardShadow,
-							overflow: "hidden",
-							width: "100%",
-						}}
-					>
-						{/* fake browser chrome */}
-						<div
-							style={{
-								padding: "10px 14px",
-								borderBottom: `1px solid ${t.border}`,
-								display: "flex",
-								alignItems: "center",
-								gap: 8,
-								background: t.surfaceAlt,
-							}}
-						>
-							<div style={{ display: "flex", gap: 5 }}>
-								{["#ff5f57", "#febc2e", "#28c840"].map((c) => (
-									<div
-										key={c}
-										style={{
-											width: 9,
-											height: 9,
-											borderRadius: 5,
-											background: c,
-											opacity: 0.6,
-										}}
-									/>
-								))}
-							</div>
-							<div
-								style={{
-									flex: 1,
-									textAlign: "center",
-									fontSize: 9,
-									color: t.metaText,
-									fontFamily: "'JetBrains Mono', monospace",
-								}}
-							>
-								driveduplicatecleaner.com/results
-							</div>
-						</div>
-						{/* fake top bar */}
-						<div
-							style={{
-								padding: "10px 16px",
-								borderBottom: `1px solid ${t.border}`,
-								display: "flex",
-								alignItems: "center",
-								gap: 12,
-							}}
-						>
-							<div
-								style={{
-									fontSize: 10,
-									fontWeight: 700,
-									color: t.titleText,
-									letterSpacing: "0.06em",
-									textTransform: "uppercase",
-								}}
-							>
-								Duplicate Results
-							</div>
-							<div style={{ flex: 1 }} />
-							<div style={{ fontSize: 9, color: t.metaText }}>
-								<b style={{ color: t.titleText }}>57</b> groups ·{" "}
-								<b style={{ color: t.accent }}>408 MB</b> recoverable
-							</div>
-							<div
-								style={{
-									background: "#e84040",
-									color: "#fff",
-									borderRadius: 4,
-									fontSize: 9,
-									fontWeight: 700,
-									padding: "4px 10px",
-									letterSpacing: "0.06em",
-									textTransform: "uppercase",
-								}}
-							>
-								Delete 12
-							</div>
-						</div>
-						{/* fake group rows */}
-						<div
-							style={{
-								padding: "10px 16px",
-								display: "flex",
-								flexDirection: "column",
-								gap: 7,
-							}}
-						>
-							{[
-								{
-									type: "EXACT",
-									count: 3,
-									name: "vacation_video.mp4",
-									size: "10.3 MB",
-								},
-								{
-									type: "VERSION",
-									count: 5,
-									name: "report_2024.pdf",
-									size: "127 KB",
-									expanded: true,
-								},
-								{
-									type: "LIKELY",
-									count: 4,
-									name: "song_master.mp3",
-									size: "4.1 MB",
-								},
-							].map((g, i) => (
-								<div
-									key={i}
-									style={{
-										border: `1px solid ${i === 1 ? t.accent : t.border}`,
-										borderRadius: 6,
-										overflow: "hidden",
-										boxShadow: i === 1 ? `0 0 0 2px ${t.accentBg}` : "none",
-									}}
-								>
-									<div
-										style={{
-											padding: "9px 12px",
-											display: "flex",
-											alignItems: "center",
-											gap: 10,
-											borderLeft: `3px solid ${t.accent}`,
-										}}
-									>
-										<span
-											style={{
-												fontSize: 8,
-												color: t.accent,
-												fontWeight: 800,
-												letterSpacing: "0.1em",
-											}}
-										>
-											{g.type}
-										</span>
-										<span
-											style={{
-												background: t.borderSoft,
-												color: t.metaText,
-												borderRadius: 2,
-												fontSize: 8,
-												fontWeight: 700,
-												padding: "1px 5px",
-											}}
-										>
-											{g.count}
-										</span>
-										<span
-											style={{
-												flex: 1,
-												fontSize: 11,
-												color: t.bodyText,
-												fontFamily: "'JetBrains Mono', monospace",
-												overflow: "hidden",
-												textOverflow: "ellipsis",
-												whiteSpace: "nowrap",
-											}}
-										>
-											{g.name}
-										</span>
-										<span
-											style={{
-												fontSize: 12,
-												fontWeight: 800,
-												color: t.accent,
-												fontFamily: "'Barlow Condensed', sans-serif",
-											}}
-										>
-											{g.size}
-										</span>
-									</div>
-									{g.expanded && (
-										<div
-											style={{
-												background: t.surfaceAlt,
-												padding: "6px 12px 6px 30px",
-												display: "flex",
-												flexDirection: "column",
-												gap: 3,
-												borderTop: `1px solid ${t.borderSoft}`,
-											}}
-										>
-											{[
-												"report_2024.pdf",
-												"report_2024 (1).pdf",
-												"report_2024_v2.pdf",
-											].map((n, j) => (
-												<div
-													key={j}
-													style={{
-														display: "flex",
-														alignItems: "center",
-														gap: 8,
-													}}
-												>
-													<div
-														style={{
-															width: 9,
-															height: 9,
-															border: `1.5px solid ${j < 2 ? t.accent : t.dimText}`,
-															background:
-																j < 2 ? t.accent : "transparent",
-															borderRadius: 2,
-														}}
-													/>
-													<span
-														style={{
-															flex: 1,
-															fontSize: 9,
-															color: t.metaText,
-															fontFamily:
-																"'JetBrains Mono', monospace",
-														}}
-													>
-														{n}
-													</span>
-													<span
-														style={{
-															fontSize: 9,
-															color: t.metaText,
-															fontFamily:
-																"'JetBrains Mono', monospace",
-														}}
-													>
-														127 KB
-													</span>
-												</div>
-											))}
-										</div>
-									)}
-								</div>
-							))}
-						</div>
-					</div>
-				);
-			}
+      // ─────────────────────────────────────────────
+      // MOCKUP — stylized results page preview
+      // ─────────────────────────────────────────────
+      function ResultsMockup({ t }) {
+        return (
+          <div
+            style={{
+              background: t.surface,
+              border: `1px solid ${t.border}`,
+              borderRadius: 14,
+              boxShadow: t.cardShadow,
+              overflow: "hidden",
+              width: "100%",
+            }}
+          >
+            {/* fake browser chrome */}
+            <div
+              style={{
+                padding: "10px 14px",
+                borderBottom: `1px solid ${t.border}`,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: t.surfaceAlt,
+              }}
+            >
+              <div style={{ display: "flex", gap: 5 }}>
+                {["#ff5f57", "#febc2e", "#28c840"].map((c) => (
+                  <div
+                    key={c}
+                    style={{
+                      width: 9,
+                      height: 9,
+                      borderRadius: 5,
+                      background: c,
+                      opacity: 0.6,
+                    }}
+                  />
+                ))}
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  fontSize: 9,
+                  color: t.metaText,
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                drive-duplicate-finder.vercel.app/results
+              </div>
+            </div>
+            {/* fake top bar */}
+            <div
+              style={{
+                padding: "10px 16px",
+                borderBottom: `1px solid ${t.border}`,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: t.titleText,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Duplicate Results
+              </div>
+              <div style={{ flex: 1 }} />
+              <div style={{ fontSize: 9, color: t.metaText }}>
+                <b style={{ color: t.titleText }}>57</b> groups ·{" "}
+                <b style={{ color: t.accent }}>408 MB</b> recoverable
+              </div>
+              <div
+                style={{
+                  background: "#e84040",
+                  color: "#fff",
+                  borderRadius: 4,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  padding: "4px 10px",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Delete 12
+              </div>
+            </div>
+            {/* fake group rows */}
+            <div
+              style={{
+                padding: "10px 16px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 7,
+              }}
+            >
+              {[
+                {
+                  type: "EXACT",
+                  count: 3,
+                  name: "vacation_video.mp4",
+                  size: "10.3 MB",
+                },
+                {
+                  type: "VERSION",
+                  count: 5,
+                  name: "report_2024.pdf",
+                  size: "127 KB",
+                  expanded: true,
+                },
+                {
+                  type: "LIKELY",
+                  count: 4,
+                  name: "song_master.mp3",
+                  size: "4.1 MB",
+                },
+              ].map((g, i) => (
+                <div
+                  key={i}
+                  style={{
+                    border: `1px solid ${i === 1 ? t.accent : t.border}`,
+                    borderRadius: 6,
+                    overflow: "hidden",
+                    boxShadow: i === 1 ? `0 0 0 2px ${t.accentBg}` : "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "9px 12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      borderLeft: `3px solid ${t.accent}`,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 8,
+                        color: t.accent,
+                        fontWeight: 800,
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      {g.type}
+                    </span>
+                    <span
+                      style={{
+                        background: t.borderSoft,
+                        color: t.metaText,
+                        borderRadius: 2,
+                        fontSize: 8,
+                        fontWeight: 700,
+                        padding: "1px 5px",
+                      }}
+                    >
+                      {g.count}
+                    </span>
+                    <span
+                      style={{
+                        flex: 1,
+                        fontSize: 11,
+                        color: t.bodyText,
+                        fontFamily: "'JetBrains Mono', monospace",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {g.name}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: t.accent,
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                      }}
+                    >
+                      {g.size}
+                    </span>
+                  </div>
+                  {g.expanded && (
+                    <div
+                      style={{
+                        background: t.surfaceAlt,
+                        padding: "6px 12px 6px 30px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 3,
+                        borderTop: `1px solid ${t.borderSoft}`,
+                      }}
+                    >
+                      {[
+                        "report_2024.pdf",
+                        "report_2024 (1).pdf",
+                        "report_2024_v2.pdf",
+                      ].map((n, j) => (
+                        <div
+                          key={j}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 9,
+                              height: 9,
+                              border: `1.5px solid ${j < 2 ? t.accent : t.dimText}`,
+                              background: j < 2 ? t.accent : "transparent",
+                              borderRadius: 2,
+                            }}
+                          />
+                          <span
+                            style={{
+                              flex: 1,
+                              fontSize: 9,
+                              color: t.metaText,
+                              fontFamily: "'JetBrains Mono', monospace",
+                            }}
+                          >
+                            {n}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 9,
+                              color: t.metaText,
+                              fontFamily: "'JetBrains Mono', monospace",
+                            }}
+                          >
+                            127 KB
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
 
-			// ─────────────────────────────────────────────
-			// PAGE
-			// ─────────────────────────────────────────────
-			function MarketingPage({ themeName }) {
-				const t = THEMES[themeName];
-				const W = 1100;
+      // ─────────────────────────────────────────────
+      // PAGE
+      // ─────────────────────────────────────────────
+      function MarketingPage({ themeName }) {
+        const t = THEMES[themeName];
+        const W = 1100;
 
-				return (
-					<div
-						style={{
-							background: t.pageBg,
-							color: t.bodyText,
-							minHeight: "100%",
-							fontFamily: "'Barlow', sans-serif",
-						}}
-					>
-						{/* ───── NAV ───── */}
-						<nav
-							style={{
-								position: "sticky",
-								top: 0,
-								zIndex: 10,
-								background: t.pageBg + "ee",
-								backdropFilter: "blur(8px)",
-								borderBottom: `1px solid ${t.border}`,
-							}}
-						>
-							<div
-								style={{
-									maxWidth: W,
-									margin: "0 auto",
-									padding: "12px 28px",
-									display: "flex",
-									alignItems: "center",
-									gap: 24,
-								}}
-							>
-								<a
-									href="#top"
-									style={{
-										textDecoration: "none",
-										display: "flex",
-										alignItems: "center",
-										gap: 10,
-									}}
-								>
-									<div
-										style={{
-											width: 28,
-											height: 28,
-											borderRadius: 7,
-											background: t.accent,
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-										}}
-									>
-										<svg
-											width="15"
-											height="15"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke={themeName === "light" ? "#fff" : "#0a1a16"}
-											strokeWidth="2.5"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-										>
-											<polygon points="12 2 2 7 12 12 22 7 12 2" />
-											<polyline points="2 17 12 22 22 17" />
-										</svg>
-									</div>
-									<div>
-										<div
-											style={{
-												fontSize: 13,
-												fontWeight: 900,
-												color: t.titleText,
-												fontFamily: "'Barlow Condensed', sans-serif",
-												textTransform: "uppercase",
-												letterSpacing: "0.02em",
-												lineHeight: 1,
-											}}
-										>
-											Drive Duplicate Cleaner
-										</div>
-										<div
-											style={{
-												fontSize: 8,
-												color: t.metaText,
-												fontWeight: 700,
-												letterSpacing: "0.12em",
-												marginTop: 2,
-											}}
-										>
-											FREE · OPEN SOURCE
-										</div>
-									</div>
-								</a>
-								<div style={{ flex: 1 }} />
-								<div style={{ display: "flex", gap: 22 }}>
-									{["Features", "How it works", "Privacy", "FAQ"].map((x) => (
-										<a
-											key={x}
-											href={`#${x.toLowerCase().replace(/ /g, "-")}`}
-											style={{
-												fontSize: 11,
-												color: t.metaText,
-												textDecoration: "none",
-												fontWeight: 600,
-												letterSpacing: "0.04em",
-												textTransform: "uppercase",
-											}}
-										>
-											{x}
-										</a>
-									))}
-								</div>
-								<a
-									href="https://github.com/lesleyfon/drive-duplicate-finder"
-									style={{
-										display: "flex",
-										alignItems: "center",
-										gap: 5,
-										fontSize: 11,
-										color: t.metaText,
-										textDecoration: "none",
-										fontWeight: 600,
-										letterSpacing: "0.04em",
-									}}
-								>
-									<I.Github c={t.metaText} /> GITHUB
-								</a>
-								<button
-									style={{
-										background: t.btnBg,
-										color: t.btnText,
-										border: `1px solid ${t.btnBorder}`,
-										borderRadius: 6,
-										padding: "7px 14px",
-										fontSize: 11,
-										fontWeight: 700,
-										letterSpacing: "0.06em",
-										textTransform: "uppercase",
-										cursor: "pointer",
-										fontFamily: "'Barlow Condensed', sans-serif",
-									}}
-								>
-									Sign in
-								</button>
-							</div>
-						</nav>
+        return (
+          <div
+            style={{
+              background: t.pageBg,
+              color: t.bodyText,
+              minHeight: "100%",
+              fontFamily: "'Barlow', sans-serif",
+            }}
+          >
+            {/* ───── NAV ───── */}
+            <nav
+              style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 10,
+                background: t.pageBg + "ee",
+                backdropFilter: "blur(8px)",
+                borderBottom: `1px solid ${t.border}`,
+              }}
+            >
+              <div
+                style={{
+                  maxWidth: W,
+                  margin: "0 auto",
+                  padding: "12px 28px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 24,
+                }}
+              >
+                <a
+                  href="#top"
+                  style={{
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 7,
+                      background: t.accent,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke={themeName === "light" ? "#fff" : "#0a1a16"}
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                      <polyline points="2 17 12 22 22 17" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 900,
+                        color: t.titleText,
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.02em",
+                        lineHeight: 1,
+                      }}
+                    >
+                      Drive Duplicate Cleaner
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 8,
+                        color: t.metaText,
+                        fontWeight: 700,
+                        letterSpacing: "0.12em",
+                        marginTop: 2,
+                      }}
+                    >
+                      FREE · OPEN SOURCE
+                    </div>
+                  </div>
+                </a>
+                <div style={{ flex: 1 }} />
+                <div style={{ display: "flex", gap: 22 }}>
+                  {["Features", "How it works", "Privacy", "FAQ"].map((x) => (
+                    <a
+                      key={x}
+                      href={`#${x.toLowerCase().replace(/ /g, "-")}`}
+                      style={{
+                        fontSize: 11,
+                        color: t.metaText,
+                        textDecoration: "none",
+                        fontWeight: 600,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {x}
+                    </a>
+                  ))}
+                </div>
+                <a
+                  href="https://github.com/lesleyfon/drive-duplicate-finder"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    fontSize: 11,
+                    color: t.metaText,
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  <I.Github c={t.metaText} /> GITHUB
+                </a>
+                <button
+                  style={{
+                    background: t.btnBg,
+                    color: t.btnText,
+                    border: `1px solid ${t.btnBorder}`,
+                    borderRadius: 6,
+                    padding: "7px 14px",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    cursor: "pointer",
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                  }}
+                >
+                  Sign in
+                </button>
+              </div>
+            </nav>
 
-						{/* ───── HERO ───── */}
-						<header
-							id="top"
-							style={{
-								borderBottom: `1px solid ${t.border}`,
-								background: `linear-gradient(180deg, ${t.pageBg} 0%, ${t.surfaceAlt} 100%)`,
-								position: "relative",
-								overflow: "hidden",
-							}}
-						>
-							<div
-								style={{
-									position: "absolute",
-									inset: 0,
-									backgroundImage: `linear-gradient(${t.grid} 1px, transparent 1px), linear-gradient(90deg, ${t.grid} 1px, transparent 1px)`,
-									backgroundSize: "32px 32px",
-									opacity: 0.6,
-									pointerEvents: "none",
-								}}
-							/>
-							<div
-								style={{
-									maxWidth: W,
-									margin: "0 auto",
-									padding: "60px 28px 50px",
-									display: "grid",
-									gridTemplateColumns: "1.1fr 1fr",
-									gap: 40,
-									alignItems: "center",
-									position: "relative",
-								}}
-							>
-								<div>
-									<div
-										style={{
-											display: "inline-flex",
-											alignItems: "center",
-											gap: 7,
-											padding: "5px 11px",
-											border: `1px solid ${t.accentBorder}`,
-											borderRadius: 100,
-											background: t.accentBg,
-											marginBottom: 22,
-										}}
-									>
-										<div
-											style={{
-												width: 6,
-												height: 6,
-												borderRadius: 3,
-												background: t.accent,
-											}}
-										/>
-										<span
-											style={{
-												fontSize: 10,
-												fontWeight: 700,
-												color: t.accentText,
-												letterSpacing: "0.12em",
-												textTransform: "uppercase",
-											}}
-										>
-											Free · Open Source · No Backend
-										</span>
-									</div>
-									<h1
-										style={{
-											fontSize: 64,
-											fontWeight: 900,
-											fontFamily: "'Barlow Condensed', sans-serif",
-											lineHeight: 0.95,
-											color: t.titleText,
-											letterSpacing: "-0.015em",
-											textTransform: "uppercase",
-											marginBottom: 18,
-											textWrap: "balance",
-										}}
-									>
-										Find &amp; Remove
-										<br />
-										<span style={{ color: t.accent }}>Duplicate Files</span>
-										<br />
-										In Google Drive
-									</h1>
-									<p
-										style={{
-											fontSize: 17,
-											color: t.bodyText,
-											lineHeight: 1.55,
-											maxWidth: 460,
-											marginBottom: 28,
-											textWrap: "pretty",
-										}}
-									>
-										The fastest way to free up Google Drive storage. Scans your
-										Drive for duplicates, shows exactly what's recoverable, and
-										lets you delete safely — all in your browser. No server. No
-										data stored.
-									</p>
-									<div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
-										<button
-											style={{
-												background: t.btnBg,
-												color: t.btnText,
-												border: `1px solid ${t.btnBorder}`,
-												borderRadius: 8,
-												padding: "13px 22px",
-												fontSize: 13,
-												fontWeight: 700,
-												letterSpacing: "0.06em",
-												textTransform: "uppercase",
-												cursor: "pointer",
-												fontFamily: "'Barlow Condensed', sans-serif",
-												display: "flex",
-												alignItems: "center",
-												gap: 9,
-											}}
-										>
-											<I.Google /> Sign in with Google
-										</button>
-										<button
-											style={{
-												background: t.btnSecondaryBg,
-												color: t.btnSecondaryText,
-												border: `1px solid ${t.btnSecondaryBorder}`,
-												borderRadius: 8,
-												padding: "13px 22px",
-												fontSize: 13,
-												fontWeight: 700,
-												letterSpacing: "0.06em",
-												textTransform: "uppercase",
-												cursor: "pointer",
-												fontFamily: "'Barlow Condensed', sans-serif",
-											}}
-										>
-											See how it works ↓
-										</button>
-									</div>
-									<div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
-										{["Free forever", "100% browser-based", "MIT licensed"].map(
-											(x) => (
-												<div
-													key={x}
-													style={{
-														display: "flex",
-														alignItems: "center",
-														gap: 6,
-														fontSize: 11,
-														color: t.metaText,
-														fontWeight: 600,
-													}}
-												>
-													<I.Check c={t.accent} /> {x}
-												</div>
-											),
-										)}
-									</div>
-								</div>
-								{/* Hero mockup */}
-								<div
-									style={{
-										transform:
-											"perspective(1400px) rotateY(-7deg) rotateX(3deg)",
-										transformOrigin: "left center",
-									}}
-								>
-									<ResultsMockup t={t} />
-								</div>
-							</div>
+            {/* ───── HERO ───── */}
+            <header
+              id="top"
+              style={{
+                borderBottom: `1px solid ${t.border}`,
+                background: `linear-gradient(180deg, ${t.pageBg} 0%, ${t.surfaceAlt} 100%)`,
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backgroundImage: `linear-gradient(${t.grid} 1px, transparent 1px), linear-gradient(90deg, ${t.grid} 1px, transparent 1px)`,
+                  backgroundSize: "32px 32px",
+                  opacity: 0.6,
+                  pointerEvents: "none",
+                }}
+              />
+              <div
+                style={{
+                  maxWidth: W,
+                  margin: "0 auto",
+                  padding: "60px 28px 50px",
+                  display: "grid",
+                  gridTemplateColumns: "1.1fr 1fr",
+                  gap: 40,
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 7,
+                      padding: "5px 11px",
+                      border: `1px solid ${t.accentBorder}`,
+                      borderRadius: 100,
+                      background: t.accentBg,
+                      marginBottom: 22,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: 3,
+                        background: t.accent,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        color: t.accentText,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Free · Open Source · No Backend
+                    </span>
+                  </div>
+                  <h1
+                    style={{
+                      fontSize: 64,
+                      fontWeight: 900,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      lineHeight: 0.95,
+                      color: t.titleText,
+                      letterSpacing: "-0.015em",
+                      textTransform: "uppercase",
+                      marginBottom: 18,
+                      textWrap: "balance",
+                    }}
+                  >
+                    Find &amp; Remove
+                    <br />
+                    <span style={{ color: t.accent }}>Duplicate Files</span>
+                    <br />
+                    In Google Drive
+                  </h1>
+                  <p
+                    style={{
+                      fontSize: 17,
+                      color: t.bodyText,
+                      lineHeight: 1.55,
+                      maxWidth: 460,
+                      marginBottom: 28,
+                      textWrap: "pretty",
+                    }}
+                  >
+                    The fastest way to free up Google Drive storage. Scans your
+                    Drive for duplicates, shows exactly what's recoverable, and
+                    lets you delete safely — all in your browser. No server. No
+                    data stored.
+                  </p>
+                  <div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
+                    <button
+                      style={{
+                        background: t.btnBg,
+                        color: t.btnText,
+                        border: `1px solid ${t.btnBorder}`,
+                        borderRadius: 8,
+                        padding: "13px 22px",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 9,
+                      }}
+                    >
+                      <I.Google /> Sign in with Google
+                    </button>
+                    <button
+                      style={{
+                        background: t.btnSecondaryBg,
+                        color: t.btnSecondaryText,
+                        border: `1px solid ${t.btnSecondaryBorder}`,
+                        borderRadius: 8,
+                        padding: "13px 22px",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                      }}
+                    >
+                      See how it works ↓
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
+                    {["Free forever", "100% browser-based", "MIT licensed"].map(
+                      (x) => (
+                        <div
+                          key={x}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            fontSize: 11,
+                            color: t.metaText,
+                            fontWeight: 600,
+                          }}
+                        >
+                          <I.Check c={t.accent} /> {x}
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+                {/* Hero mockup */}
+                <div
+                  style={{
+                    transform:
+                      "perspective(1400px) rotateY(-7deg) rotateX(3deg)",
+                    transformOrigin: "left center",
+                  }}
+                >
+                  <ResultsMockup t={t} />
+                </div>
+              </div>
 
-							{/* Stat strip */}
-							<div
-								style={{
-									borderTop: `1px solid ${t.border}`,
-									background: t.surface,
-								}}
-							>
-								<div
-									style={{
-										maxWidth: W,
-										margin: "0 auto",
-										padding: "18px 28px",
-										display: "grid",
-										gridTemplateColumns: "repeat(4, 1fr)",
-										gap: 24,
-									}}
-								>
-									{[
-										["2.4 GB", "average recoverable per scan"],
-										["< 30 sec", "to scan 5,000 files"],
-										["0 bytes", "leave your browser"],
-										["100%", "open source"],
-									].map(([v, l], i) => (
-										<div
-											key={i}
-											style={{
-												borderLeft:
-													i > 0 ? `1px solid ${t.borderSoft}` : "none",
-												paddingLeft: i > 0 ? 24 : 0,
-											}}
-										>
-											<div
-												style={{
-													fontSize: 28,
-													fontWeight: 900,
-													color: t.statText,
-													fontFamily: "'Barlow Condensed', sans-serif",
-													letterSpacing: "-0.01em",
-													lineHeight: 1,
-												}}
-											>
-												{v}
-											</div>
-											<div
-												style={{
-													fontSize: 10,
-													color: t.metaText,
-													fontWeight: 700,
-													letterSpacing: "0.1em",
-													textTransform: "uppercase",
-													marginTop: 5,
-												}}
-											>
-												{l}
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-						</header>
+              {/* Stat strip */}
+              <div
+                style={{
+                  borderTop: `1px solid ${t.border}`,
+                  background: t.surface,
+                }}
+              >
+                <div
+                  style={{
+                    maxWidth: W,
+                    margin: "0 auto",
+                    padding: "18px 28px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, 1fr)",
+                    gap: 24,
+                  }}
+                >
+                  {[
+                    ["2.4 GB", "average recoverable per scan"],
+                    ["< 30 sec", "to scan 5,000 files"],
+                    ["0 bytes", "leave your browser"],
+                    ["100%", "open source"],
+                  ].map(([v, l], i) => (
+                    <div
+                      key={i}
+                      style={{
+                        borderLeft:
+                          i > 0 ? `1px solid ${t.borderSoft}` : "none",
+                        paddingLeft: i > 0 ? 24 : 0,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 28,
+                          fontWeight: 900,
+                          color: t.statText,
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {v}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: t.metaText,
+                          fontWeight: 700,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          marginTop: 5,
+                        }}
+                      >
+                        {l}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </header>
 
-						{/* ───── FEATURES ───── */}
-						<section
-							id="features"
-							style={{ padding: "80px 28px", maxWidth: W, margin: "0 auto" }}
-						>
-							<div style={{ textAlign: "center", marginBottom: 50 }}>
-								<div
-									style={{
-										fontSize: 10,
-										fontWeight: 800,
-										color: t.accent,
-										letterSpacing: "0.18em",
-										textTransform: "uppercase",
-										marginBottom: 10,
-									}}
-								>
-									What it does
-								</div>
-								<h2
-									style={{
-										fontSize: 44,
-										fontWeight: 900,
-										color: t.titleText,
-										fontFamily: "'Barlow Condensed', sans-serif",
-										letterSpacing: "-0.01em",
-										textTransform: "uppercase",
-										lineHeight: 1,
-										marginBottom: 14,
-									}}
-								>
-									Everything you need to{" "}
-									<span style={{ color: t.accent }}>clean up Drive</span>
-								</h2>
-								<p
-									style={{
-										fontSize: 15,
-										color: t.metaText,
-										maxWidth: 540,
-										margin: "0 auto",
-										lineHeight: 1.55,
-									}}
-								>
-									Built for people who want their storage back without giving a
-									third-party vendor unrestricted access to their files.
-								</p>
-							</div>
-							<div
-								style={{
-									display: "grid",
-									gridTemplateColumns: "repeat(3, 1fr)",
-									gap: 14,
-								}}
-							>
-								{[
-									{
-										icon: "Layers",
-										title: "Smart Duplicate Detection",
-										body: "Detects exact matches via MD5 checksum, plus likely duplicates and version variants. Three confidence levels so you know what's safe to delete.",
-										tag: "DETECT",
-									},
-									{
-										icon: "Lock",
-										title: "Private by Design",
-										body: "No backend server. No database. Your files and credentials never leave your browser. Sign out and there is nothing to delete because nothing was ever stored.",
-										tag: "PRIVATE",
-									},
-									{
-										icon: "Eye",
-										title: "Review Before Deleting",
-										body: "Every duplicate group is reviewable. Inspect filenames, paths, sizes, and modified dates. Select only what you want gone — checked files are deleted, unchecked stay.",
-										tag: "REVIEW",
-									},
-									{
-										icon: "Trash",
-										title: "Safe Recovery Window",
-										body: "Files move to your Google Drive Trash, not permanent deletion. Restore any file within 30 days directly from Drive if you change your mind.",
-										tag: "REVERSIBLE",
-									},
-									{
-										icon: "Zap",
-										title: "Fast Scans",
-										body: "Streams metadata from the Drive API and computes diffs locally. Tens of thousands of files in well under a minute. No batch jobs, no waiting in queues.",
-										tag: "PERFORMANCE",
-									},
-									{
-										icon: "Code",
-										title: "Fully Open Source",
-										body: "MIT licensed. Read the code, audit the permissions, run it locally, fork it, contribute. No black box, no telemetry, no analytics scripts.",
-										tag: "OPEN",
-									},
-								].map((f, i) => {
-									const Icon = I[f.icon];
-									return (
-										<article
-											key={i}
-											style={{
-												background: t.surface,
-												border: `1px solid ${t.border}`,
-												borderRadius: 10,
-												padding: "22px 22px 24px",
-												boxShadow: t.cardShadow,
-											}}
-										>
-											<div
-												style={{
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "space-between",
-													marginBottom: 14,
-												}}
-											>
-												<div
-													style={{
-														width: 36,
-														height: 36,
-														background: t.accentDim,
-														border: `1px solid ${t.accentBorder}`,
-														borderRadius: 8,
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "center",
-													}}
-												>
-													<Icon c={t.accent} />
-												</div>
-												<span
-													style={{
-														fontSize: 9,
-														color: t.metaText,
-														fontWeight: 700,
-														letterSpacing: "0.14em",
-														fontFamily: "'JetBrains Mono', monospace",
-													}}
-												>
-													{f.tag}
-												</span>
-											</div>
-											<h3
-												style={{
-													fontSize: 18,
-													fontWeight: 800,
-													color: t.titleText,
-													fontFamily: "'Barlow Condensed', sans-serif",
-													textTransform: "uppercase",
-													letterSpacing: "0.01em",
-													marginBottom: 8,
-													lineHeight: 1.1,
-												}}
-											>
-												{f.title}
-											</h3>
-											<p
-												style={{
-													fontSize: 13,
-													color: t.bodyText,
-													lineHeight: 1.55,
-													textWrap: "pretty",
-												}}
-											>
-												{f.body}
-											</p>
-										</article>
-									);
-								})}
-							</div>
-						</section>
+            {/* ───── FEATURES ───── */}
+            <section
+              id="features"
+              style={{ padding: "80px 28px", maxWidth: W, margin: "0 auto" }}
+            >
+              <div style={{ textAlign: "center", marginBottom: 50 }}>
+                <div
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    color: t.accent,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    marginBottom: 10,
+                  }}
+                >
+                  What it does
+                </div>
+                <h2
+                  style={{
+                    fontSize: 44,
+                    fontWeight: 900,
+                    color: t.titleText,
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    letterSpacing: "-0.01em",
+                    textTransform: "uppercase",
+                    lineHeight: 1,
+                    marginBottom: 14,
+                  }}
+                >
+                  Everything you need to{" "}
+                  <span style={{ color: t.accent }}>clean up Drive</span>
+                </h2>
+                <p
+                  style={{
+                    fontSize: 15,
+                    color: t.metaText,
+                    maxWidth: 540,
+                    margin: "0 auto",
+                    lineHeight: 1.55,
+                  }}
+                >
+                  Built for people who want their storage back without giving a
+                  third-party vendor unrestricted access to their files.
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 14,
+                }}
+              >
+                {[
+                  {
+                    icon: "Layers",
+                    title: "Smart Duplicate Detection",
+                    body: "Detects exact matches via MD5 checksum, plus likely duplicates and version variants. Three confidence levels so you know what's safe to delete.",
+                    tag: "DETECT",
+                  },
+                  {
+                    icon: "Lock",
+                    title: "Private by Design",
+                    body: "No backend server. No database. Your files and credentials never leave your browser. Sign out and there is nothing to delete because nothing was ever stored.",
+                    tag: "PRIVATE",
+                  },
+                  {
+                    icon: "Eye",
+                    title: "Review Before Deleting",
+                    body: "Every duplicate group is reviewable. Inspect filenames, paths, sizes, and modified dates. Select only what you want gone — checked files are deleted, unchecked stay.",
+                    tag: "REVIEW",
+                  },
+                  {
+                    icon: "Trash",
+                    title: "Safe Recovery Window",
+                    body: "Files move to your Google Drive Trash, not permanent deletion. Restore any file within 30 days directly from Drive if you change your mind.",
+                    tag: "REVERSIBLE",
+                  },
+                  {
+                    icon: "Zap",
+                    title: "Fast Scans",
+                    body: "Streams metadata from the Drive API and computes diffs locally. Tens of thousands of files in well under a minute. No batch jobs, no waiting in queues.",
+                    tag: "PERFORMANCE",
+                  },
+                  {
+                    icon: "Code",
+                    title: "Fully Open Source",
+                    body: "MIT licensed. Read the code, audit the permissions, run it locally, fork it, contribute. No black box, no telemetry, no analytics scripts.",
+                    tag: "OPEN",
+                  },
+                ].map((f, i) => {
+                  const Icon = I[f.icon];
+                  return (
+                    <article
+                      key={i}
+                      style={{
+                        background: t.surface,
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 10,
+                        padding: "22px 22px 24px",
+                        boxShadow: t.cardShadow,
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: 14,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 36,
+                            height: 36,
+                            background: t.accentDim,
+                            border: `1px solid ${t.accentBorder}`,
+                            borderRadius: 8,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Icon c={t.accent} />
+                        </div>
+                        <span
+                          style={{
+                            fontSize: 9,
+                            color: t.metaText,
+                            fontWeight: 700,
+                            letterSpacing: "0.14em",
+                            fontFamily: "'JetBrains Mono', monospace",
+                          }}
+                        >
+                          {f.tag}
+                        </span>
+                      </div>
+                      <h3
+                        style={{
+                          fontSize: 18,
+                          fontWeight: 800,
+                          color: t.titleText,
+                          fontFamily: "'Barlow Condensed', sans-serif",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.01em",
+                          marginBottom: 8,
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        {f.title}
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: t.bodyText,
+                          lineHeight: 1.55,
+                          textWrap: "pretty",
+                        }}
+                      >
+                        {f.body}
+                      </p>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
 
-						{/* ───── HOW IT WORKS ───── */}
-						<section
-							id="how-it-works"
-							style={{
-								padding: "80px 28px",
-								background: t.surface,
-								borderTop: `1px solid ${t.border}`,
-								borderBottom: `1px solid ${t.border}`,
-							}}
-						>
-							<div style={{ maxWidth: W, margin: "0 auto" }}>
-								<div
-									style={{
-										display: "grid",
-										gridTemplateColumns: "1fr 1.4fr",
-										gap: 60,
-										alignItems: "start",
-									}}
-								>
-									<div style={{ position: "sticky", top: 80 }}>
-										<div
-											style={{
-												fontSize: 10,
-												fontWeight: 800,
-												color: t.accent,
-												letterSpacing: "0.18em",
-												textTransform: "uppercase",
-												marginBottom: 10,
-											}}
-										>
-											How it works
-										</div>
-										<h2
-											style={{
-												fontSize: 44,
-												fontWeight: 900,
-												color: t.titleText,
-												fontFamily: "'Barlow Condensed', sans-serif",
-												letterSpacing: "-0.01em",
-												textTransform: "uppercase",
-												lineHeight: 1,
-												marginBottom: 18,
-											}}
-										>
-											Four steps.{" "}
-											<span style={{ color: t.accent }}>Zero risk.</span>
-										</h2>
-										<p
-											style={{
-												fontSize: 14,
-												color: t.bodyText,
-												lineHeight: 1.6,
-												marginBottom: 22,
-											}}
-										>
-											From sign-in to recovered storage in under five minutes.
-											The app reads metadata, finds matches, lets you pick
-											what to delete, and moves selected files to Drive's
-											Trash — where they're recoverable for 30 days.
-										</p>
-										<button
-											style={{
-												background: t.btnBg,
-												color: t.btnText,
-												border: `1px solid ${t.btnBorder}`,
-												borderRadius: 8,
-												padding: "12px 20px",
-												fontSize: 12,
-												fontWeight: 700,
-												letterSpacing: "0.06em",
-												textTransform: "uppercase",
-												cursor: "pointer",
-												fontFamily: "'Barlow Condensed', sans-serif",
-												display: "inline-flex",
-												alignItems: "center",
-												gap: 8,
-											}}
-										>
-											<I.Google /> Try it now
-										</button>
-									</div>
-									<ol
-										style={{
-											listStyle: "none",
-											display: "flex",
-											flexDirection: "column",
-											gap: 14,
-										}}
-									>
-										{[
-											{
-												n: "01",
-												title: "Sign in with Google",
-												body: "Standard OAuth flow. Grant Drive read/write so we can list files and move duplicates to Trash. No password, no account creation. You may see an 'unverified app' notice — click Advanced → Continue.",
-												time: "~10 sec",
-											},
-											{
-												n: "02",
-												title: "Scan your Drive",
-												body: "We stream file metadata from the Drive API, compute checksums, and group matches by exact / likely / version-variant confidence levels. Nothing is uploaded anywhere — the work happens in your browser.",
-												time: "~30 sec",
-											},
-											{
-												n: "03",
-												title: "Review duplicate groups",
-												body: "Browse groups by category — Same Folder, Largest Files, Hidden, Old, Not Owned By Me. Inspect every file. Check what you want to delete; uncheck what you want to keep.",
-												time: "as long as you need",
-											},
-											{
-												n: "04",
-												title: "Delete safely",
-												body: "Selected files move to Google Drive Trash. They're recoverable for 30 days from Drive itself. Storage frees up immediately. Nothing on your end is permanent until Trash auto-empties.",
-												time: "instant",
-											},
-										].map((s, i) => (
-											<li
-												key={i}
-												style={{
-													background: t.surfaceAlt,
-													border: `1px solid ${t.border}`,
-													borderLeft: `4px solid ${t.accent}`,
-													borderRadius: 8,
-													padding: "20px 24px",
-													display: "grid",
-													gridTemplateColumns: "60px 1fr auto",
-													gap: 18,
-													alignItems: "start",
-												}}
-											>
-												<div
-													style={{
-														fontSize: 30,
-														fontWeight: 900,
-														color: t.accent,
-														fontFamily:
-															"'Barlow Condensed', sans-serif",
-														letterSpacing: "-0.02em",
-														lineHeight: 1,
-													}}
-												>
-													{s.n}
-												</div>
-												<div>
-													<h3
-														style={{
-															fontSize: 17,
-															fontWeight: 800,
-															color: t.titleText,
-															fontFamily:
-																"'Barlow Condensed', sans-serif",
-															textTransform: "uppercase",
-															letterSpacing: "0.02em",
-															marginBottom: 6,
-															lineHeight: 1.15,
-														}}
-													>
-														{s.title}
-													</h3>
-													<p
-														style={{
-															fontSize: 13,
-															color: t.bodyText,
-															lineHeight: 1.55,
-															textWrap: "pretty",
-														}}
-													>
-														{s.body}
-													</p>
-												</div>
-												<span
-													style={{
-														fontSize: 9,
-														fontWeight: 700,
-														color: t.metaText,
-														letterSpacing: "0.1em",
-														textTransform: "uppercase",
-														whiteSpace: "nowrap",
-														fontFamily: "'JetBrains Mono', monospace",
-														border: `1px solid ${t.border}`,
-														padding: "3px 8px",
-														borderRadius: 3,
-													}}
-												>
-													{s.time}
-												</span>
-											</li>
-										))}
-									</ol>
-								</div>
-							</div>
-						</section>
+            {/* ───── HOW IT WORKS ───── */}
+            <section
+              id="how-it-works"
+              style={{
+                padding: "80px 28px",
+                background: t.surface,
+                borderTop: `1px solid ${t.border}`,
+                borderBottom: `1px solid ${t.border}`,
+              }}
+            >
+              <div style={{ maxWidth: W, margin: "0 auto" }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1.4fr",
+                    gap: 60,
+                    alignItems: "start",
+                  }}
+                >
+                  <div style={{ position: "sticky", top: 80 }}>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: t.accent,
+                        letterSpacing: "0.18em",
+                        textTransform: "uppercase",
+                        marginBottom: 10,
+                      }}
+                    >
+                      How it works
+                    </div>
+                    <h2
+                      style={{
+                        fontSize: 44,
+                        fontWeight: 900,
+                        color: t.titleText,
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        letterSpacing: "-0.01em",
+                        textTransform: "uppercase",
+                        lineHeight: 1,
+                        marginBottom: 18,
+                      }}
+                    >
+                      Four steps.{" "}
+                      <span style={{ color: t.accent }}>Zero risk.</span>
+                    </h2>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        color: t.bodyText,
+                        lineHeight: 1.6,
+                        marginBottom: 22,
+                      }}
+                    >
+                      From sign-in to recovered storage in under five minutes.
+                      The app reads metadata, finds matches, lets you pick what
+                      to delete, and moves selected files to Drive's Trash —
+                      where they're recoverable for 30 days.
+                    </p>
+                    <button
+                      style={{
+                        background: t.btnBg,
+                        color: t.btnText,
+                        border: `1px solid ${t.btnBorder}`,
+                        borderRadius: 8,
+                        padding: "12px 20px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        fontFamily: "'Barlow Condensed', sans-serif",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      <I.Google /> Try it now
+                    </button>
+                  </div>
+                  <ol
+                    style={{
+                      listStyle: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 14,
+                    }}
+                  >
+                    {[
+                      {
+                        n: "01",
+                        title: "Sign in with Google",
+                        body: "Standard OAuth flow. Grant Drive read/write so we can list files and move duplicates to Trash. No password, no account creation. You may see an 'unverified app' notice — click Advanced → Continue.",
+                        time: "~10 sec",
+                      },
+                      {
+                        n: "02",
+                        title: "Scan your Drive",
+                        body: "We stream file metadata from the Drive API, compute checksums, and group matches by exact / likely / version-variant confidence levels. Nothing is uploaded anywhere — the work happens in your browser.",
+                        time: "~30 sec",
+                      },
+                      {
+                        n: "03",
+                        title: "Review duplicate groups",
+                        body: "Browse groups by category — Same Folder, Largest Files, Hidden, Old, Not Owned By Me. Inspect every file. Check what you want to delete; uncheck what you want to keep.",
+                        time: "as long as you need",
+                      },
+                      {
+                        n: "04",
+                        title: "Delete safely",
+                        body: "Selected files move to Google Drive Trash. They're recoverable for 30 days from Drive itself. Storage frees up immediately. Nothing on your end is permanent until Trash auto-empties.",
+                        time: "instant",
+                      },
+                    ].map((s, i) => (
+                      <li
+                        key={i}
+                        style={{
+                          background: t.surfaceAlt,
+                          border: `1px solid ${t.border}`,
+                          borderLeft: `4px solid ${t.accent}`,
+                          borderRadius: 8,
+                          padding: "20px 24px",
+                          display: "grid",
+                          gridTemplateColumns: "60px 1fr auto",
+                          gap: 18,
+                          alignItems: "start",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 30,
+                            fontWeight: 900,
+                            color: t.accent,
+                            fontFamily: "'Barlow Condensed', sans-serif",
+                            letterSpacing: "-0.02em",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {s.n}
+                        </div>
+                        <div>
+                          <h3
+                            style={{
+                              fontSize: 17,
+                              fontWeight: 800,
+                              color: t.titleText,
+                              fontFamily: "'Barlow Condensed', sans-serif",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.02em",
+                              marginBottom: 6,
+                              lineHeight: 1.15,
+                            }}
+                          >
+                            {s.title}
+                          </h3>
+                          <p
+                            style={{
+                              fontSize: 13,
+                              color: t.bodyText,
+                              lineHeight: 1.55,
+                              textWrap: "pretty",
+                            }}
+                          >
+                            {s.body}
+                          </p>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: 9,
+                            fontWeight: 700,
+                            color: t.metaText,
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            whiteSpace: "nowrap",
+                            fontFamily: "'JetBrains Mono', monospace",
+                            border: `1px solid ${t.border}`,
+                            padding: "3px 8px",
+                            borderRadius: 3,
+                          }}
+                        >
+                          {s.time}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </section>
 
-						{/* ───── PRIVACY ───── */}
-						<section
-							id="privacy"
-							style={{ padding: "80px 28px", maxWidth: W, margin: "0 auto" }}
-						>
-							<div
-								style={{
-									background: t.surface,
-									border: `1px solid ${t.border}`,
-									borderRadius: 14,
-									overflow: "hidden",
-									boxShadow: t.cardShadow,
-									display: "grid",
-									gridTemplateColumns: "1fr 1fr",
-								}}
-							>
-								<div
-									style={{
-										padding: "44px 40px",
-										borderRight: `1px solid ${t.border}`,
-									}}
-								>
-									<div
-										style={{
-											display: "inline-flex",
-											alignItems: "center",
-											gap: 7,
-											padding: "4px 10px",
-											background: t.accentDim,
-											border: `1px solid ${t.accentBorder}`,
-											borderRadius: 4,
-											marginBottom: 18,
-										}}
-									>
-										<I.Lock c={t.accent} />
-										<span
-											style={{
-												fontSize: 10,
-												fontWeight: 800,
-												color: t.accent,
-												letterSpacing: "0.14em",
-												textTransform: "uppercase",
-											}}
-										>
-											Privacy
-										</span>
-									</div>
-									<h2
-										style={{
-											fontSize: 36,
-											fontWeight: 900,
-											color: t.titleText,
-											fontFamily: "'Barlow Condensed', sans-serif",
-											letterSpacing: "-0.01em",
-											textTransform: "uppercase",
-											lineHeight: 1,
-											marginBottom: 16,
-										}}
-									>
-										Your files{" "}
-										<span style={{ color: t.accent }}>never leave</span> your
-										browser.
-									</h2>
-									<p
-										style={{
-											fontSize: 14,
-											color: t.bodyText,
-											lineHeight: 1.6,
-											textWrap: "pretty",
-										}}
-									>
-										Most cleanup tools route your Drive through their servers.
-										We don't have servers. Open the network tab — every request
-										goes to{" "}
-										<code
-											style={{
-												fontFamily: "'JetBrains Mono', monospace",
-												fontSize: 12,
-												background: t.borderSoft,
-												padding: "1px 5px",
-												borderRadius: 3,
-											}}
-										>
-											googleapis.com
-										</code>{" "}
-										or to load this page itself. Nothing else.
-									</p>
-								</div>
-								<div
-									style={{
-										padding: "44px 40px",
-										display: "flex",
-										flexDirection: "column",
-										gap: 14,
-									}}
-								>
-									{[
-										[
-											"No backend server",
-											"The app is static files. There's nothing on the receiving end to log, breach, or sell.",
-										],
-										[
-											"No data collection",
-											"No analytics scripts. No cookies that track. No telemetry. Your scan results live in memory until you close the tab.",
-										],
-										[
-											"No file transfer",
-											"We compute checksums and diffs in your browser. The Drive API streams metadata — never file contents — directly to your machine.",
-										],
-										[
-											"Auditable code",
-											"Every line is on GitHub. Read it, fork it, run it locally, host it yourself. We don't ask for trust because you don't have to.",
-										],
-									].map(([title, body], i) => (
-										<div
-											key={i}
-											style={{
-												display: "grid",
-												gridTemplateColumns: "auto 1fr",
-												gap: 14,
-											}}
-										>
-											<div
-												style={{
-													width: 22,
-													height: 22,
-													borderRadius: 11,
-													background: t.accent,
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "center",
-													flexShrink: 0,
-													marginTop: 2,
-												}}
-											>
-												<I.Check
-													c={themeName === "light" ? "#fff" : "#0a1a16"}
-												/>
-											</div>
-											<div>
-												<h3
-													style={{
-														fontSize: 14,
-														fontWeight: 700,
-														color: t.titleText,
-														marginBottom: 4,
-													}}
-												>
-													{title}
-												</h3>
-												<p
-													style={{
-														fontSize: 12.5,
-														color: t.bodyText,
-														lineHeight: 1.5,
-													}}
-												>
-													{body}
-												</p>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-						</section>
+            {/* ───── PRIVACY ───── */}
+            <section
+              id="privacy"
+              style={{ padding: "80px 28px", maxWidth: W, margin: "0 auto" }}
+            >
+              <div
+                style={{
+                  background: t.surface,
+                  border: `1px solid ${t.border}`,
+                  borderRadius: 14,
+                  overflow: "hidden",
+                  boxShadow: t.cardShadow,
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                }}
+              >
+                <div
+                  style={{
+                    padding: "44px 40px",
+                    borderRight: `1px solid ${t.border}`,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 7,
+                      padding: "4px 10px",
+                      background: t.accentDim,
+                      border: `1px solid ${t.accentBorder}`,
+                      borderRadius: 4,
+                      marginBottom: 18,
+                    }}
+                  >
+                    <I.Lock c={t.accent} />
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: t.accent,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Privacy
+                    </span>
+                  </div>
+                  <h2
+                    style={{
+                      fontSize: 36,
+                      fontWeight: 900,
+                      color: t.titleText,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      letterSpacing: "-0.01em",
+                      textTransform: "uppercase",
+                      lineHeight: 1,
+                      marginBottom: 16,
+                    }}
+                  >
+                    Your files{" "}
+                    <span style={{ color: t.accent }}>never leave</span> your
+                    browser.
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      color: t.bodyText,
+                      lineHeight: 1.6,
+                      textWrap: "pretty",
+                    }}
+                  >
+                    Most cleanup tools route your Drive through their servers.
+                    We don't have servers. Open the network tab — every request
+                    goes to{" "}
+                    <code
+                      style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: 12,
+                        background: t.borderSoft,
+                        padding: "1px 5px",
+                        borderRadius: 3,
+                      }}
+                    >
+                      googleapis.com
+                    </code>{" "}
+                    or to load this page itself. Nothing else.
+                  </p>
+                </div>
+                <div
+                  style={{
+                    padding: "44px 40px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                  }}
+                >
+                  {[
+                    [
+                      "No backend server",
+                      "The app is static files. There's nothing on the receiving end to log, breach, or sell.",
+                    ],
+                    [
+                      "No data collection",
+                      "No analytics scripts. No cookies that track. No telemetry. Your scan results live in memory until you close the tab.",
+                    ],
+                    [
+                      "No file transfer",
+                      "We compute checksums and diffs in your browser. The Drive API streams metadata — never file contents — directly to your machine.",
+                    ],
+                    [
+                      "Auditable code",
+                      "Every line is on GitHub. Read it, fork it, run it locally, host it yourself. We don't ask for trust because you don't have to.",
+                    ],
+                  ].map(([title, body], i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "auto 1fr",
+                        gap: 14,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: 11,
+                          background: t.accent,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          marginTop: 2,
+                        }}
+                      >
+                        <I.Check
+                          c={themeName === "light" ? "#fff" : "#0a1a16"}
+                        />
+                      </div>
+                      <div>
+                        <h3
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: t.titleText,
+                            marginBottom: 4,
+                          }}
+                        >
+                          {title}
+                        </h3>
+                        <p
+                          style={{
+                            fontSize: 12.5,
+                            color: t.bodyText,
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {body}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-						{/* ───── FAQ ───── */}
-						<section
-							id="faq"
-							style={{
-								padding: "80px 28px",
-								borderTop: `1px solid ${t.border}`,
-								background: t.surfaceAlt,
-							}}
-						>
-							<div style={{ maxWidth: 820, margin: "0 auto" }}>
-								<div style={{ textAlign: "center", marginBottom: 44 }}>
-									<div
-										style={{
-											fontSize: 10,
-											fontWeight: 800,
-											color: t.accent,
-											letterSpacing: "0.18em",
-											textTransform: "uppercase",
-											marginBottom: 10,
-										}}
-									>
-										FAQ
-									</div>
-									<h2
-										style={{
-											fontSize: 40,
-											fontWeight: 900,
-											color: t.titleText,
-											fontFamily: "'Barlow Condensed', sans-serif",
-											letterSpacing: "-0.01em",
-											textTransform: "uppercase",
-											lineHeight: 1,
-										}}
-									>
-										Common questions
-									</h2>
-								</div>
-								<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-									{[
-										[
-											"Is Drive Duplicate Cleaner free to use?",
-											"Yes — completely free and open source under the MIT license. There are no paid tiers, no premium features, and no data sold.",
-										],
-										[
-											"Does this tool store my Google Drive files?",
-											"No. The app runs entirely in your browser. There is no backend server, no database, and your files never leave your device.",
-										],
-										[
-											"How does it detect duplicate files?",
-											"Files are compared using MD5 checksums for exact matches, then by name and size for likely duplicates. You can review every match before deleting.",
-										],
-										[
-											"Are deletions permanent?",
-											"No — files are moved to your Google Drive Trash, where they remain recoverable for 30 days.",
-										],
-										[
-											"What permissions does it need?",
-											"Drive read access to scan files and list metadata, and Drive write access to move duplicates to Trash. The app never touches files you don't explicitly select.",
-										],
-										[
-											"Why does Google show an 'unverified app' warning?",
-											"This is a personal, open-source app that hasn't gone through Google's paid public-app verification process. Click Advanced → Continue to proceed. The code is on GitHub if you want to audit it first.",
-										],
-									].map(([q, a], i) => (
-										<details
-											key={i}
-											style={{
-												background: t.surface,
-												border: `1px solid ${t.border}`,
-												borderRadius: 8,
-												padding: "14px 18px",
-											}}
-										>
-											<summary
-												style={{
-													cursor: "pointer",
-													fontSize: 15,
-													fontWeight: 700,
-													color: t.titleText,
-													listStyle: "none",
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "space-between",
-													gap: 12,
-												}}
-											>
-												<span>{q}</span>
-												<span
-													style={{
-														fontSize: 18,
-														color: t.accent,
-														fontWeight: 400,
-													}}
-												>
-													+
-												</span>
-											</summary>
-											<p
-												style={{
-													marginTop: 10,
-													fontSize: 13,
-													color: t.bodyText,
-													lineHeight: 1.6,
-													textWrap: "pretty",
-												}}
-											>
-												{a}
-											</p>
-										</details>
-									))}
-								</div>
-							</div>
-						</section>
+            {/* ───── FAQ ───── */}
+            <section
+              id="faq"
+              style={{
+                padding: "80px 28px",
+                borderTop: `1px solid ${t.border}`,
+                background: t.surfaceAlt,
+              }}
+            >
+              <div style={{ maxWidth: 820, margin: "0 auto" }}>
+                <div style={{ textAlign: "center", marginBottom: 44 }}>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 800,
+                      color: t.accent,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      marginBottom: 10,
+                    }}
+                  >
+                    FAQ
+                  </div>
+                  <h2
+                    style={{
+                      fontSize: 40,
+                      fontWeight: 900,
+                      color: t.titleText,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      letterSpacing: "-0.01em",
+                      textTransform: "uppercase",
+                      lineHeight: 1,
+                    }}
+                  >
+                    Common questions
+                  </h2>
+                </div>
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                >
+                  {[
+                    [
+                      "Is Drive Duplicate Cleaner free to use?",
+                      "Yes — completely free and open source under the MIT license. There are no paid tiers, no premium features, and no data sold.",
+                    ],
+                    [
+                      "Does this tool store my Google Drive files?",
+                      "No. The app runs entirely in your browser. There is no backend server, no database, and your files never leave your device.",
+                    ],
+                    [
+                      "How does it detect duplicate files?",
+                      "Files are compared using MD5 checksums for exact matches, then by name and size for likely duplicates. You can review every match before deleting.",
+                    ],
+                    [
+                      "Are deletions permanent?",
+                      "No — files are moved to your Google Drive Trash, where they remain recoverable for 30 days.",
+                    ],
+                    [
+                      "What permissions does it need?",
+                      "Drive read access to scan files and list metadata, and Drive write access to move duplicates to Trash. The app never touches files you don't explicitly select.",
+                    ],
+                    [
+                      "Why does Google show an 'unverified app' warning?",
+                      "This is a personal, open-source app that hasn't gone through Google's paid public-app verification process. Click Advanced → Continue to proceed. The code is on GitHub if you want to audit it first.",
+                    ],
+                  ].map(([q, a], i) => (
+                    <details
+                      key={i}
+                      style={{
+                        background: t.surface,
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 8,
+                        padding: "14px 18px",
+                      }}
+                    >
+                      <summary
+                        style={{
+                          cursor: "pointer",
+                          fontSize: 15,
+                          fontWeight: 700,
+                          color: t.titleText,
+                          listStyle: "none",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: 12,
+                        }}
+                      >
+                        <span>{q}</span>
+                        <span
+                          style={{
+                            fontSize: 18,
+                            color: t.accent,
+                            fontWeight: 400,
+                          }}
+                        >
+                          +
+                        </span>
+                      </summary>
+                      <p
+                        style={{
+                          marginTop: 10,
+                          fontSize: 13,
+                          color: t.bodyText,
+                          lineHeight: 1.6,
+                          textWrap: "pretty",
+                        }}
+                      >
+                        {a}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-						{/* ───── OPEN SOURCE CTA ───── */}
-						<section
-							style={{ padding: "70px 28px", borderTop: `1px solid ${t.border}` }}
-						>
-							<div
-								style={{
-									maxWidth: W,
-									margin: "0 auto",
-									background: t.titleText,
-									color: themeName === "light" ? "#f5f5f0" : "#0a1a16",
-									borderRadius: 14,
-									padding: "44px 48px",
-									display: "grid",
-									gridTemplateColumns: "1.2fr 1fr",
-									gap: 30,
-									alignItems: "center",
-									position: "relative",
-									overflow: "hidden",
-								}}
-							>
-								<div
-									style={{
-										position: "absolute",
-										top: -20,
-										right: -20,
-										fontSize: 240,
-										fontWeight: 900,
-										fontFamily: "'Barlow Condensed', sans-serif",
-										color: t.accent,
-										opacity: 0.08,
-										lineHeight: 1,
-										pointerEvents: "none",
-									}}
-								>
-									MIT
-								</div>
-								<div style={{ position: "relative" }}>
-									<div
-										style={{
-											fontSize: 10,
-											fontWeight: 800,
-											color: t.accent,
-											letterSpacing: "0.18em",
-											textTransform: "uppercase",
-											marginBottom: 10,
-										}}
-									>
-										Open Source
-									</div>
-									<h2
-										style={{
-											fontSize: 38,
-											fontWeight: 900,
-											fontFamily: "'Barlow Condensed', sans-serif",
-											letterSpacing: "-0.01em",
-											textTransform: "uppercase",
-											lineHeight: 1,
-											marginBottom: 14,
-											color: themeName === "light" ? "#f5f5f0" : "#e8eaf2",
-										}}
-									>
-										Read the code.{" "}
-										<span style={{ color: t.accent }}>Run it yourself.</span>
-									</h2>
-									<p
-										style={{
-											fontSize: 14,
-											lineHeight: 1.6,
-											opacity: 0.8,
-											color: themeName === "light" ? "#d0d0c8" : "#0a1a16",
-										}}
-									>
-										Star it, fork it, audit the OAuth scopes, host your own
-										copy. Contributions are welcome — bug reports, scan
-										optimizations, new file-type heuristics, additional
-										languages.
-									</p>
-								</div>
-								<div
-									style={{
-										position: "relative",
-										display: "flex",
-										flexDirection: "column",
-										gap: 10,
-									}}
-								>
-									<a
-										href="https://github.com/lesleyfon/drive-duplicate-finder"
-										style={{
-											background: t.accent,
-											color: themeName === "light" ? "#fff" : "#0a1a16",
-											borderRadius: 8,
-											padding: "14px 22px",
-											fontSize: 13,
-											fontWeight: 700,
-											letterSpacing: "0.06em",
-											textTransform: "uppercase",
-											cursor: "pointer",
-											fontFamily: "'Barlow Condensed', sans-serif",
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-											gap: 9,
-											textDecoration: "none",
-										}}
-									>
-										<I.Github c={themeName === "light" ? "#fff" : "#0a1a16"} />{" "}
-										View on GitHub · MIT License
-									</a>
-									<a
-										href="#"
-										style={{
-											border: `1px solid ${themeName === "light" ? "#3a3a36" : "#2a2d38"}`,
-											color: themeName === "light" ? "#f5f5f0" : "#e8eaf2",
-											background: "transparent",
-											borderRadius: 8,
-											padding: "14px 22px",
-											fontSize: 13,
-											fontWeight: 700,
-											letterSpacing: "0.06em",
-											textTransform: "uppercase",
-											cursor: "pointer",
-											fontFamily: "'Barlow Condensed', sans-serif",
-											textAlign: "center",
-											textDecoration: "none",
-										}}
-									>
-										Read the docs
-									</a>
-								</div>
-							</div>
-						</section>
+            {/* ───── OPEN SOURCE CTA ───── */}
+            <section
+              style={{
+                padding: "70px 28px",
+                borderTop: `1px solid ${t.border}`,
+              }}
+            >
+              <div
+                style={{
+                  maxWidth: W,
+                  margin: "0 auto",
+                  background: t.titleText,
+                  color: themeName === "light" ? "#f5f5f0" : "#0a1a16",
+                  borderRadius: 14,
+                  padding: "44px 48px",
+                  display: "grid",
+                  gridTemplateColumns: "1.2fr 1fr",
+                  gap: 30,
+                  alignItems: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -20,
+                    right: -20,
+                    fontSize: 240,
+                    fontWeight: 900,
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    color: t.accent,
+                    opacity: 0.08,
+                    lineHeight: 1,
+                    pointerEvents: "none",
+                  }}
+                >
+                  MIT
+                </div>
+                <div style={{ position: "relative" }}>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 800,
+                      color: t.accent,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      marginBottom: 10,
+                    }}
+                  >
+                    Open Source
+                  </div>
+                  <h2
+                    style={{
+                      fontSize: 38,
+                      fontWeight: 900,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      letterSpacing: "-0.01em",
+                      textTransform: "uppercase",
+                      lineHeight: 1,
+                      marginBottom: 14,
+                      color: themeName === "light" ? "#f5f5f0" : "#e8eaf2",
+                    }}
+                  >
+                    Read the code.{" "}
+                    <span style={{ color: t.accent }}>Run it yourself.</span>
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      lineHeight: 1.6,
+                      opacity: 0.8,
+                      color: themeName === "light" ? "#d0d0c8" : "#0a1a16",
+                    }}
+                  >
+                    Star it, fork it, audit the OAuth scopes, host your own
+                    copy. Contributions are welcome — bug reports, scan
+                    optimizations, new file-type heuristics, additional
+                    languages.
+                  </p>
+                </div>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
+                  <a
+                    href="https://github.com/lesleyfon/drive-duplicate-finder"
+                    style={{
+                      background: t.accent,
+                      color: themeName === "light" ? "#fff" : "#0a1a16",
+                      borderRadius: 8,
+                      padding: "14px 22px",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 9,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <I.Github c={themeName === "light" ? "#fff" : "#0a1a16"} />{" "}
+                    View on GitHub · MIT License
+                  </a>
+                  <a
+                    href="#"
+                    style={{
+                      border: `1px solid ${themeName === "light" ? "#3a3a36" : "#2a2d38"}`,
+                      color: themeName === "light" ? "#f5f5f0" : "#e8eaf2",
+                      background: "transparent",
+                      borderRadius: 8,
+                      padding: "14px 22px",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      textAlign: "center",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Read the docs
+                  </a>
+                </div>
+              </div>
+            </section>
 
-						{/* ───── FINAL CTA ───── */}
-						<section
-							style={{
-								padding: "80px 28px",
-								textAlign: "center",
-								borderTop: `1px solid ${t.border}`,
-								background: `linear-gradient(180deg, ${t.surfaceAlt} 0%, ${t.pageBg} 100%)`,
-							}}
-						>
-							<h2
-								style={{
-									fontSize: 56,
-									fontWeight: 900,
-									color: t.titleText,
-									fontFamily: "'Barlow Condensed', sans-serif",
-									letterSpacing: "-0.015em",
-									textTransform: "uppercase",
-									lineHeight: 0.95,
-									marginBottom: 16,
-								}}
-							>
-								Get your <span style={{ color: t.accent }}>storage back.</span>
-							</h2>
-							<p
-								style={{
-									fontSize: 16,
-									color: t.bodyText,
-									lineHeight: 1.5,
-									maxWidth: 480,
-									margin: "0 auto 26px",
-								}}
-							>
-								One click sign-in. Scan in 30 seconds. Delete duplicates. Done. No
-								account, no email, no card.
-							</p>
-							<button
-								style={{
-									background: t.btnBg,
-									color: t.btnText,
-									border: `1px solid ${t.btnBorder}`,
-									borderRadius: 8,
-									padding: "15px 28px",
-									fontSize: 14,
-									fontWeight: 700,
-									letterSpacing: "0.08em",
-									textTransform: "uppercase",
-									cursor: "pointer",
-									fontFamily: "'Barlow Condensed', sans-serif",
-									display: "inline-flex",
-									alignItems: "center",
-									gap: 10,
-									marginBottom: 14,
-								}}
-							>
-								<I.Google /> Sign in with Google · Free
-							</button>
-							<div style={{ fontSize: 11, color: t.metaText }}>
-								You may see an &ldquo;unverified app&rdquo; warning. Click{" "}
-								<b style={{ color: t.bodyText }}>Advanced → Continue</b>.
-							</div>
-						</section>
+            {/* ───── FINAL CTA ───── */}
+            <section
+              style={{
+                padding: "80px 28px",
+                textAlign: "center",
+                borderTop: `1px solid ${t.border}`,
+                background: `linear-gradient(180deg, ${t.surfaceAlt} 0%, ${t.pageBg} 100%)`,
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: 56,
+                  fontWeight: 900,
+                  color: t.titleText,
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  letterSpacing: "-0.015em",
+                  textTransform: "uppercase",
+                  lineHeight: 0.95,
+                  marginBottom: 16,
+                }}
+              >
+                Get your <span style={{ color: t.accent }}>storage back.</span>
+              </h2>
+              <p
+                style={{
+                  fontSize: 16,
+                  color: t.bodyText,
+                  lineHeight: 1.5,
+                  maxWidth: 480,
+                  margin: "0 auto 26px",
+                }}
+              >
+                One click sign-in. Scan in 30 seconds. Delete duplicates. Done.
+                No account, no email, no card.
+              </p>
+              <button
+                style={{
+                  background: t.btnBg,
+                  color: t.btnText,
+                  border: `1px solid ${t.btnBorder}`,
+                  borderRadius: 8,
+                  padding: "15px 28px",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 10,
+                  marginBottom: 14,
+                }}
+              >
+                <I.Google /> Sign in with Google · Free
+              </button>
+              <div style={{ fontSize: 11, color: t.metaText }}>
+                You may see an &ldquo;unverified app&rdquo; warning. Click{" "}
+                <b style={{ color: t.bodyText }}>Advanced → Continue</b>.
+              </div>
+            </section>
 
-						{/* ───── FOOTER ───── */}
-						<footer
-							style={{
-								borderTop: `1px solid ${t.border}`,
-								background: t.surface,
-								padding: "40px 28px 28px",
-							}}
-						>
-							<div
-								style={{
-									maxWidth: W,
-									margin: "0 auto",
-									display: "grid",
-									gridTemplateColumns: "2fr 1fr 1fr 1fr",
-									gap: 32,
-									marginBottom: 28,
-								}}
-							>
-								<div>
-									<div
-										style={{
-											fontSize: 16,
-											fontWeight: 900,
-											color: t.accent,
-											fontFamily: "'Barlow Condensed', sans-serif",
-											textTransform: "uppercase",
-											letterSpacing: "0.02em",
-											lineHeight: 1.05,
-											marginBottom: 8,
-										}}
-									>
-										Drive Duplicate
-										<br />
-										Cleaner
-									</div>
-									<p
-										style={{
-											fontSize: 12,
-											color: t.metaText,
-											lineHeight: 1.55,
-											maxWidth: 280,
-										}}
-									>
-										Free, open-source, browser-based duplicate finder for Google
-										Drive. MIT licensed.
-									</p>
-								</div>
-								{[
-									["Product", ["Features", "How it works", "Privacy", "FAQ"]],
-									[
-										"Project",
-										["GitHub", "Documentation", "Changelog", "Contribute"],
-									],
-									[
-										"Resources",
-										["Privacy Policy", "Terms", "License (MIT)", "Contact"],
-									],
-								].map(([title, items]) => (
-									<div key={title}>
-										<div
-											style={{
-												fontSize: 9,
-												fontWeight: 800,
-												color: t.metaText,
-												letterSpacing: "0.14em",
-												textTransform: "uppercase",
-												marginBottom: 10,
-											}}
-										>
-											{title}
-										</div>
-										<div
-											style={{
-												display: "flex",
-												flexDirection: "column",
-												gap: 7,
-											}}
-										>
-											{items.map((x) => (
-												<a
-													key={x}
-													href="#"
-													style={{
-														fontSize: 12,
-														color: t.bodyText,
-														textDecoration: "none",
-													}}
-												>
-													{x}
-												</a>
-											))}
-										</div>
-									</div>
-								))}
-							</div>
-							<div
-								style={{
-									maxWidth: W,
-									margin: "0 auto",
-									padding: "18px 0 0",
-									borderTop: `1px solid ${t.borderSoft}`,
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "center",
-									flexWrap: "wrap",
-									gap: 10,
-								}}
-							>
-								<span style={{ fontSize: 11, color: t.metaText }}>
-									© 2026 Drive Duplicate Cleaner · MIT License
-								</span>
-								<span
-									style={{
-										fontSize: 10,
-										color: t.dimText,
-										fontFamily: "'JetBrains Mono', monospace",
-									}}
-								>
-									v1.0.0 · build 2026.05
-								</span>
-							</div>
-						</footer>
-					</div>
-				);
-			}
+            {/* ───── FOOTER ───── */}
+            <footer
+              style={{
+                borderTop: `1px solid ${t.border}`,
+                background: t.surface,
+                padding: "40px 28px 28px",
+              }}
+            >
+              <div
+                style={{
+                  maxWidth: W,
+                  margin: "0 auto",
+                  display: "grid",
+                  gridTemplateColumns: "2fr 1fr 1fr 1fr",
+                  gap: 32,
+                  marginBottom: 28,
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 900,
+                      color: t.accent,
+                      fontFamily: "'Barlow Condensed', sans-serif",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.02em",
+                      lineHeight: 1.05,
+                      marginBottom: 8,
+                    }}
+                  >
+                    Drive Duplicate
+                    <br />
+                    Cleaner
+                  </div>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: t.metaText,
+                      lineHeight: 1.55,
+                      maxWidth: 280,
+                    }}
+                  >
+                    Free, open-source, browser-based duplicate finder for Google
+                    Drive. MIT licensed.
+                  </p>
+                </div>
+                {[
+                  ["Product", ["Features", "How it works", "Privacy", "FAQ"]],
+                  [
+                    "Project",
+                    ["GitHub", "Documentation", "Changelog", "Contribute"],
+                  ],
+                  [
+                    "Resources",
+                    ["Privacy Policy", "Terms", "License (MIT)", "Contact"],
+                  ],
+                ].map(([title, items]) => (
+                  <div key={title}>
+                    <div
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 800,
+                        color: t.metaText,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        marginBottom: 10,
+                      }}
+                    >
+                      {title}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 7,
+                      }}
+                    >
+                      {items.map((x) => (
+                        <a
+                          key={x}
+                          href="#"
+                          style={{
+                            fontSize: 12,
+                            color: t.bodyText,
+                            textDecoration: "none",
+                          }}
+                        >
+                          {x}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div
+                style={{
+                  maxWidth: W,
+                  margin: "0 auto",
+                  padding: "18px 0 0",
+                  borderTop: `1px solid ${t.borderSoft}`,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 10,
+                }}
+              >
+                <span style={{ fontSize: 11, color: t.metaText }}>
+                  © 2026 Drive Duplicate Cleaner · MIT License
+                </span>
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: t.dimText,
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  v1.0.0 · build 2026.05
+                </span>
+              </div>
+            </footer>
+          </div>
+        );
+      }
 
-			// ─────────────────────────────────────────────
-			// ROOT
-			// ─────────────────────────────────────────────
-			function App() {
-				return (
-					<DesignCanvas>
-						<DCSection id="marketing" title="Marketing Page — Clinical">
-							<DCArtboard id="light" label="Light Theme" width={1100} height={3400}>
-								<MarketingPage themeName="light" />
-							</DCArtboard>
-							<DCArtboard id="dark" label="Dark Theme" width={1100} height={3400}>
-								<MarketingPage themeName="dark" />
-							</DCArtboard>
-						</DCSection>
-					</DesignCanvas>
-				);
-			}
+      // ─────────────────────────────────────────────
+      // ROOT
+      // ─────────────────────────────────────────────
+      function App() {
+        return (
+          <DesignCanvas>
+            <DCSection id="marketing" title="Marketing Page — Clinical">
+              <DCArtboard
+                id="light"
+                label="Light Theme"
+                width={1100}
+                height={3400}
+              >
+                <MarketingPage themeName="light" />
+              </DCArtboard>
+              <DCArtboard
+                id="dark"
+                label="Dark Theme"
+                width={1100}
+                height={3400}
+              >
+                <MarketingPage themeName="dark" />
+              </DCArtboard>
+            </DCSection>
+          </DesignCanvas>
+        );
+      }
 
-			const root = ReactDOM.createRoot(document.getElementById("root"));
-			root.render(<App />);
-		</script>
-		<div id="root"></div>
-	</body>
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+    <div id="root"></div>
+  </body>
 </html>

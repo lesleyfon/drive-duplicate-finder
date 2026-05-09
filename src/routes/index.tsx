@@ -44,7 +44,7 @@ function ResultsMockUp() {
           ))}
         </div>
         <div className="flex-1 text-center font-jetbrains text-[9px] text-[var(--theme-text-secondary)]">
-          driveduplicatecleaner.com/results
+          drive-duplicate-finder.vercel.app/results
         </div>
       </div>
 
