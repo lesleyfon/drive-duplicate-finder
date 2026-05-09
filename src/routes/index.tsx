@@ -23,7 +23,6 @@ import { cn } from "../lib/cn";
 export const Route = createFileRoute("/")({
   beforeLoad: ({ context }) => {
     if (context.isAuthenticated) {
-      console.log("User already authenticated, redirecting to dashboard");
       throw redirect({ to: "/dashboard" });
     }
   },
