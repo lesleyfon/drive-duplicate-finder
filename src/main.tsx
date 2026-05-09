@@ -13,7 +13,9 @@ const queryClient = new QueryClient({
       retry: (failureCount, error) => {
         const status = (error as { status?: number }).status;
         // Don't retry on auth errors or not found
-        if (status === 401 || status === 403 || status === 404) return false;
+        if (status === 401 || status === 403 || status === 404) {
+          return false;
+        }
         // Retry up to 3 times on network/rate-limit errors
         return failureCount < 3;
       },
