@@ -2,8 +2,8 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: "var(--theme-page-bg)";
-  color: "var(--theme-accent)";
+  background: var(--theme-page-bg);
+  color: var(--theme-accent);
 }
 
 .btn::before {

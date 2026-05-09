@@ -145,21 +145,14 @@
   #root {
     height: 100%;
     background-color: var(--theme-page-bg);
-    color: #e2e2e2;
-    font-family: "Space Grotesk", monospace;
+    color: var(--theme-text-primary);
+    font-family: "Space Grotesk", sans-serif;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
   }
 
   ::-webkit-scrollbar {
     width: 6px;
-    background: #0e0e0e;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #3b494b;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #00dbe9;
   }
 
   [data-theme="light"] ::-webkit-scrollbar {
