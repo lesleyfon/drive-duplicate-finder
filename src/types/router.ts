@@ -1,4 +1,4 @@
 export interface RouterContext {
-  isAuthenticated: boolean;
-  isAuthLoading: boolean;
+	isAuthenticated: boolean;
+	isAuthLoading: boolean;
 }

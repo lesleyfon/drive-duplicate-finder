@@ -33,7 +33,7 @@ export function useScanFiles(enabled: boolean) {
 	const modifiedSinceRef = useRef<string | undefined>(undefined);
 	const cacheLastFetchedAtRef = useRef<string | null>(null);
 
-	if (enabled && !!accessToken && !isAlreadyComplete && !modeInitRef.current) {
+	if (enabled && accessToken && !isAlreadyComplete && !modeInitRef.current) {
 		modeInitRef.current = true;
 		const cache = readScanCache();
 		// scanScope is always null until folder-scoped scanning (issue 04) is implemented
@@ -42,7 +42,9 @@ export function useScanFiles(enabled: boolean) {
 			cachedFilesRef.current = cache.files;
 			cacheLastFetchedAtRef.current = cache.lastFetchedAt;
 			// Apply 60s clock-skew buffer so near-simultaneous changes aren't missed
-			const adjusted = new Date(new Date(cache.lastFetchedAt).getTime() - 60_000);
+			const adjusted = new Date(
+				new Date(cache.lastFetchedAt).getTime() - 60_000,
+			);
 			modifiedSinceRef.current = adjusted.toISOString();
 		}
 	}
@@ -70,8 +72,12 @@ export function useScanFiles(enabled: boolean) {
 			if (!startTimeRef.current) startTimeRef.current = Date.now();
 			const since = modifiedSinceRef.current ?? "";
 			const [changedFiles, trashedFiles] = await Promise.all([
-				paginateAll((pt) => listFilesPage(accessToken ?? "", pt, undefined, since)),
-				paginateAll((pt) => listRecentlyTrashedPage(accessToken ?? "", since, pt)),
+				paginateAll((pt) =>
+					listFilesPage(accessToken ?? "", pt, undefined, since),
+				),
+				paginateAll((pt) =>
+					listRecentlyTrashedPage(accessToken ?? "", since, pt),
+				),
 			]);
 			return { changedFiles, trashedFiles };
 		},
@@ -85,7 +91,10 @@ export function useScanFiles(enabled: boolean) {
 		if (enabled && storeStatus === "idle") {
 			startScan();
 			setScanMode(scanModeRef.current);
-			if (scanModeRef.current === "incremental" && cacheLastFetchedAtRef.current) {
+			if (
+				scanModeRef.current === "incremental" &&
+				cacheLastFetchedAtRef.current
+			) {
 				setCachedAt(cacheLastFetchedAtRef.current);
 			}
 		}
@@ -93,10 +102,19 @@ export function useScanFiles(enabled: boolean) {
 
 	// Full mode: auto-fetch remaining pages
 	useEffect(() => {
-		if (fullQuery.status === "success" && fullQuery.hasNextPage && !fullQuery.isFetchingNextPage) {
+		if (
+			fullQuery.status === "success" &&
+			fullQuery.hasNextPage &&
+			!fullQuery.isFetchingNextPage
+		) {
 			fullQuery.fetchNextPage();
 		}
-	}, [fullQuery.status, fullQuery.hasNextPage, fullQuery.isFetchingNextPage, fullQuery.fetchNextPage]);
+	}, [
+		fullQuery.status,
+		fullQuery.hasNextPage,
+		fullQuery.isFetchingNextPage,
+		fullQuery.fetchNextPage,
+	]);
 
 	// Full mode: progress tracking
 	useEffect(() => {
@@ -107,15 +125,27 @@ export function useScanFiles(enabled: boolean) {
 
 	// Full mode: completion + cache write
 	useEffect(() => {
-		if (fullQuery.status === "success" && !fullQuery.hasNextPage && fullQuery.data) {
+		if (
+			fullQuery.status === "success" &&
+			!fullQuery.hasNextPage &&
+			fullQuery.data
+		) {
 			const allFiles = fullQuery.data.pages.flatMap((p) => p.files);
 			const now = new Date().toISOString();
-			if (writeScanCache({ lastFetchedAt: now, files: allFiles, scanScope: null })) {
+			if (
+				writeScanCache({ lastFetchedAt: now, files: allFiles, scanScope: null })
+			) {
 				setCachedAt(now);
 			}
 			completeScan(runDeduplication(allFiles));
 		}
-	}, [fullQuery.status, fullQuery.hasNextPage, fullQuery.data, completeScan, setCachedAt]);
+	}, [
+		fullQuery.status,
+		fullQuery.hasNextPage,
+		fullQuery.data,
+		completeScan,
+		setCachedAt,
+	]);
 
 	// Incremental mode: completion + merge + cache write
 	useEffect(() => {
@@ -140,12 +170,19 @@ export function useScanFiles(enabled: boolean) {
 			}
 
 			const now = new Date().toISOString();
-			if (writeScanCache({ lastFetchedAt: now, files: merged, scanScope: null })) {
+			if (
+				writeScanCache({ lastFetchedAt: now, files: merged, scanScope: null })
+			) {
 				setCachedAt(now);
 			}
 			completeScan(runDeduplication(merged));
 		}
-	}, [incrementalQuery.status, incrementalQuery.data, completeScan, setCachedAt]);
+	}, [
+		incrementalQuery.status,
+		incrementalQuery.data,
+		completeScan,
+		setCachedAt,
+	]);
 
 	// Error handling
 	useEffect(() => {
@@ -160,8 +197,12 @@ export function useScanFiles(enabled: boolean) {
 		}
 	}, [incrementalQuery.isError, incrementalQuery.error, setScanError]);
 
-	const isFetching = isIncremental ? incrementalQuery.isFetching : fullQuery.isFetching;
-	const isFetchingNextPage = isIncremental ? false : fullQuery.isFetchingNextPage;
+	const isFetching = isIncremental
+		? incrementalQuery.isFetching
+		: fullQuery.isFetching;
+	const isFetchingNextPage = isIncremental
+		? false
+		: fullQuery.isFetchingNextPage;
 	const isError = fullQuery.isError || incrementalQuery.isError;
 	const error = fullQuery.error ?? incrementalQuery.error;
 

@@ -25,7 +25,10 @@ export const Table = ({
 	toggleSelectAll: () => void;
 	tableHeaderLabels: TableHeaderLabelsType;
 	colTemplate: string;
-	renderMetricCols: (file: FileRecord, typeStyle: { bg: string; text: string }) => ReactNode;
+	renderMetricCols: (
+		file: FileRecord,
+		typeStyle: { bg: string; text: string },
+	) => ReactNode;
 	emptyTitle: string;
 	emptyDescription: string;
 }) => {

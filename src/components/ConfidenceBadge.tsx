@@ -1,12 +1,27 @@
-import type { ConfidenceLevel } from "../types/drive";
 import { useTheme } from "../context/ThemeContext";
 import { cn } from "../lib/cn";
+import type { ConfidenceLevel } from "../types/drive";
 
 const COLORS = {
 	light: {
-		exact: { bg: "#e8f5f2", border: "#00b894", text: "#007a5e", label: "Exact Match" },
-		likely: { bg: "#fff8e6", border: "#f5a623", text: "#b8750f", label: "Likely Duplicate" },
-		version: { bg: "#eff3ff", border: "#667eea", text: "#4a5bd4", label: "Possible Version" },
+		exact: {
+			bg: "#e8f5f2",
+			border: "#00b894",
+			text: "#007a5e",
+			label: "Exact Match",
+		},
+		likely: {
+			bg: "#fff8e6",
+			border: "#f5a623",
+			text: "#b8750f",
+			label: "Likely Duplicate",
+		},
+		version: {
+			bg: "#eff3ff",
+			border: "#667eea",
+			text: "#4a5bd4",
+			label: "Possible Version",
+		},
 	},
 	dark: {
 		exact: {

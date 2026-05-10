@@ -27,7 +27,9 @@ export function createDriveCache<T extends CacheShape>(cacheKey: string) {
 		try {
 			const serialized = JSON.stringify(cache);
 			if (new Blob([serialized]).size > MAX_BYTES) {
-				console.warn(`[driveCache] ${cacheKey}: exceeds 4 MB — skipping write.`);
+				console.warn(
+					`[driveCache] ${cacheKey}: exceeds 4 MB — skipping write.`,
+				);
 				return false;
 			}
 			localStorage.setItem(cacheKey, serialized);

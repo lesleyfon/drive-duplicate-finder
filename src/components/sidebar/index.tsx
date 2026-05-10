@@ -1,14 +1,18 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-import { NavItem, sidebarLinkClass, type NavigationPath } from "./SidebarItem";
+import { NavItem, type NavigationPath, sidebarLinkClass } from "./SidebarItem";
 
 function useIsDashboard() {
 	const state = useRouterState();
 	return state.location.pathname === "/dashboard";
 }
 
-const NAV_ITEMS: Array<{ label: string; filter?: string; to?: NavigationPath }> = [
+const NAV_ITEMS: Array<{
+	label: string;
+	filter?: string;
+	to?: NavigationPath;
+}> = [
 	{ label: "Duplicates", filter: "duplicates" },
 	{ label: "Same Folder", to: "/same-folder" },
 	{ label: "Large Files", to: "/large-files" },
@@ -54,7 +58,9 @@ export default function Sidebar() {
 						color: dashActive
 							? "var(--theme-sidebar-active)"
 							: "var(--theme-sidebar-text)",
-						background: dashActive ? "var(--theme-sidebar-active-bg)" : "transparent",
+						background: dashActive
+							? "var(--theme-sidebar-active-bg)"
+							: "transparent",
 					}}
 				>
 					STORAGE SUMMARY

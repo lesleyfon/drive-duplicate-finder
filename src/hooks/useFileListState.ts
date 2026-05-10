@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { useDeleteFiles } from "./useDeleteFiles";
 import { formatBytes } from "../lib/formatters";
 import type { FileRecord } from "../types/drive";
+import { useDeleteFiles } from "./useDeleteFiles";
 
 export interface UseFileListStateOptions<S extends string> {
 	files: FileRecord[];

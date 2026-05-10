@@ -1,10 +1,10 @@
 import { HardDrive } from "lucide-react";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
-import { cn } from "../../lib/cn";
-import type { FileRecord } from "../../types/drive";
-import { getTypeStyle } from "../../lib/mimeStyles";
 import { useTheme } from "../../context/ThemeContext";
+import { cn } from "../../lib/cn";
+import { getTypeStyle } from "../../lib/mimeStyles";
+import type { FileRecord } from "../../types/drive";
 import { FileThumbnail } from "../FileThumbnail";
 
 export const TableBody = ({
@@ -22,13 +22,19 @@ export const TableBody = ({
 	selected: Set<string>;
 	toggleSelect: (fileId: string) => void;
 	colTemplate: string;
-	renderMetricCols: (file: FileRecord, typeStyle: { bg: string; text: string }) => ReactNode;
+	renderMetricCols: (
+		file: FileRecord,
+		typeStyle: { bg: string; text: string },
+	) => ReactNode;
 	emptyTitle: string;
 	emptyDescription: string;
 }) => {
 	const { theme } = useTheme();
 
-	const rankMap = useMemo(() => new Map(files.map((file, i) => [file.id, i + 1])), [files]);
+	const rankMap = useMemo(
+		() => new Map(files.map((file, i) => [file.id, i + 1])),
+		[files],
+	);
 
 	return (
 		<div
@@ -39,11 +45,16 @@ export const TableBody = ({
 		>
 			{files.length === 0 ? (
 				<div className="h-full flex flex-col items-center justify-center gap-3">
-					<HardDrive size={40} className="text-[var(--theme-file-icon-color)]" />
+					<HardDrive
+						size={40}
+						className="text-[var(--theme-file-icon-color)]"
+					/>
 					<p className="text-[16px] font-semibold text-[var(--theme-text-secondary)]">
 						{emptyTitle}
 					</p>
-					<p className="text-[13px] text-[var(--theme-path-text)]">{emptyDescription}</p>
+					<p className="text-[13px] text-[var(--theme-path-text)]">
+						{emptyDescription}
+					</p>
 				</div>
 			) : visibleFiles.length === 0 ? (
 				<div className="flex items-center justify-center p-16">

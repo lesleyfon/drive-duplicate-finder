@@ -35,22 +35,26 @@ export function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
 				</div>
 
 				<div className="space-y-2">
-					<h1 className="text-2xl font-bold text-gray-900">Something went wrong</h1>
+					<h1 className="text-2xl font-bold text-gray-900">
+						Something went wrong
+					</h1>
 					{retriesExhausted ? (
 						<p className="text-gray-500">
-							The error persists after multiple retries. Please go back to the home
-							page.
+							The error persists after multiple retries. Please go back to the
+							home page.
 						</p>
 					) : (
 						<p className="text-gray-500">
-							An unexpected error occurred. You can try again or go back to the home
-							page.
+							An unexpected error occurred. You can try again or go back to the
+							home page.
 						</p>
 					)}
 				</div>
 
 				<div className="bg-white border border-red-100 rounded-xl p-4 text-left">
-					<p className="text-xs font-mono text-red-600 break-all">{error.message}</p>
+					<p className="text-xs font-mono text-red-600 break-all">
+						{error.message}
+					</p>
 				</div>
 
 				{retriesExhausted ? (

@@ -1,6 +1,9 @@
 import { classifyMime } from "./deduplicator";
 
-export const TYPE_COLORS: Record<string, { light: string; dark: string; text: string }> = {
+export const TYPE_COLORS: Record<
+	string,
+	{ light: string; dark: string; text: string }
+> = {
 	video: { light: "#fde8e8", dark: "#2d1515", text: "#f5a623" },
 	audio: { light: "#fff8e6", dark: "#221a08", text: "#667eeae6" },
 	document: { light: "#e8f7f1", dark: "#102918", text: "#00c48c" },
@@ -19,7 +22,8 @@ export function getTypeStyle(
 		return { bg: classStyle[theme], text: classStyle.text };
 	}
 	return {
-		bg: theme === "light" ? "var(--theme-count-badge-bg)" : "var(--theme-border)",
+		bg:
+			theme === "light" ? "var(--theme-count-badge-bg)" : "var(--theme-border)",
 		text: "var(--theme-text-secondary)",
 	};
 }

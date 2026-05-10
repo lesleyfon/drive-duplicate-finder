@@ -1,6 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
 
-export function NoResult({ title, description }: { title: string; description: string }) {
+export function NoResult({
+	title,
+	description,
+}: {
+	title: string;
+	description: string;
+}) {
 	const navigate = useNavigate();
 	return (
 		<div className="flex flex-col h-full bg-[var(--theme-page-bg)]">

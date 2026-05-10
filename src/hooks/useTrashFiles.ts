@@ -1,3 +1,4 @@
+import type { InfiniteData } from "@tanstack/react-query";
 import {
 	useInfiniteQuery,
 	useMutation,
@@ -5,17 +6,15 @@ import {
 } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import type { TrashedFilePage } from "../lib/driveApi";
 import {
 	enrichWithTrashedTimes,
 	listTrashedFilesPage,
 	untrashFile,
 } from "../lib/driveApi";
+import type { SequentialResult } from "../lib/sequentially";
 import { runSequentially } from "../lib/sequentially";
 import { readTrashCache, writeTrashCache } from "../lib/trashCache";
-
-import type { InfiniteData } from "@tanstack/react-query";
-import type { SequentialResult } from "../lib/sequentially";
-import type { TrashedFilePage } from "../lib/driveApi";
 import type { FileRecord } from "../types/drive";
 
 export type RestoreResult = SequentialResult;
@@ -25,8 +24,10 @@ export function useListTrashedFiles() {
 	const queryClient = useQueryClient();
 
 	// Read cache once on init (same pattern as useScanFiles)
-	const cacheRef = useRef<ReturnType<typeof readTrashCache> | undefined>(undefined);
-	if (cacheRef.current === undefined && !!accessToken) {
+	const cacheRef = useRef<ReturnType<typeof readTrashCache> | undefined>(
+		undefined,
+	);
+	if (cacheRef.current === undefined && accessToken) {
 		cacheRef.current = readTrashCache();
 	}
 	const hasCache = !!cacheRef.current?.files.length;
@@ -58,7 +59,9 @@ export function useListTrashedFiles() {
 							return { ...old, pages: newPages };
 						},
 					);
-					const updated = queryClient.getQueryData<InfiniteData<TrashedFilePage>>(["trashedFiles"]);
+					const updated = queryClient.getQueryData<
+						InfiniteData<TrashedFilePage>
+					>(["trashedFiles"]);
 					if (updated) {
 						writeTrashCache({
 							lastFetchedAt: new Date().toISOString(),
@@ -87,14 +90,23 @@ export function useListTrashedFiles() {
 
 	// Write cache when all pages are loaded (enrichment writes its own updates above)
 	useEffect(() => {
-		if (status === "success" && !hasNextPage && !query.isFetching && query.data) {
+		if (
+			status === "success" &&
+			!hasNextPage &&
+			!query.isFetching &&
+			query.data
+		) {
 			const allFiles = query.data.pages.flatMap((p) => p.files);
-			writeTrashCache({ lastFetchedAt: new Date().toISOString(), files: allFiles });
+			writeTrashCache({
+				lastFetchedAt: new Date().toISOString(),
+				files: allFiles,
+			});
 		}
 	}, [status, hasNextPage, query.isFetching, query.data]);
 
 	// While the query is loading, show cached files so the page is instant
-	const isQueryComplete = status === "success" && !hasNextPage && !query.isFetching;
+	const isQueryComplete =
+		status === "success" && !hasNextPage && !query.isFetching;
 	const isShowingCache = hasCache && !isQueryComplete && status !== "error";
 
 	const allFiles: FileRecord[] = isShowingCache
@@ -139,7 +151,9 @@ export function useRestoreFiles() {
 			);
 			// Sync localStorage from React Query state rather than re-reading localStorage,
 			// so a concurrent cache write can't be rolled back by a stale read.
-			const updated = queryClient.getQueryData<InfiniteData<TrashedFilePage>>(["trashedFiles"]);
+			const updated = queryClient.getQueryData<InfiniteData<TrashedFilePage>>([
+				"trashedFiles",
+			]);
 			const cache = readTrashCache();
 			if (cache && updated) {
 				writeTrashCache({

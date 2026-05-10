@@ -1,5 +1,3 @@
-import { formatBytes, getMimeColor } from "../lib/formatters";
-import type { RecentFileEntry, ScanResult } from "../types/drive";
 import {
 	ClipboardList,
 	Code,
@@ -13,6 +11,7 @@ import {
 	HelpCircle,
 	Image,
 	Layers,
+	type LucideIcon,
 	Mail,
 	Map as MapIcon,
 	Music,
@@ -20,8 +19,9 @@ import {
 	Sparkles,
 	Table,
 	Video,
-	type LucideIcon,
 } from "lucide-react";
+import { formatBytes, getMimeColor } from "../lib/formatters";
+import type { RecentFileEntry, ScanResult } from "../types/drive";
 
 const MIME_ICONS: Record<string, LucideIcon> = {
 	"application/vnd.google-apps.audio": Music,
@@ -64,8 +64,10 @@ export function RecentFileActivity({ scanResults }: Props) {
 				<span
 					className="font-barlow-condensed uppercase rounded py-1 px-[10px] text-[10px] font-extrabold tracking-[0.12em] text-[var(--theme-accent)]"
 					style={{
-						background: "color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-						border: "1px solid color-mix(in srgb, var(--theme-accent) 27%, transparent)",
+						background:
+							"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+						border:
+							"1px solid color-mix(in srgb, var(--theme-accent) 27%, transparent)",
 					}}
 				>
 					Storage Size
@@ -87,7 +89,9 @@ export function RecentFileActivity({ scanResults }: Props) {
 			{/* File rows */}
 			<div className="flex flex-col">
 				{recentFiles
-					? recentFiles.map((file) => <RecentFileRow key={file.id} file={file} />)
+					? recentFiles.map((file) => (
+							<RecentFileRow key={file.id} file={file} />
+						))
 					: Array.from({ length: 8 }).map((_, i) => (
 							<div
 								// biome-ignore lint/suspicious/noArrayIndexKey: static skeleton rows, not dynamic list
@@ -105,11 +109,14 @@ export function RecentFileActivity({ scanResults }: Props) {
 }
 
 function RecentFileRow({ file }: { file: RecentFileEntry }) {
-	const formattedDate = new Date(file.modifiedTime).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
+	const formattedDate = new Date(file.modifiedTime).toLocaleDateString(
+		undefined,
+		{
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		},
+	);
 	const Icon = MIME_ICONS[file.mimeType] ?? File;
 
 	return (
@@ -123,7 +130,11 @@ function RecentFileRow({ file }: { file: RecentFileEntry }) {
 				{formattedDate}
 			</span>
 			<span className="flex items-center gap-2 min-w-0">
-				<Icon size={13} color={getMimeColor(file.mimeType)} className="shrink-0" />
+				<Icon
+					size={13}
+					color={getMimeColor(file.mimeType)}
+					className="shrink-0"
+				/>
 				<span className="text-[12px] truncate text-[var(--theme-body-text)]">
 					{file.name}
 				</span>

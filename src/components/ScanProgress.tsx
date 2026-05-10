@@ -7,7 +7,11 @@ interface ScanProgressProps {
 	isFetching: boolean;
 }
 
-export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgressProps) {
+export function ScanProgress({
+	totalFiles,
+	isComplete,
+	isFetching,
+}: ScanProgressProps) {
 	const scanMode = useScanStore((s) => s.scanMode);
 	const cachedAt = useScanStore((s) => s.cachedAt);
 
@@ -21,7 +25,9 @@ export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgres
 
 	return (
 		<div className="flex flex-col items-center gap-6">
-			<h2 className="text-md uppercase tracking-widest text-text-primary">{headline}</h2>
+			<h2 className="text-md uppercase tracking-widest text-text-primary">
+				{headline}
+			</h2>
 
 			<div className="w-full h-1 bg-surface-high border border-border-dim overflow-hidden relative">
 				{isComplete ? (
@@ -35,7 +41,9 @@ export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgres
 				{isComplete ? (
 					<>
 						OBJECTS PARSED:{" "}
-						<span className="text-status-ok">{totalFiles.toLocaleString()}</span>
+						<span className="text-status-ok">
+							{totalFiles.toLocaleString()}
+						</span>
 					</>
 				) : isFetching ? (
 					isIncremental ? (
@@ -43,7 +51,9 @@ export function ScanProgress({ totalFiles, isComplete, isFetching }: ScanProgres
 					) : (
 						<>
 							OBJECTS PARSED:{" "}
-							<span className="text-text-primary">{totalFiles.toLocaleString()}</span>
+							<span className="text-text-primary">
+								{totalFiles.toLocaleString()}
+							</span>
 						</>
 					)
 				) : (

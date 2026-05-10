@@ -9,7 +9,12 @@ interface Props {
 	showForceRescan: boolean;
 }
 
-export function QuickScanCard({ scanResults, onStartScan, onForceScan, showForceRescan }: Props) {
+export function QuickScanCard({
+	scanResults,
+	onStartScan,
+	onForceScan,
+	showForceRescan,
+}: Props) {
 	// TODO: verify duplicate count — should equal total excess files across all groups
 	const duplicateCount = scanResults
 		? scanResults.duplicateGroups.reduce((n, g) => n + g.files.length - 1, 0)
@@ -24,8 +29,8 @@ export function QuickScanCard({ scanResults, onStartScan, onForceScan, showForce
 						QUICK SCAN
 					</h2>
 					<p className="text-[12px] leading-relaxed text-[var(--theme-text-secondary)] max-w-[220px]">
-						Locate duplicate assets, temporary data, and abandoned clusters in your
-						Drive.
+						Locate duplicate assets, temporary data, and abandoned clusters in
+						your Drive.
 					</p>
 				</div>
 				<div className="shrink-0 flex items-center justify-center rounded w-8 h-8 border border-[var(--theme-card-border)]">
@@ -42,7 +47,9 @@ export function QuickScanCard({ scanResults, onStartScan, onForceScan, showForce
 						LAST SCAN
 					</p>
 					<p className="text-[12px] font-semibold font-jetbrains text-[var(--theme-body-text)]">
-						{scanResults ? formatDate(scanResults.scannedAt.toISOString()) : "—"}
+						{scanResults
+							? formatDate(scanResults.scannedAt.toISOString())
+							: "—"}
 					</p>
 				</div>
 				<div>

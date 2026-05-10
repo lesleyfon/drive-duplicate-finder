@@ -1,11 +1,27 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
-  "css": {
-    "linter": {
-      "enabled": false
-    },
-    "parser": {
-      "tailwindDirectives": true
-    }
-  }
+	"$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+	"css": {
+		"linter": {
+			"enabled": false
+		},
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"linter": {
+		"rules": {
+			"suspicious": {
+				"useBiomeIgnoreFolder": "error"
+			}
+		}
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!dist",
+			"vite.config.ts",
+			"wrangler.jsonc",
+			"tsconfig.json"
+		]
+	}
 }

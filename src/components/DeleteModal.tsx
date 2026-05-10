@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
-import type { FileRecord } from "../types/drive";
 import { formatBytes } from "../lib/formatters";
+import type { FileRecord } from "../types/drive";
 
 interface DeleteModalProps {
 	files: FileRecord[];

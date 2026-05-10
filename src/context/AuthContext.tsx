@@ -1,4 +1,11 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import {
+	createContext,
+	type ReactNode,
+	useCallback,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { clearScanCache } from "../lib/scanCache";
 import { clearTrashCache } from "../lib/trashCache";
 import { useScanStore } from "../store/scanStore";
@@ -40,7 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			const accessToken = localStorage.getItem("accessToken");
 			const expiresAt = Number(localStorage.getItem("expiresAt"));
 
-			const tokenValid = accessToken && expiresAt && Date.now() < expiresAt - 60_000;
+			const tokenValid =
+				accessToken && expiresAt && Date.now() < expiresAt - 60_000;
 
 			setAuthState({
 				accessToken: tokenValid ? accessToken : null,
