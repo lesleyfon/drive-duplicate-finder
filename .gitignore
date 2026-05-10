@@ -15,7 +15,9 @@ client_secret*.json
 # IDE / editor
 .vscode/
 .claude/
+.zed/
 
+# Code spell config
 codebook.toml
 
 
