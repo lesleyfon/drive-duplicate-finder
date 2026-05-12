@@ -12,12 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTrashRouteImport } from './routes/_authenticated/trash'
-import { Route as AuthenticatedScanRouteImport } from './routes/_authenticated/scan'
 import { Route as AuthenticatedSameFolderRouteImport } from './routes/_authenticated/same-folder'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
 import { Route as AuthenticatedOldFilesRouteImport } from './routes/_authenticated/old-files'
 import { Route as AuthenticatedLargeFilesRouteImport } from './routes/_authenticated/large-files'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedScanIndexRouteImport } from './routes/_authenticated/scan/index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -31,11 +31,6 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedTrashRoute = AuthenticatedTrashRouteImport.update({
   id: '/trash',
   path: '/trash',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedScanRoute = AuthenticatedScanRouteImport.update({
-  id: '/scan',
-  path: '/scan',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSameFolderRoute = AuthenticatedSameFolderRouteImport.update({
@@ -63,6 +58,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedScanIndexRoute = AuthenticatedScanIndexRouteImport.update({
+  id: '/scan/',
+  path: '/scan/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,8 +71,8 @@ export interface FileRoutesByFullPath {
   '/old-files': typeof AuthenticatedOldFilesRoute
   '/results': typeof AuthenticatedResultsRoute
   '/same-folder': typeof AuthenticatedSameFolderRoute
-  '/scan': typeof AuthenticatedScanRoute
   '/trash': typeof AuthenticatedTrashRoute
+  '/scan/': typeof AuthenticatedScanIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -81,8 +81,8 @@ export interface FileRoutesByTo {
   '/old-files': typeof AuthenticatedOldFilesRoute
   '/results': typeof AuthenticatedResultsRoute
   '/same-folder': typeof AuthenticatedSameFolderRoute
-  '/scan': typeof AuthenticatedScanRoute
   '/trash': typeof AuthenticatedTrashRoute
+  '/scan': typeof AuthenticatedScanIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,8 +93,8 @@ export interface FileRoutesById {
   '/_authenticated/old-files': typeof AuthenticatedOldFilesRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
   '/_authenticated/same-folder': typeof AuthenticatedSameFolderRoute
-  '/_authenticated/scan': typeof AuthenticatedScanRoute
   '/_authenticated/trash': typeof AuthenticatedTrashRoute
+  '/_authenticated/scan/': typeof AuthenticatedScanIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,8 +105,8 @@ export interface FileRouteTypes {
     | '/old-files'
     | '/results'
     | '/same-folder'
-    | '/scan'
     | '/trash'
+    | '/scan/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -115,8 +115,8 @@ export interface FileRouteTypes {
     | '/old-files'
     | '/results'
     | '/same-folder'
-    | '/scan'
     | '/trash'
+    | '/scan'
   id:
     | '__root__'
     | '/'
@@ -126,8 +126,8 @@ export interface FileRouteTypes {
     | '/_authenticated/old-files'
     | '/_authenticated/results'
     | '/_authenticated/same-folder'
-    | '/_authenticated/scan'
     | '/_authenticated/trash'
+    | '/_authenticated/scan/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -156,13 +156,6 @@ declare module '@tanstack/react-router' {
       path: '/trash'
       fullPath: '/trash'
       preLoaderRoute: typeof AuthenticatedTrashRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/scan': {
-      id: '/_authenticated/scan'
-      path: '/scan'
-      fullPath: '/scan'
-      preLoaderRoute: typeof AuthenticatedScanRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/same-folder': {
@@ -200,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/scan/': {
+      id: '/_authenticated/scan/'
+      path: '/scan'
+      fullPath: '/scan/'
+      preLoaderRoute: typeof AuthenticatedScanIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -209,8 +209,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOldFilesRoute: typeof AuthenticatedOldFilesRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
   AuthenticatedSameFolderRoute: typeof AuthenticatedSameFolderRoute
-  AuthenticatedScanRoute: typeof AuthenticatedScanRoute
   AuthenticatedTrashRoute: typeof AuthenticatedTrashRoute
+  AuthenticatedScanIndexRoute: typeof AuthenticatedScanIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -219,8 +219,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedOldFilesRoute: AuthenticatedOldFilesRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
   AuthenticatedSameFolderRoute: AuthenticatedSameFolderRoute,
-  AuthenticatedScanRoute: AuthenticatedScanRoute,
   AuthenticatedTrashRoute: AuthenticatedTrashRoute,
+  AuthenticatedScanIndexRoute: AuthenticatedScanIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
