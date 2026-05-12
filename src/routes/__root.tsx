@@ -5,12 +5,14 @@ import Sidebar from "../components/sidebar";
 import { useAuth } from "../context/AuthContext";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import { useScanStore } from "../store/scanStore";
 import type { RouterContext } from "../types/router";
 
 function RootComponent() {
 	useGoogleAuth();
 	const { isAuthenticated, isAuthLoading } = useAuth();
 	const { theme } = useTheme();
+	const scanStatus = useScanStore((s) => s.status);
 
 	if (isAuthLoading) {
 		return (
@@ -27,17 +29,18 @@ function RootComponent() {
 
 	if (!isAuthenticated) {
 		return (
-			<div
-				data-theme={theme}
-				className="min-h-screen bg-[var(--theme-page-bg)]"
-			>
+			<div data-theme={theme} className="min-h-screen bg-[var(--theme-page-bg)]">
 				<Outlet />
 			</div>
 		);
 	}
 
 	return (
-		<div data-theme={theme} className="flex h-screen overflow-hidden">
+		<div
+			data-theme={theme}
+			data-scanning={scanStatus === "scanning" ? "true" : undefined}
+			className="flex h-screen overflow-hidden"
+		>
 			<Sidebar />
 			<main className="flex-1 overflow-y-auto bg-[var(--theme-page-bg)]">
 				<Outlet />
@@ -56,7 +59,5 @@ function AppRoot() {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
 	component: AppRoot,
-	errorComponent: ({ error, reset }) => (
-		<ErrorBoundary error={error} reset={reset} />
-	),
+	errorComponent: ({ error, reset }) => <ErrorBoundary error={error} reset={reset} />,
 });
