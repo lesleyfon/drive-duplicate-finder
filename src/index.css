@@ -70,6 +70,7 @@
 		--theme-btn-secondary-border: #e0e0d8;
 		--theme-grid-overlay: rgba(0, 0, 0, 0.04);
 		--theme-nav-bg: rgba(245, 245, 240, 0.93);
+		--theme-bar-track: #e8e8e2;
 	}
 
 	[data-theme="dark"] {
@@ -138,6 +139,7 @@
 		--theme-btn-secondary-border: #2a2d38;
 		--theme-grid-overlay: rgba(255, 255, 255, 0.025);
 		--theme-nav-bg: rgba(15, 16, 20, 0.93);
+		--theme-bar-track: #22242c;
 	}
 
 	html,
@@ -244,6 +246,43 @@
 	.row-hover:hover {
 		background: var(--theme-row-hover);
 	}
+}
+
+@keyframes scan-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.scan-pulse-dot {
+	animation: scan-pulse 1.4s ease-in-out infinite;
+}
+
+.scan-pulse-seg {
+	animation: scan-pulse 1s ease-in-out infinite;
+}
+
+.scan-pulse-line {
+	animation: scan-pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scan-pulse-dot,
+	.scan-pulse-seg,
+	.scan-pulse-line {
+		animation: none;
+		opacity: 1;
+	}
+}
+
+[data-scanning="true"] aside {
+	opacity: 0.6;
+	pointer-events: none;
+	user-select: none;
 }
 
 @layer utilities {
