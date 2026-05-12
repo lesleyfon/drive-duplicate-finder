@@ -128,6 +128,8 @@ const initialState = {
 	errorMessage: null,
 	scanMode: null as "full" | "incremental" | null,
 	cachedAt: null as string | null,
+	sessionId: null as string | null,
+	startedAt: null as number | null,
 };
 
 export const useScanStore = create<ScanState>()(
@@ -143,6 +145,8 @@ export const useScanStore = create<ScanState>()(
 					errorMessage: null,
 					scanMode: null,
 					cachedAt: null,
+					sessionId: `scn_${Math.random().toString(36).slice(2, 8)}`,
+					startedAt: Date.now(),
 				}),
 
 			updateProgress: (totalFiles) => set({ totalFiles }),
