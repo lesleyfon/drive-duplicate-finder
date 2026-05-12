@@ -218,6 +218,10 @@ export function useScanFiles(enabled: boolean) {
 			? incrementalQuery.status === "success"
 			: fullQuery.status === "success" && !fullQuery.hasNextPage);
 
+	const estimatedTotal = isIncremental
+		? cachedFilesRef.current.length || null
+		: null;
+
 	return {
 		isFetching,
 		isFetchingNextPage,
@@ -226,5 +230,6 @@ export function useScanFiles(enabled: boolean) {
 		totalFiles,
 		isComplete,
 		estimatedTimeRemaining: null,
+		estimatedTotal,
 	};
 }
