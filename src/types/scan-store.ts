@@ -9,6 +9,8 @@ export interface ScanState {
 	errorMessage: string | null;
 	scanMode: "full" | "incremental" | null;
 	cachedAt: string | null;
+	sessionId: string | null;
+	startedAt: number | null;
 
 	startScan: () => void;
 	updateProgress: (totalFiles: number) => void;
